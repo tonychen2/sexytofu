@@ -1,0 +1,13 @@
+node_modules/
+dist/
+logs/
+.cache/
+
+# ============================
+# Operating System Files
+# ============================
+
+.DS_Store
+$RECYCLE.BIN/
+Desktop.ini
+Thumbs.db
