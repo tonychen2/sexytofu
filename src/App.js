@@ -42,13 +42,6 @@ class App extends Component {
         let [impact, contributors] = this.parseResponse(json);
 
         this.createMessage(impact, contributors);
-
-        // if (json().impact > 0 ){
-        //   const food = json().impact.items[0];
-
-        //   console.log('food', food);
-        //   this.setState({ food});
-        //   }
     }
 
     parseQuery() {
@@ -62,16 +55,22 @@ class App extends Component {
     }
 
     parseResponse(json) {
+        /**
+         * Parse response from GHGI API to access data points for display
+         * @param   {String} json      Response body in json format
+         * @return  {[Number, Array]}  Requested data points assembled in an array
+         */
         console.log("Parsing response");
         const impact = json["impact"];
         let contributors = [];
 
+        // Find impact of each ingredient and rank them
         for (let item of json["items"]) {
             contributors.push([item["names"][0], item["impact"]]);
         }
 
         contributors.sort((a, b) => b[1] - a[1]);
-        return [impact, contributors];
+        return [impact/contributors.length, contributors];
     }
 
     createMessage(impact, contributors) {
@@ -83,7 +82,20 @@ class App extends Component {
          */
         console.log("Impact:", impact);
         console.log("Contributors", contributors);
-        this.setState({message: "PLACEHOLDER MESSAGE"});
+        const ingredient_list_1 = ["beef", "lamb", "pork"]
+        const ingredient_list_2 = ["chicken", "cheese", "fish"]
+        // const ingredient_list_3 = ["chickpeas", "lentils", "tofu", "soy beans", "kale"]
+
+        let top_contributor = contributors[0][0];
+        let recommendation = "";
+        if (ingredient_list_1.includes(top_contributor)) {
+            recommendation = "Consider replacing it with chicken, cheese, or fish as your source of protein, and help save the world.";
+        } else if (ingredient_list_2.includes(top_contributor)) {
+            recommendation = "Consider replacing it with chickpeas, lentils, tofu, or kale as your source of protein, and help save the world.";
+        } else {
+            recommendation = "You are doing great! Thanks for helping save the world."
+        }
+        this.setState({message: `The average amount of carbon footprint for your food intake is ${impact}. ${top_contributor} is the biggest contributor to carbon emission in this list, with an impact of ${contributors[0][1]}. ${recommendation}`});
         console.log(this.state.message);
     }
 
@@ -97,6 +109,7 @@ class App extends Component {
                 placeholder='Find your food'
                 />
                 <button onClick={this.searchFood}>Search</button>
+                <h6>{this.state.message}</h6>
             </div>
         );
     }
