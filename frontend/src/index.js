@@ -4,6 +4,6 @@ import App from './App';
 import './index.css';
 import  "regenerator-runtime";
 
-ReactDOM.render(<App />, document.getElementById('root'));
+ReactDOM.render(<App />, document.getElementById('query'));
 
 
