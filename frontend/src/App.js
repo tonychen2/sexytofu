@@ -4,8 +4,17 @@ import  "regenerator-runtime";
 
 const API_ADDRESS = 'https://api.ghgi.org';
 
+function GroceryListItem(props) {
+    return(
+        <li key={props.name}>
+            {props.name}<button className="close" onClick={props.remove}>x</button>
+        </li>
+    );
+}
+
 function GroceryList(props) {
-    const list = props.groceryList.map((ingredient) => <li key={ingredient}>{ingredient}</li>)
+    const list = props.groceryList.map((food, index) =>
+        <GroceryListItem key={food} name={food} remove={() => props.remove(index)}/>);
     return <ul id="groceryList">{list}</ul>
 }
 
@@ -27,16 +36,16 @@ class App extends Component {
          */
         if (event.key === 'Enter') {
             if (this.state.foodQuery === "") {
-                this.searchFood();
+                this.search();
             } else {
-                this.addIngredient();
+                this.addFood();
             }
         }
     }
 
-    searchFood = async () => {
+    search = async () => {
         /**
-         * Send ingredients to the GHGI API to retrieve median carbon emission
+         * Send grocery list to the GHGI API to retrieve median carbon emission
          * Future extension: error handling
          */
 
@@ -58,14 +67,15 @@ class App extends Component {
 
     // parseQuery() {
     //     /**
-    //      * Parse foodQuery into an array of ingredients
+    //      * Parse foodQuery into an array of items
     //      * Future extension: check for spelling and units
     //      * @param   {String} text  User input
-    //      * @return  {Array}        List of ingredients with units, e.g. ["a cup of diced onion", "100g of beef"]
+    //      * @return  {Array}        List of food items with units, e.g. ["a cup of diced onion", "100g of beef"]
     //      */
     //     return this.state.foodQuery.split(",");
     // }
 
+    // TODO: Distinguish between originally searched food and actual ingredients
     parseResponse(json) {
         /**
          * Parse response from GHGI API to access data points for display
@@ -117,19 +127,26 @@ class App extends Component {
         console.log(this.state.message);
     }
 
-    addIngredient = () => {
+    addFood = () => {
         /**
          * Add user input to shopping list
          */
         let groceryList = this.state.groceryList;
         groceryList.push(this.state.foodQuery);
 
-        // let listHTML = document.getElementById("groceryList");
-        // let listHTML = this.refs["groceryList"]
-        // listHTML.innerHTML += `<li>${this.state.foodQuery}</li>`;
-
         this.setState({
             foodQuery: "",
+            groceryList: groceryList});
+    }
+
+    removeFood = (index) => {
+        /**
+         * Remove an item from shopping list
+         */
+        let groceryList = this.state.groceryList;
+        groceryList.splice(index, 1);
+
+        this.setState({
             groceryList: groceryList});
     }
 
@@ -145,7 +162,7 @@ class App extends Component {
             <div id="container">
                 <div id="searchBox">
                     <h2>Sexy Tofu</h2>
-                    <GroceryList groceryList={this.state.groceryList} />
+                    <GroceryList groceryList={this.state.groceryList} remove={this.removeFood}/>
                     <input
                         id="foodQuery"
                         onChange={this.updateFoodQuery}
@@ -153,8 +170,8 @@ class App extends Component {
                         value={this.state.foodQuery}
                         placeholder='Add to your grocery list'
                     />
-                    <button onClick={this.addIngredient}>Add</button>
-                    <button onClick={this.searchFood}>Search</button>
+                    <button onClick={this.addFood}>Add</button>
+                    <button onClick={this.search}>Search</button>
                 </div>
                 {this.state.hasSearched && result}
             </div>
