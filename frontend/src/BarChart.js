@@ -34,7 +34,7 @@ export default class BarChart extends Component {
                     {
                         label: "Impact by ingredient",
                         data: this.props.data,
-                        backgroundColor: "#800080"
+                        backgroundColor: "#ffdbec"
                     }
                 ]
             },

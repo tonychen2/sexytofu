@@ -18,11 +18,11 @@ body{
 
 h1, h2, h3, h4, h5 {
     font-family: 'EconomicaBold';
-    color: #fff
+    color: #ffdbec
 }
 
 label {
-    color: #fff;
+    color: #ffdbec;
 }
 
 .profile{
@@ -47,7 +47,7 @@ label {
 }
 
 #searchBox {
-    width: 20ch;
+    width: 30ch;
 }
 
 .quantityBox {
@@ -66,7 +66,7 @@ Input {
     margin: 1px;
     flex: 0 auto;
     border-style: none;
-    background-color: #fff;
+    background-color: #ffdbec;
     box-shadow: inset 0 0 0 0 #fc0a7e;
     -webkit-transition: box-shadow 300ms cubic-bezier(.215, .61, .355, 1);
     transition: box-shadow 300ms cubic-bezier(.215, .61, .355, 1);
@@ -90,7 +90,7 @@ Button {
 }
 
 Button:hover {
-  background-color: #fc0a7e; /* Green */
+  background-color: #fc0a7e;
   color: #ffdbec;
 }
 

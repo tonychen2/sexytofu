@@ -30,7 +30,7 @@ class App extends Component {
 
         let json = await fetch(`${API_ADDRESS}/rateCarbon`,
             {method: 'POST',
-                headers: {'Content-Type': 'application/json'},
+                //headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({'recipe': groceryList})}).then(response => response.json()).then(json => this.setState({hasSearched: true, apiResponse: json}));
         console.log(this.state.apiResponse);
         console.log("API response received");

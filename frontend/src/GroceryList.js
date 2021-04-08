@@ -86,6 +86,7 @@ export default class GroceryList extends Component {
                 unit={food["unit"]}
                 update={(field, newValue) => this.updateFood(index, field, newValue)}
                 remove={() => this.removeFood(index)}
+                search={() => this.props.search(this.state.groceryList)}
             />)
         return (
             <div id="groceryList">
@@ -100,7 +101,7 @@ export default class GroceryList extends Component {
                     <button onClick={this.addFood}>Add</button>
                     <button onClick={() => this.props.search(this.state.groceryList)}>Search</button>
                 </div>
-                <ColumnNames />
+                {/*<ColumnNames />*/}
                 {list}
             </div>
         );
@@ -135,6 +136,15 @@ class GroceryListItem extends Component{
         }
     }
 
+    handleKeyPress = event => {
+        /**
+         * React to key presses
+         */
+        if (event.key === 'Enter') {
+            this.props.search();
+        }
+    }
+
     render() {
         return (
             <div className="groceryListItem">
@@ -142,7 +152,7 @@ class GroceryListItem extends Component{
                     className="ingredientBox"
                     id={`${this.state.ingredient}_ingredient`}
                     onChange={this.handleChange}
-                    // onKeyPress={this.handleKeyPress}
+                    onKeyPress={this.handleKeyPress}
                     value={this.state.ingredient}
                 />
                 <input
@@ -150,14 +160,14 @@ class GroceryListItem extends Component{
                     id={`${this.state.name}_quantity`}
                     type={'number'}
                     onChange={this.handleChange}
-                    // onKeyPress={this.handleKeyPress}
+                    onKeyPress={this.handleKeyPress}
                     value={this.state.quantity}
                 />
                 <input
                     className="unitBox"
                     id={`${this.state.name}_unit`}
                     onChange={this.handleChange}
-                    // onKeyPress={this.handleKeyPress}
+                    onKeyPress={this.handleKeyPress}
                     value={this.state.unit}
                 />
                 <button className="close" onClick={this.props.remove}>x</button>
