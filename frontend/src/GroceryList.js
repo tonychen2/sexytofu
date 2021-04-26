@@ -1,7 +1,8 @@
 import React, {Component} from "react";
 import  "regenerator-runtime";
 
-const API_ADDRESS = 'https://api.ghgi.org';
+const GHGI_API_ADDRESS = 'https://api.ghgi.org';
+const NATIVE_API_ADDRESS = 'http://127.0.0.1:8000';
 
 export default class GroceryList extends Component {
     constructor(props) {
@@ -65,7 +66,7 @@ export default class GroceryList extends Component {
          * Future extension: error handling
          */
 
-        let json = await fetch(`${API_ADDRESS}/rateCarbon`,
+        let json = await fetch(`${GHGI_API_ADDRESS}/rateCarbon`,
             {method: 'POST',
                 //headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({'recipe': [food]})}).then(response => response.json());
