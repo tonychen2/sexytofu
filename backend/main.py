@@ -44,12 +44,12 @@ async def root():
 
 
 @app.get("/parse/")
-async def parse(query_text: str) -> Product:
-    qtys = parser.amounts(query_text, False)['qtys']
-    return qtys[0]
+async def parse(query: str) -> Product:
+    parsed_response = parser.amounts(query, False)
+    return parsed_response
 
 
-@app.get("/recommendation/{product_name}/", response_model=list[schemas.Recommendation])
+@app.get("/recommendations/{product_name}/", response_model=list[schemas.Recommendation])
 async def recommendations(product_name: str,
                           skip: Optional[int] = 0,
                           limit: Optional[int] = 5,
@@ -58,8 +58,8 @@ async def recommendations(product_name: str,
     if food is None:
         raise HTTPException(status_code=404, detail=f"{product_name} not found")
     recos = crud.get_recos_by_food(db=db, food_id=food.id, skip=skip, limit=limit)
-    if recos is None:
-        raise HTTPException(status_code=404, detail=f"No recommendation found for {product_name}")
+    # if recos is None:
+    #     raise HTTPException(status_code=404, detail=f"No recommendation found for {product_name}")
     return recos
 
 

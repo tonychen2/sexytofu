@@ -18,7 +18,7 @@ class App extends Component {
          */
 
         // const recipe = this.parseQuery();
-        console.log(groceryList);
+        groceryList = [...groceryList]
         for (let i = 0; i < groceryList.length; i++) {
             let food = groceryList[i];
             if (food["unit"] === "ea") {

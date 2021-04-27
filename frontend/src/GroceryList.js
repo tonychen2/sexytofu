@@ -30,14 +30,23 @@ export default class GroceryList extends Component {
         }
     }
 
-    addFood = () => {
+    addFood = async () => {
         /**
          * Add user input to grocery list
          */
-        this.searchFood(this.state.currentQuery);
+        let json = await fetch(`${NATIVE_API_ADDRESS}/parse/?query=${this.state.currentQuery}`)
+            .then(response => response.json());
 
-        this.setState({
-            currentQuery: ""});
+        let groceryList = this.state.groceryList;
+        let name = json['names'][0];
+        let quantity = json['qtys'][0]['qty'][0] || 1;
+        let unit = json['qtys'][0]['unit'][0] || 'ea';
+
+        groceryList.push({"ingredient": name,
+            "quantity": quantity,
+            "unit": unit});
+
+        this.setState({groceryList: groceryList, currentQuery: "",});
     }
 
     updateFood = (index, field, newValue) => {
@@ -54,32 +63,16 @@ export default class GroceryList extends Component {
         /**
          * Remove an item from shopping list
          */
+        console.log(`Removing item #${index}`);
         let groceryList = this.state.groceryList;
         groceryList.splice(index, 1);
+        console.log(`New list: ${groceryList[0]}`);
 
         this.setState({groceryList: groceryList});
     }
 
-    searchFood = async (food) => {
-        /**
-         * Send food item to the GHGI API to retrieve default quantity
-         * Future extension: error handling
-         */
-
-        let json = await fetch(`${GHGI_API_ADDRESS}/rateCarbon`,
-            {method: 'POST',
-                //headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({'recipe': [food]})}).then(response => response.json());
-        console.log(json);
-
-        let groceryList = this.state.groceryList;
-        let item = json["items"][0];
-        groceryList.push({"ingredient": item["product"]["alias"], "quantity": item["qtys"][0]["qty"][0], "unit": item["qtys"][0]["unit"][0]});
-        this.setState({groceryList: groceryList})
-    }
-
     render() {
-        const list = this.state.groceryList.map((food, index) =>
+        let list = this.state.groceryList.map((food, index) =>
             <GroceryListItem
                 key={index}
                 ingredient={food["ingredient"]}
@@ -88,7 +81,8 @@ export default class GroceryList extends Component {
                 update={(field, newValue) => this.updateFood(index, field, newValue)}
                 remove={() => this.removeFood(index)}
                 search={() => this.props.search(this.state.groceryList)}
-            />)
+            />);
+        if (this.state.groceryList.length > 0) {console.log(this.state.groceryList[0]["ingredient"])};
         return (
             <div id="groceryList">
                 <div id="search">
@@ -118,11 +112,6 @@ function ColumnNames() {
 }
 
 class GroceryListItem extends Component{
-    constructor(props) {
-        super(props);
-        this.state = {dish: props.dish, ingredient: props.ingredient, quantity: props.quantity, unit: props.unit};
-    }
-
     handleChange = event => {
         if (event.target.id.includes("_ingredient")) {
             this.setState({ingredient: event.target.value});
@@ -151,25 +140,25 @@ class GroceryListItem extends Component{
             <div className="groceryListItem">
                 <input
                     className="ingredientBox"
-                    id={`${this.state.ingredient}_ingredient`}
+                    id={`${this.props.ingredient}_ingredient`}
                     onChange={this.handleChange}
                     onKeyPress={this.handleKeyPress}
-                    value={this.state.ingredient}
+                    value={this.props.ingredient}
                 />
                 <input
                     className="quantityBox"
-                    id={`${this.state.name}_quantity`}
+                    id={`${this.props.name}_quantity`}
                     type={'number'}
                     onChange={this.handleChange}
                     onKeyPress={this.handleKeyPress}
-                    value={this.state.quantity}
+                    value={this.props.quantity}
                 />
                 <input
                     className="unitBox"
-                    id={`${this.state.name}_unit`}
+                    id={`${this.props.name}_unit`}
                     onChange={this.handleChange}
                     onKeyPress={this.handleKeyPress}
-                    value={this.state.unit}
+                    value={this.props.unit}
                 />
                 <button className="close" onClick={this.props.remove}>x</button>
             </div>

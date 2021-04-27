@@ -1,6 +1,7 @@
 import React, {Component} from "react";
 import BarChart from "./BarChart";
 import  "regenerator-runtime";
+import Recommendations from "./Recommendations";
 
 export default class Result extends Component {
     constructor(props) {
@@ -10,7 +11,8 @@ export default class Result extends Component {
         this.state = {
             avg_impact: avg_impact,
             contributors: contributors,
-            impacts: impacts};
+            impacts: impacts,
+            selectedFood: contributors[0]};
     }
 
     componentDidUpdate(prevProps) {
@@ -49,6 +51,10 @@ export default class Result extends Component {
         return [total_impact/contributors.length, contributors, impacts];
     }
 
+    showRecommendation(food) {
+        this.setState({selectedFood: food});
+    }
+
     render() {
         console.log("rendered");
         return (
@@ -58,7 +64,12 @@ export default class Result extends Component {
                     contributors={this.state.contributors}
                     impacts={this.state.impacts}
                 />
-                <BarChart data={this.state.impacts} labels={this.state.contributors} horizontal={true}/>
+                <BarChart data={this.state.impacts}
+                          labels={this.state.contributors}
+                          horizontal={true}
+                          showRecommendation={(food) => this.showRecommendation(food)}
+                />
+                <Recommendations food={this.state.selectedFood} />
             </div>
         )
     }
