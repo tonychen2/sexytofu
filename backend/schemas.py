@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional, Any
 from pydantic import BaseModel
 
 
@@ -9,6 +9,7 @@ class RecoBase(BaseModel):
     freq_weekly: int
     text_short: str
     text_long: str
+    replacement_food_id: Optional[int]
 
 
 class RecoCreate(RecoBase):
@@ -17,6 +18,8 @@ class RecoCreate(RecoBase):
 
 class Recommendation(RecoBase):
     id: int
+    # TODO: Need a better solution here
+    replacement: Any
 
     class Config:
         orm_mode = True

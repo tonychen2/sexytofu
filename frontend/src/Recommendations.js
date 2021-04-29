@@ -6,28 +6,38 @@ const API_ADDRESS = 'http://127.0.0.1:8000';
 export default class Recommendations extends Component {
     constructor(props) {
         super(props);
-        this.state = {recos: [], indexOnDisplay: 0, is_last: false, is_applicable: true};
+        this.state = {recos: [], indexOnDisplay: 0};
     }
 
-    readRecommendations = (recos) => {
-        if (recos.length === 0) {
-            let food = this.props.food.charAt(0).toUpperCase() + this.props.food.slice(1)
-            recos = [`${food} is a great choice! Thank you for helping save the world.`];
-            this.setState({is_applicable: false});
+    showRecos = () => {
+        if (this.state.recos.length === 0) {
+            let food = this.props.food.charAt(0).toUpperCase() + this.props.food.slice(1);
+            return [`${food} is a great choice! Thank you for helping save the world.`];
+
         } else {
-            recos = recos.map(orig => orig["text_long"]);
-            this.setState({is_applicable: true});
+            return this.state.recos.map(orig => orig["text_long"]);
+
         }
+    }
 
-        this.setState({recos: recos});
+    isLast = () => {
+        return (this.state.indexOnDisplay + 1 >= this.state.recos.length);
+    }
 
-        return recos
+    isApplicable = () => {
+        if (this.state.recos.length > 0) {
+            let reco = this.state.recos[this.state.indexOnDisplay]
+            // Currently "apply" feature only supports "replace" type recommendations
+            return (reco['type_id'] === 1);
+        } else {
+            return false;
+        }
     }
 
     componentDidMount() {
         fetch(`${API_ADDRESS}/recommendations/${this.props.food}/`)
             .then(response => response.json())
-            .then(recos => this.readRecommendations(recos));
+            .then(recos => this.setState({recos: recos}));
         // this.setState({recos: [`${this.props.food} recommendation 1`, `${this.props.food} recommendation 2`]});
     }
 
@@ -35,12 +45,13 @@ export default class Recommendations extends Component {
         if (prevProps !== this.props) {
             fetch(`${API_ADDRESS}/recommendations/${this.props.food}/`)
                 .then(response => response.json())
-                .then(recos => this.readRecommendations(recos))
-                .then(recos => this.setState({indexOnDisplay: 0, is_last: (recos.length <= 1)}));
+                .then(recos => this.setState({recos: recos, indexOnDisplay: 0}));
         }
     }
 
     applyReco = () => {
+        let reco = this.state.recos[this.state.indexOnDisplay];
+        this.props.updateGroceryList('ingredient', this.props.food, reco['replacement']['name']);
     }
 
     nextReco = () => {
@@ -48,17 +59,14 @@ export default class Recommendations extends Component {
         // Otherwise the button should not have shown, hence this function won't be triggered
         let newIndex = this.state.indexOnDisplay + 1;
         this.setState({indexOnDisplay: newIndex});
-        if (newIndex + 1 === this.state.recos.length) {
-            this.setState({is_last: true});
-        }
     }
 
     render() {
         return (
             <div id="recommendations">
-                <span id="reco_text">{this.state.recos[this.state.indexOnDisplay]}</span>
-                {this.state.is_applicable && <button onClick={this.applyReco}>Apply to grocery list</button>}
-                {this.state.is_last || <button onClick={this.nextReco}>Show me more</button>}
+                <span id="reco_text">{this.showRecos()}</span>
+                {this.isApplicable() && <button onClick={this.applyReco}>Apply to grocery list</button>}
+                {this.isLast() || <button onClick={this.nextReco}>Show me more</button>}
             </div>
         )
     }

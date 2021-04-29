@@ -20,9 +20,10 @@ export default class BarChart extends Component {
     handleClick = event => {
         // const myChartRef = this.chartRef.current.getContext("2d");
         const points = myBarChart.getElementsAtEventForMode(event, 'nearest', { intersect: true }, true);
-        const label = myBarChart.data.labels[points[0]._index];
-        console.log(points);
-        this.props.showRecommendation(label);
+        if (points[0]) {
+            const label = myBarChart.data.labels[points[0]._index];
+            this.props.showRecommendation(label);
+        }
     }
 
     buildChart = () => {

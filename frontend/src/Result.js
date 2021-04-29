@@ -18,9 +18,11 @@ export default class Result extends Component {
     componentDidUpdate(prevProps) {
         if (prevProps.apiResponse !== this.props.apiResponse) {
             let [avg_impact, contributors, impacts] = this.parseResponse(this.props.apiResponse);
-            this.setState({avg_impact: avg_impact,
+            this.setState({
+                avg_impact: avg_impact,
                 contributors: contributors,
-                impacts: impacts});
+                impacts: impacts,
+                selectedFood: contributors[0]});
         }
     }
 
@@ -69,7 +71,7 @@ export default class Result extends Component {
                           horizontal={true}
                           showRecommendation={(food) => this.showRecommendation(food)}
                 />
-                <Recommendations food={this.state.selectedFood} />
+                <Recommendations food={this.state.selectedFood} updateGroceryList={this.props.updateGroceryList}/>
             </div>
         )
     }

@@ -9,7 +9,11 @@ const API_ADDRESS = 'https://api.ghgi.org';
 
 class App extends Component {
 
-    state = {apiResponse: {}, hasSearched: false};
+    state = {apiResponse: {}, hasSearched: false, requestForUpdate: []};
+
+    updateGroceryList = (field, oldValue, newValue) => {
+        this.setState({requestForUpdate: {'field': field, 'oldValue': oldValue, 'newValue': newValue}});
+    }
 
     search = async (groceryList) => {
         /**
@@ -56,8 +60,9 @@ class App extends Component {
                 </div>
                 <img src={tofuHero} alt="" id="tofu-hero"/>
                 <h2>Sexy Tofu</h2>
-                <GroceryList search={this.search}/>
-                {this.state.hasSearched && <Result apiResponse={this.state.apiResponse} />}
+                <GroceryList search={this.search} requestForUpdate={this.state.requestForUpdate}/>
+                {this.state.hasSearched && <Result apiResponse={this.state.apiResponse}
+                                                   updateGroceryList={this.updateGroceryList}/>}
             </div>
         );
     }

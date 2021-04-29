@@ -10,7 +10,7 @@ class Food(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, unique=True, index=True)
 
-    recos = relationship("Recommendation", backref="food")
+    recos = relationship("Recommendation", back_populates="food", foreign_keys="Recommendation.food_id")
 
 
 class RecoType(Base):
@@ -32,3 +32,7 @@ class Recommendation(Base):
     freq_weekly = Column(Integer)
     text_short = Column(String, unique=True, index=True)
     text_long = Column(String, unique=True, index=True)
+    replacement_food_id = Column(Integer, ForeignKey("food.id"))
+
+    food = relationship("Food", back_populates="recos", foreign_keys=[food_id])
+    replacement = relationship("Food", foreign_keys=[replacement_food_id])

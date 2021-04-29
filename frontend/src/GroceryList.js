@@ -10,6 +10,22 @@ export default class GroceryList extends Component {
         this.state = {groceryList: [], currentQuery: ""};
     }
 
+    componentDidUpdate(prevProps) {
+        if (this.props.requestForUpdate !== prevProps.requestForUpdate) {
+            let request = this.props.requestForUpdate;
+            let index = this.valueToIndex(request['field'], request['oldValue']);
+            // TODO: error handling
+            if (index === -1) return;
+            this.updateFood(index, request['field'], request['newValue']);
+            this.props.search(this.state.groceryList);
+        }
+    }
+
+    valueToIndex = (field, value) => {
+        let list = this.state.groceryList.map((item) => item[field]);
+        return list.indexOf(value);
+    }
+
     updateQuery = event => {
         /**
          * Update state of GroceryList to store current user input as foodQuery
