@@ -1,6 +1,8 @@
 import React, {Component} from "react";
 import  "regenerator-runtime";
 
+import Box from '@material-ui/core/Box';
+
 const GHGI_API_ADDRESS = 'https://api.ghgi.org';
 const NATIVE_API_ADDRESS = 'http://127.0.0.1:8000';
 
@@ -100,7 +102,7 @@ export default class GroceryList extends Component {
             />);
         if (this.state.groceryList.length > 0) {console.log(this.state.groceryList[0]["ingredient"])};
         return (
-            <div id="groceryList">
+            <Box id="groceryList" border={1} borderColor='#ffdbec'>
                 <div id="search">
                     <input
                         id="searchBox"
@@ -113,8 +115,10 @@ export default class GroceryList extends Component {
                     <button onClick={() => this.props.search(this.state.groceryList)}>Search</button>
                 </div>
                 {/*<ColumnNames />*/}
-                {list}
-            </div>
+                <form>
+                    {list}
+                </form>
+            </Box>
         );
     }
 }

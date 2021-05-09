@@ -1,6 +1,7 @@
 import React, {Component} from "react";
 import BarChart from "./BarChart";
 
+
 const API_ADDRESS = 'http://127.0.0.1:8000';
 
 export default class Recommendations extends Component {
@@ -12,10 +13,10 @@ export default class Recommendations extends Component {
     showRecos = () => {
         if (this.state.recos.length === 0) {
             let food = this.props.food.charAt(0).toUpperCase() + this.props.food.slice(1);
-            return [`${food} is a great choice! Thank you for helping save the world.`];
+            return `${food} is a great choice! Thank you for helping save the world.`;
 
         } else {
-            return this.state.recos.map(orig => orig["text_long"]);
+            return this.state.recos[this.state.indexOnDisplay]["text_long"];
 
         }
     }
