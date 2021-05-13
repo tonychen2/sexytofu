@@ -13,11 +13,13 @@ const boxStyles = {
         backgroundColor: 'transparent',
     },
     summary: {
+        color: '#ffdbec',
         textDecoration: 'underline'
     },
     details: {
         backgroundColor: '#ffdbec',
-        flexWrap: 'wrap'
+        flexWrap: 'wrap',
+        color: 'grey'
     }
 };
 
@@ -53,12 +55,14 @@ class Comparison extends Component {
 
         const selectNumPeople =
             <Select value={this.state.numPeople}
-                    onChange={this.handleNumPeopleChange}>
+                    onChange={this.handleNumPeopleChange}
+                    className={classes.details}>
                 {[...Array(10).keys()].map((x) => <MenuItem value={x}>{x}</MenuItem>)}
             </Select>;
         const selectNumDays =
             <Select value={this.state.numDays}
-                    onChange={this.handleNumDaysChange}>
+                    onChange={this.handleNumDaysChange}
+                    className={classes.details}>
                 {[...Array(14).keys()].map((x) => <MenuItem value={x}>{x}</MenuItem>)}
             </Select>;
 
@@ -69,9 +73,7 @@ class Comparison extends Component {
                         <Typography className={classes.summary}>See how you compare to others </Typography>
                     </AccordionSummary>
                     <AccordionDetails className={classes.details}>
-                        <Typography component='div'>
-                            This list is for a household of {selectNumPeople} to consume over {selectNumDays} days.
-                        </Typography>
+                        This list is for a household of {selectNumPeople} to consume over {selectNumDays} days.
                         <ComparisonScale impact={this.props.totalImpact}
                                          numPeople={this.state.numPeople}
                                          numDays={this.state.numDays}

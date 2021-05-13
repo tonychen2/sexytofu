@@ -34,6 +34,8 @@ export default class BarChart extends Component {
 
         if (typeof myBarChart !== "undefined") myBarChart.destroy();
 
+        Chart.defaults.color = '#ffdbec';
+
         myBarChart = new Chart(myChartRef, {
             type: type,
             data: {
@@ -41,9 +43,9 @@ export default class BarChart extends Component {
                 labels: this.props.labels,
                 datasets: [
                     {
-                        label: "Impact by ingredient",
+                        label: 'Impact by ingredient',
                         data: this.props.data,
-                        backgroundColor: "#ffdbec"
+                        backgroundColor: '#ffdbec'
                     }
                 ]
             },
@@ -51,9 +53,20 @@ export default class BarChart extends Component {
                 scales: {
                     xAxes: [{
                         ticks: {
-                            beginAtZero: true
+                            beginAtZero: true,
+                            fontColor: '#ffdbec'
+                        }
+                    }],
+                    yAxes: [{
+                        ticks: {
+                            fontColor: '#ffdbec'
                         }
                     }]
+                },
+                legend: {
+                    labels: {
+                        fontColor: '#ffdbec'
+                    }
                 },
                 onClick: this.handleClick
             }

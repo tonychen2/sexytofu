@@ -1,10 +1,14 @@
 import React, {Component} from "react";
 import  "regenerator-runtime";
 
-import Box from '@material-ui/core/Box';
+import {AccordionSummary, Box, Grid} from '@material-ui/core';
+import Typography from "@material-ui/core/Typography";
 
 const GHGI_API_ADDRESS = 'https://api.ghgi.org';
 const NATIVE_API_ADDRESS = 'http://127.0.0.1:8000';
+
+
+const inputStyles = {display: "flex", clear: 'both', alignItems: 'center'}
 
 export default class GroceryList extends Component {
     constructor(props) {
@@ -101,23 +105,35 @@ export default class GroceryList extends Component {
                 search={() => this.props.search(this.state.groceryList)}
             />);
         if (this.state.groceryList.length > 0) {console.log(this.state.groceryList[0]["ingredient"])};
+
+        let showBorder = null;
+        if (this.props.hasSearched) showBorder = '1px solid #ffdbec';
+        // TODO: Move in-line styling out
         return (
-            <Box id="groceryList" border={1} borderColor='#ffdbec'>
-                <div id="search">
-                    <input
-                        id="searchBox"
-                        onChange={this.updateQuery}
-                        onKeyPress={this.handleKeyPress}
-                        value={this.state.currentQuery}
-                        placeholder='Try "Tofu" or "2 lbs of chicken breast"'
-                    />
-                    <button onClick={this.addFood}>Add</button>
-                    <button onClick={() => this.props.search(this.state.groceryList)}>Search</button>
-                </div>
+            <Box id="groceryList" border={showBorder} padding='20px' margin='40px'>
+                {this.props.hasSearched && <Typography variant='h5' align='left'>Your list</Typography>}
+                <Grid container>
+                    <Grid item xs={10} style={inputStyles}>
+                        <input
+                            id="searchBox"
+                            onChange={this.updateQuery}
+                            onKeyPress={this.handleKeyPress}
+                            value={this.state.currentQuery}
+                            placeholder='Try "Tofu" or "2 lbs of chicken breast"'
+                        />
+                    </Grid>
+                    <Grid item xs={2}>
+                        <button onClick={this.addFood}
+                                style={{float: "right", clear: 'both'}}>Add</button>
+                    </Grid>
+                </Grid>
+                {/*</div>*/}
                 {/*<ColumnNames />*/}
                 <form>
                     {list}
                 </form>
+                {this.state.groceryList.length > 0 &&
+                <button onClick={() => this.props.search(this.state.groceryList)}>Search</button>}
             </Box>
         );
     }
@@ -158,29 +174,45 @@ class GroceryListItem extends Component{
     render() {
         return (
             <div className="groceryListItem">
-                <input
-                    className="ingredientBox"
-                    id={`${this.props.ingredient}_ingredient`}
-                    onChange={this.handleChange}
-                    onKeyPress={this.handleKeyPress}
-                    value={this.props.ingredient}
-                />
-                <input
-                    className="quantityBox"
-                    id={`${this.props.name}_quantity`}
-                    type={'number'}
-                    onChange={this.handleChange}
-                    onKeyPress={this.handleKeyPress}
-                    value={this.props.quantity}
-                />
-                <input
-                    className="unitBox"
-                    id={`${this.props.name}_unit`}
-                    onChange={this.handleChange}
-                    onKeyPress={this.handleKeyPress}
-                    value={this.props.unit}
-                />
-                <button className="close" onClick={this.props.remove}>x</button>
+                <Grid container>
+                    <Grid item xs={12} sm={6} style={inputStyles}>
+                        <input
+                            className="ingredientBox"
+                            id={`${this.props.ingredient}_ingredient`}
+                            onChange={this.handleChange}
+                            onKeyPress={this.handleKeyPress}
+                            value={this.props.ingredient}
+                            // style={{float: "left", clear: 'both'}}
+                        />
+                    </Grid>
+                    <Grid item xs={4} sm={2} style={inputStyles}>
+                        <input
+                            className="quantityBox"
+                            id={`${this.props.name}_quantity`}
+                            type={'number'}
+                            onChange={this.handleChange}
+                            onKeyPress={this.handleKeyPress}
+                            value={this.props.quantity}
+                            // style={{float: "left", clear: 'both'}}
+                        />
+                    </Grid>
+                    <Grid item xs={6} sm={3} style={inputStyles}>
+                        <input
+                            className="unitBox"
+                            id={`${this.props.name}_unit`}
+                            onChange={this.handleChange}
+                            onKeyPress={this.handleKeyPress}
+                            value={this.props.unit}
+                            // style={{float: "left", clear: 'both'}}
+                        />
+                    </Grid>
+                    <Grid item xs={2} sm={1}>
+                        <button
+                            className="close"
+                            onClick={this.props.remove}
+                            style={{float: "right", clear: 'both'}}>x</button>
+                    </Grid>
+                </Grid>
             </div>
         );
     }

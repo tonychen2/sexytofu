@@ -108,6 +108,12 @@ class App extends Component {
     }
 
     render(){
+        let infoSize = 12;
+        let groceryListSize = 5;
+        if (this.state.hasSearched) {
+            infoSize = 7;
+        }
+
         return (
             <div id="container">
                 <div id="header">
@@ -115,34 +121,39 @@ class App extends Component {
                         <img src={logo} alt="" id="logo"/>
                     </a>
                 </div>
-                <Grid container spacing={3} alignItems="baseline">
-                    <Grid item xs={12} sm={6}>
+                <Grid container spacing={3} justify={"center"}>
+                    <Grid item xs={12} sm={infoSize}>
                         <img src={tofuHero} alt="" id="tofu-hero"/>
                         <h2>Track the climate impact of your food</h2>
                         {this.state.hasSearched &&
                         <Summary driveEq={this.state.results.driveEq} />}
-                        {this.state.hasSearched &&
-                        <Comparison total_imoact={this.state.results.totalImpact} />}
                     </Grid>
-                    <Grid item xs={12} sm={6}>
-                        <GroceryList search={this.search} requestForUpdate={this.state.requestForUpdate}/>
+                    <Grid item xs={12} sm={groceryListSize}>
+                        <GroceryList
+                            search={this.search}
+                            hasSearched={this.state.hasSearched}
+                            requestForUpdate={this.state.requestForUpdate}/>
                     </Grid>
-                    <Grid item xs={12} sm={6}>
-                        {this.state.hasSearched &&
+                    {this.state.hasSearched &&
+                    <Grid item xs={12} sm={12}>
+                        <Comparison total_imoact={this.state.results.totalImpact} />
+                    </Grid>}
+                    {this.state.hasSearched &&
+                    <Grid item xs={12} sm={infoSize}>
                         <BarChart
                             data={this.state.results.impacts}
                             labels={this.state.results.contributors}
                             horizontal={true}
                             showRecommendation={(food) => this.showRecommendation(food)}
-                        />}
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                        {this.state.hasSearched &&
+                        />
+                    </Grid>}
+                    {this.state.hasSearched &&
+                    <Grid item xs={12} sm={groceryListSize}>
                         <Recommendations
                             food={this.state.selectedFood}
                             updateGroceryList={this.updateGroceryList}
-                        />}
-                    </Grid>
+                        />
+                    </Grid>}
                 </Grid>
             </div>
         );
