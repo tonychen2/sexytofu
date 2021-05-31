@@ -21,7 +21,7 @@ class App extends Component {
     state = {
         hasSearched: false,
         requestForUpdate: [],
-        selectedFood: '',
+        selectedFood: {},
         results: {}
     };
 
@@ -46,15 +46,19 @@ class App extends Component {
             }
         }
 
-        let json = await fetch(`${API_ADDRESS}/rateCarbon`,
+        await fetch(`${API_ADDRESS}/rateCarbon`,
             {method: 'POST',
                 //headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({'recipe': groceryList})})
             .then(response => response.json())
-            .then(json => this.parseResponse(json))
-            .then(top_contributor => this.setState({
-                hasSearched: true,
-                selectedFood: top_contributor}));
+            .then(json => this.parseResponse(json));
+
+        this.setState({
+            hasSearched: true,
+            selectedFood: {
+                alias: this.state.results.contributors[0],
+                grams: this.state.results.grams[0]
+            }});
 ;
         console.log("API response received");
 
@@ -67,20 +71,24 @@ class App extends Component {
          * @param   {String} json      Response body in json format
          * @return  {[Number, Array]}  Requested data points assembled in an array
          */
-        console.log("Parsing response");
 
         let ingredients = [];
         // Find impact of each ingredient and rank them
         for (let item of json["items"]) {
-            ingredients.push([item["product"]["alias"], item["impact"]]);
+            ingredients.push({
+                contributor: item["product"]["alias"],
+                impact: item["impact"],
+                grams: item["g"]});
         }
-        ingredients.sort((a, b) => b[1] - a[1]);
+        ingredients.sort((a, b) => b.impact - a.impact);
 
         let contributors = [];
         let impacts = [];
+        let grams = [];
         for (let item of ingredients) {
-            contributors.push(item[0]);
-            impacts.push(item[1]);
+            contributors.push(item.contributor);
+            impacts.push(item.impact);
+            grams.push(item.grams);
         }
 
         this.setState({
@@ -88,6 +96,7 @@ class App extends Component {
                 totalImpact: json["impact"],
                 contributors: contributors,
                 impacts: impacts,
+                grams: grams,
                 driveEq: json["drive_eq"]}});
 
         return contributors[0];
@@ -103,8 +112,11 @@ class App extends Component {
     //     return this.state.foodQuery.split(",");
     // }
 
-    showRecommendation(food) {
-        this.setState({selectedFood: food});
+    showRecommendation(index) {
+        this.setState({selectedFood: {
+            alias: this.state.results.contributors[index],
+            gram: this.state.results.grams[index]
+        }});
     }
 
     render(){
@@ -144,7 +156,7 @@ class App extends Component {
                             data={this.state.results.impacts}
                             labels={this.state.results.contributors}
                             horizontal={true}
-                            showRecommendation={(food) => this.showRecommendation(food)}
+                            showRecommendation={this.showRecommendation}
                         />
                     </Grid>}
                     {this.state.hasSearched &&

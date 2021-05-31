@@ -8,6 +8,8 @@ import {withStyles} from "@material-ui/core";
 
 
 const API_ADDRESS = 'http://127.0.0.1:8000';
+const ANNUAL_IMPACT_PER_TREE = 26.6;
+const IMPACT_PER_MILE = 0.35;
 
 const styles = {
     root: {
@@ -29,14 +31,33 @@ class Recommendations extends Component {
     }
 
     showRecos = () => {
+        let reco_text;
         if (this.state.recos.length === 0) {
-            let food = this.props.food.charAt(0).toUpperCase() + this.props.food.slice(1);
-            return `${food} is a great choice! Thank you for helping save the world.`;
+            // Capitalize the first letter
+            let food = this.props.food.alias.charAt(0).toUpperCase() + this.props.food.alias.slice(1);
+            reco_text = `${food} is a great choice! Thank you for helping save the world.`;
 
         } else {
-            return this.state.recos[this.state.indexOnDisplay]["text_long"];
+            let reco = this.state.recos[this.state.indexOnDisplay];
+            reco_text = reco.text_long;
 
+            // For replacement recommendations, we add an "equivalent to" section, which is random among four options
+            // TODO: Error handling!!!!
+            console.log(reco.type_id);
+            if (reco.type_id === 1) {
+                let random_group = Math.floor(Math.random() * 2);
+                let annual_impact = (this.props.food.grams / 1000) * reco.impact_once * 52;
+                if (random_group === 1) {
+                    let n_trees = Math.round(annual_impact / ANNUAL_IMPACT_PER_TREE);
+                    reco_text += ` you can offset as much CO2 as ${n_trees} trees in a year.`;
+                } else {
+                    let n_miles = Math.round(annual_impact / IMPACT_PER_MILE);
+                    reco_text += ` you'll be saving the equivalent of ${n_miles} miles driven in a car`;
+                }
+            }
         }
+
+        return {__html: reco_text};
     }
 
     isLast = () => {
@@ -54,16 +75,15 @@ class Recommendations extends Component {
     }
 
     componentDidMount() {
-        fetch(`${API_ADDRESS}/recommendations/${this.props.food}/`)
+        fetch(`${API_ADDRESS}/recommendations/${this.props.food.alias}/`)
             .then(response => response.json())
             .then(recos => this.setState({recos: recos}));
-        // this.setState({recos: [`${this.props.food} recommendation 1`, `${this.props.food} recommendation 2`]});
     }
 
     componentDidUpdate(prevProps) {
         // TODO: eliminate the intermediate state of displaying "beef is a great choice"
         if (prevProps !== this.props) {
-            fetch(`${API_ADDRESS}/recommendations/${this.props.food}/`)
+            fetch(`${API_ADDRESS}/recommendations/${this.props.food.alias}/`)
                 .then(response => response.json())
                 .then(recos => this.setState({recos: recos, indexOnDisplay: 0}));
         }
@@ -71,7 +91,8 @@ class Recommendations extends Component {
 
     applyReco = () => {
         let reco = this.state.recos[this.state.indexOnDisplay];
-        this.props.updateGroceryList('ingredient', this.props.food, reco['replacement']['name']);
+        console.log(reco);
+        this.props.updateGroceryList('ingredient', this.props.food.alias, reco['replacement']['name']);
     }
 
     nextReco = () => {
@@ -84,6 +105,7 @@ class Recommendations extends Component {
     render() {
         const classes = this.props.classes;
 
+        // TODO: Move away from dangerouslySetInnerHTML
         return (
             <Card id="recommendations" className={classes.root}>
                 <CardContent>
@@ -94,7 +116,7 @@ class Recommendations extends Component {
                         classes={classes}>
                         How can I do better?
                     </Typography>
-                    <p align='left'>{this.showRecos()}</p>
+                    <p align='left' dangerouslySetInnerHTML={this.showRecos()} />
                 </CardContent>
                 <CardActions className={classes.actions}>
                     {this.isApplicable() && <button onClick={this.applyReco}>Apply to grocery list</button>}

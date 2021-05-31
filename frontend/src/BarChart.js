@@ -21,8 +21,8 @@ export default class BarChart extends Component {
         // const myChartRef = this.chartRef.current.getContext("2d");
         const points = myBarChart.getElementsAtEventForMode(event, 'nearest', { intersect: true }, true);
         if (points[0]) {
-            const label = myBarChart.data.labels[points[0]._index];
-            this.props.showRecommendation(label);
+            // const label = myBarChart.data.labels[points[0]._index];
+            this.props.showRecommendation(points[0]._index);
         }
     }
 
@@ -76,7 +76,7 @@ export default class BarChart extends Component {
     render() {
         return (
 //            <div className={classes.graphContainer}>
-            <div className="chart-container" style={{width:"30vw", margin:"0 auto"}}>
+            <div className="chartContainer" style={{width:"30vw", margin:"0 auto"}}>
                 <canvas
                     id="myChart"
                     ref={this.chartRef}

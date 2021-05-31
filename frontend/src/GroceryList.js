@@ -56,13 +56,34 @@ export default class GroceryList extends Component {
         /**
          * Add user input to grocery list
          */
-        let json = await fetch(`${NATIVE_API_ADDRESS}/parse/?query=${this.state.currentQuery}`)
+        let parsed = await fetch(`${NATIVE_API_ADDRESS}/parse/?query=${this.state.currentQuery}`)
             .then(response => response.json());
+        let default_grams = await fetch(`${GHGI_API_ADDRESS}/rateCarbon`,
+            {method: 'POST',
+                body: JSON.stringify({'recipe': [this.state.currentQuery]})})
+            .then(response => response.json())
+            .then(json => json['items'][0]['g']);
+
+        // TODO: refine this logic to include super
+        let default_qty;
+        let default_unit;
+        if (default_grams >= 400) {
+            default_qty = Math.round(default_grams / 454);
+            default_unit = "pound"
+        }
+        else if (default_grams >= 100) {
+            default_qty = Math.round(default_grams / 28);
+            default_unit = "ounce";
+        }
+        else {
+            default_qty = default_grams;
+            default_unit = "gram";
+        }
 
         let groceryList = this.state.groceryList;
-        let name = json['names'][0];
-        let quantity = json['qtys'][0]['qty'][0] || 1;
-        let unit = json['qtys'][0]['unit'][0] || 'ea';
+        let name = parsed['names'][0];
+        let quantity = parsed['qtys'][0]['qty'][0] || default_qty;
+        let unit = parsed['qtys'][0]['unit'][0] || default_unit;
 
         groceryList.push({"ingredient": name,
             "quantity": quantity,
