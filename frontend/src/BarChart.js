@@ -45,16 +45,37 @@ export default class BarChart extends Component {
                     {
                         label: 'Impact by ingredient',
                         data: this.props.data,
-                        backgroundColor: '#ffdbec'
+                        backgroundColor: '#ffdbec',
                     }
                 ]
             },
             options: {
+                "hover": {
+                    "animationDuration": 0
+                },
+                "animation": {
+                    "duration": 1,
+                    "onComplete": function () {
+                        myChartRef.font = Chart.helpers.fontString(Chart.defaults.global.defaultFontSize, Chart.defaults.global.defaultFontStyle, Chart.defaults.global.defaultFontFamily);
+                        myChartRef.textAlign = 'left';
+                        myChartRef.textBaseline = 'middle';
+
+                        let chartInstance = this.chart;
+                        let meta = chartInstance.controller.getDatasetMeta(0);
+                        meta.data.forEach((bar, index) => {
+                            let value = this.data.datasets[0].data[index].toFixed(1);
+                            console.log(bar);
+                            myChartRef.fillText(value, bar._model.x+5, bar._model.y);
+                        });
+                    }
+                },
                 scales: {
                     xAxes: [{
                         ticks: {
                             beginAtZero: true,
-                            fontColor: '#ffdbec'
+                            fontColor: '#ffdbec',
+                            display: false,
+                            max: Math.max(...this.props.data) * 1.2
                         }
                     }],
                     yAxes: [{
@@ -74,12 +95,14 @@ export default class BarChart extends Component {
     }
 
     render() {
+        let n_bars = this.props.labels.length;
+        console.log(n_bars);
         return (
-//            <div className={classes.graphContainer}>
-            <div className="chartContainer" style={{width:"30vw", margin:"0 auto"}}>
+            <div className="chartContainer" style={{width:"40vw", margin:"0 auto", minHeight: "100px"}}>
                 <canvas
                     id="myChart"
                     ref={this.chartRef}
+                    style={{height: n_bars * 40, minHeight: 200, maxHeight: 400}}
                 />
             </div>
         )

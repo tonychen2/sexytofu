@@ -14,7 +14,8 @@ const IMPACT_PER_MILE = 0.35;
 const styles = {
     root: {
         backgroundColor: '#ffdbec',
-        color: 'grey'
+        color: 'grey',
+        margin: '0px 30px'
     },
     colorTextPrimary: {
         color: '#fc0a7e'
@@ -22,7 +23,7 @@ const styles = {
     actions: {
         justifyContent: 'space-between'
     }
-}
+};
 
 class Recommendations extends Component {
     constructor(props) {
@@ -43,7 +44,6 @@ class Recommendations extends Component {
 
             // For replacement recommendations, we add an "equivalent to" section, which is random among four options
             // TODO: Error handling!!!!
-            console.log(reco.type_id);
             if (reco.type_id === 1) {
                 let random_group = Math.floor(Math.random() * 2);
                 let annual_impact = (this.props.food.grams / 1000) * reco.impact_once * 52;

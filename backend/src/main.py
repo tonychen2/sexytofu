@@ -61,15 +61,13 @@ async def get_all_recommendations(db: Session = Depends(get_db)) -> list[schemas
 
 @app.get("/recommendations/{food_alias}/", response_model=list[schemas.Recommendation])
 async def get_recommendations_by_food_alias(food_alias: str,
-                          skip: Optional[int] = 0,
-                          limit: Optional[int] = 5,
-                          db: Session = Depends(get_db)) -> list[schemas.Recommendation]:
+                                            skip: Optional[int] = 0,
+                                            limit: Optional[int] = 5,
+                                            db: Session = Depends(get_db)) -> list[schemas.Recommendation]:
     food = crud.get_food_by_alias(db=db, alias=food_alias)
     if food is None:
         raise HTTPException(status_code=404, detail=f"{food_alias} not found")
-    recos = crud.get_recos_by_food(db=db, food_id=food.id, skip=skip, limit=limit)
-    if recos is None:
-        raise HTTPException(status_code=404, detail=f"No recommendation found for {food_alias}")
+    recos = crud.get_recos_by_food_id(db=db, food_id=food.id, skip=skip, limit=limit)
     return recos
 
 
@@ -106,6 +104,19 @@ async def delete_recommendation(id: int,
     return crud.get_all_recos(db)
 
 
-@app.post("/rate")
-async def rate(products: SearchInput):
-    pass
+@app.get("/land_use/{food_alias}/", response_model=schemas.LandUse)
+async def get_land_use_by_food_alias(food_alias: str,
+                                     db: Session = Depends(get_db)) -> schemas.LandUse:
+    food = crud.get_food_by_alias(db=db, alias=food_alias)
+    if food is None:
+        raise HTTPException(status_code=404, detail=f"{food_alias} not found")
+    return crud.get_land_use_by_food_id(db=db, food_id=food.id)
+
+
+@app.get("/water_use/{food_alias}/", response_model=schemas.WaterUse)
+async def get_water_use_by_food_alias(food_alias: str,
+                                      db: Session = Depends(get_db)) -> schemas.WaterUse:
+    food = crud.get_food_by_alias(db=db, alias=food_alias)
+    if food is None:
+        raise HTTPException(status_code=404, detail=f"{food_alias} not found")
+    return crud.get_water_use_by_food_id(db=db, food_id=food.id)

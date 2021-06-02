@@ -1,16 +1,35 @@
 import React, {Component} from "react";
 import  "regenerator-runtime";
 
-import {AccordionSummary, Box, Grid} from '@material-ui/core';
-import Typography from "@material-ui/core/Typography";
+import {Grid, AccordionSummary, Box, Typography} from '@material-ui/core';
+import {withStyles} from '@material-ui/core';
 
 const GHGI_API_ADDRESS = 'https://api.ghgi.org';
 const NATIVE_API_ADDRESS = 'http://127.0.0.1:8000';
 
 
-const inputStyles = {display: "flex", clear: 'both', alignItems: 'center'}
+const styles = {
+    root: {
+        justifyContent: 'center'
+    },
+    row: {
+        maxWidth: '60ch',
+        margin: 'auto'
+    },
+    box: {
+        padding: '20px',
+        margin: 'auto',
+        maxWidth: '60ch'
+    },
+    input: {
+        display: "flex",
+        clear: 'both',
+        alignItems: 'center',
+        maxWidth: '40ch'
+    }
+}
 
-export default class GroceryList extends Component {
+class GroceryList extends Component {
     constructor(props) {
         super(props);
         this.state = {groceryList: [], currentQuery: ""};
@@ -124,6 +143,7 @@ export default class GroceryList extends Component {
                 update={(field, newValue) => this.updateFood(index, field, newValue)}
                 remove={() => this.removeFood(index)}
                 search={() => this.props.search(this.state.groceryList)}
+                classes={this.props.classes}
             />);
         if (this.state.groceryList.length > 0) {console.log(this.state.groceryList[0]["ingredient"])};
 
@@ -131,10 +151,10 @@ export default class GroceryList extends Component {
         if (this.props.hasSearched) showBorder = '1px solid #ffdbec';
         // TODO: Move in-line styling out
         return (
-            <Box id="groceryList" border={showBorder} padding='20px' margin='40px'>
+            <Box id="groceryList" border={showBorder} className={this.props.classes.box}>
                 {this.props.hasSearched && <Typography variant='h5' align='left'>Your list</Typography>}
-                <Grid container>
-                    <Grid item xs={10} style={inputStyles}>
+                <Grid container className={this.props.classes.root}>
+                    <Grid item xs={12} sm={11} className={this.props.classes.input}>
                         <input
                             id="searchBox"
                             onChange={this.updateQuery}
@@ -143,9 +163,8 @@ export default class GroceryList extends Component {
                             placeholder='Try "Tofu" or "2 lbs of chicken breast"'
                         />
                     </Grid>
-                    <Grid item xs={2}>
-                        <button onClick={this.addFood}
-                                style={{float: "right", clear: 'both'}}>Add</button>
+                    <Grid item xs={12} sm={1}>
+                        <button onClick={this.addFood}>Add</button>
                     </Grid>
                 </Grid>
                 {/*</div>*/}
@@ -195,8 +214,8 @@ class GroceryListItem extends Component{
     render() {
         return (
             <div className="groceryListItem">
-                <Grid container>
-                    <Grid item xs={12} sm={6} style={inputStyles}>
+                <Grid container className={this.props.classes.row}>
+                    <Grid item xs={12} sm={6} className={this.props.classes.input}>
                         <input
                             className="ingredientBox"
                             id={`${this.props.ingredient}_ingredient`}
@@ -206,7 +225,7 @@ class GroceryListItem extends Component{
                             // style={{float: "left", clear: 'both'}}
                         />
                     </Grid>
-                    <Grid item xs={4} sm={2} style={inputStyles}>
+                    <Grid item xs={4} sm={2} className={this.props.classes.input}>
                         <input
                             className="quantityBox"
                             id={`${this.props.name}_quantity`}
@@ -217,7 +236,7 @@ class GroceryListItem extends Component{
                             // style={{float: "left", clear: 'both'}}
                         />
                     </Grid>
-                    <Grid item xs={6} sm={3} style={inputStyles}>
+                    <Grid item xs={6} sm={3} className={this.props.classes.input}>
                         <input
                             className="unitBox"
                             id={`${this.props.name}_unit`}
@@ -238,3 +257,5 @@ class GroceryListItem extends Component{
         );
     }
 }
+
+export default withStyles(styles)(GroceryList);

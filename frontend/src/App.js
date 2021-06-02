@@ -11,9 +11,9 @@ import Comparison from "./Comparison";
 import Summary from "./Summary";
 
 import Grid from '@material-ui/core/Grid';
-import { List } from '@material-ui/core';
 
-const API_ADDRESS = 'https://api.ghgi.org';
+const GHGI_API_ADDRESS = 'https://api.ghgi.org';
+const NATIVE_API_ADDRESS = 'http://127.0.0.1:8000';
 
 
 class App extends Component {
@@ -46,7 +46,7 @@ class App extends Component {
             }
         }
 
-        await fetch(`${API_ADDRESS}/rateCarbon`,
+        let results = await fetch(`${GHGI_API_ADDRESS}/rateCarbon`,
             {method: 'POST',
                 //headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({'recipe': groceryList})})
@@ -56,16 +56,29 @@ class App extends Component {
         this.setState({
             hasSearched: true,
             selectedFood: {
-                alias: this.state.results.contributors[0],
-                grams: this.state.results.grams[0]
-            }});
-;
-        console.log("API response received");
+                alias: results.contributors[0],
+                grams: results.grams[0]
+            },
+            results: results
+        });
+    }
 
+    // TODO: Distinguish between L and KG
+    getLandUse = async (item) => {
+        let landUse = await fetch(`${NATIVE_API_ADDRESS}/land_use/${item.name}`)
+            .then(response => response.json());
+        return landUse["median"] * (item.grams / 1000);
+    }
+
+    // TODO: Distinguish between L and KG
+    getWaterUse = async (item) => {
+        let waterUse = await fetch(`${NATIVE_API_ADDRESS}/water_use/${item.name}`)
+            .then(response => response.json());
+        return waterUse["median"] * (item.grams / 1000);
     }
 
     // TODO: Distinguish between originally searched food and actual ingredients
-    parseResponse(json) {
+    parseResponse = async (json) => {
         /**
          * Parse response from GHGI API to access data points for display
          * @param   {String} json      Response body in json format
@@ -73,33 +86,41 @@ class App extends Component {
          */
 
         let ingredients = [];
+        console.log(json)
         // Find impact of each ingredient and rank them
         for (let item of json["items"]) {
             ingredients.push({
-                contributor: item["product"]["alias"],
+                name: item["product"]["alias"],
                 impact: item["impact"],
                 grams: item["g"]});
         }
         ingredients.sort((a, b) => b.impact - a.impact);
 
+        let totalLandUse = await ingredients
+            .map(async item => await this.getLandUse(item))
+            .reduce((x, y) => x + y);
+
+        let totalWaterUse = await ingredients
+            .map(async item => await this.getWaterUse(item))
+            .reduce((x, y) => x + y);
+
         let contributors = [];
         let impacts = [];
         let grams = [];
         for (let item of ingredients) {
-            contributors.push(item.contributor);
+            contributors.push(item.name);
             impacts.push(item.impact);
             grams.push(item.grams);
         }
 
-        this.setState({
-            results: {
-                totalImpact: json["impact"],
+        return {totalImpact: json["impact"] / 1000 * 2.2, // Convert from grams to pounds
                 contributors: contributors,
                 impacts: impacts,
                 grams: grams,
-                driveEq: json["drive_eq"]}});
-
-        return contributors[0];
+                driveEq: json["drive_eq"],
+                totalLandUse: totalLandUse / 50, // Convert from sq meters to central parks
+                totalWaterUse: totalWaterUse * 4.2 // Convert from liters to cups
+        };
     }
 
     // parseQuery() {
@@ -120,38 +141,39 @@ class App extends Component {
     }
 
     render(){
-        let infoSize = 12;
-        let groceryListSize = 5;
-        if (this.state.hasSearched) {
-            infoSize = 7;
-        }
+        const infoSize = 12;
+        const summarySize = 6;
+        const groceryListSize = 12;
+        const barSize = 6;
+        const recoSize = 6;
 
         return (
             <div id="container">
                 <div id="header">
                     <a href="#">
-                        <img src={logo} alt="" id="logo"/>
+                        <img src={logo} alt="Sexy Tofu" id="logo"/>
                     </a>
                 </div>
                 <Grid container spacing={3} justify={"center"}>
                     <Grid item xs={12} sm={infoSize}>
-                        <img src={tofuHero} alt="" id="tofu-hero"/>
+                        <img src={tofuHero} alt="Tofu Hero" id="tofu-hero"/>
                         <h2>Track the climate impact of your food</h2>
-                        {this.state.hasSearched &&
-                        <Summary driveEq={this.state.results.driveEq} />}
-                    </Grid>
-                    <Grid item xs={12} sm={groceryListSize}>
-                        <GroceryList
-                            search={this.search}
-                            hasSearched={this.state.hasSearched}
-                            requestForUpdate={this.state.requestForUpdate}/>
                     </Grid>
                     {this.state.hasSearched &&
-                    <Grid item xs={12} sm={12}>
-                        <Comparison total_imoact={this.state.results.totalImpact} />
+                    <Grid item xs={12} sm={summarySize}>
+                        <Summary
+                            totalImpact={this.state.results.totalImpact}
+                            driveEq={this.state.results.driveEq}
+                            totalLandUse={this.state.results.totalLandUse}
+                            totalWaterUse={this.state.results.totalWaterUse}
+                        />
                     </Grid>}
                     {this.state.hasSearched &&
-                    <Grid item xs={12} sm={infoSize}>
+                    <Grid item xs={12} sm={12}>
+                        <Comparison totalImpact={this.state.results.totalImpact} />
+                    </Grid>}
+                    {this.state.hasSearched &&
+                    <Grid item xs={12} sm={barSize}>
                         <BarChart
                             data={this.state.results.impacts}
                             labels={this.state.results.contributors}
@@ -160,12 +182,18 @@ class App extends Component {
                         />
                     </Grid>}
                     {this.state.hasSearched &&
-                    <Grid item xs={12} sm={groceryListSize}>
+                    <Grid item xs={12} sm={recoSize}>
                         <Recommendations
                             food={this.state.selectedFood}
                             updateGroceryList={this.updateGroceryList}
                         />
                     </Grid>}
+                    <Grid item xs={12} sm={groceryListSize}>
+                        <GroceryList
+                            search={this.search}
+                            hasSearched={this.state.hasSearched}
+                            requestForUpdate={this.state.requestForUpdate}/>
+                    </Grid>
                 </Grid>
             </div>
         );

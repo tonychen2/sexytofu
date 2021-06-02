@@ -25,6 +25,51 @@ class FoodAlias(Base):
     food = relationship("Food")
 
 
+class FoodParentChild(Base):
+    __tablename__ = "food_parent_child"
+
+    id = Column(Integer, primary_key=True, index=True)
+    child_id = Column(Integer, ForeignKey("food.id"), index=True)
+    parent_id = Column(Integer, ForeignKey("food.id"), index=True)
+    perc = Column(Float)
+
+    child = relationship("Food", foreign_keys=[child_id])
+    parent = relationship("Food", foreign_keys=[parent_id])
+
+
+class GreenhouseGasEmission(Base):
+    __tablename__ = "greenhouse_gas_emission"
+
+    id = Column(Integer, primary_key=True, index=True)
+    food_id = Column(Integer, ForeignKey("food.id"), unique=True, index=True)
+    mean = Column(Float)
+    median = Column(Float)
+
+    food = relationship("Food")
+
+
+class LandUse(Base):
+    __tablename__ = "land_use"
+
+    id = Column(Integer, primary_key=True, index=True)
+    food_id = Column(Integer, ForeignKey("food.id"), unique=True, index=True)
+    mean = Column(Float)
+    median = Column(Float)
+
+    food = relationship("Food")
+
+
+class WaterUse(Base):
+    __tablename__ = "water_use"
+
+    id = Column(Integer, primary_key=True, index=True)
+    food_id = Column(Integer, ForeignKey("food.id"), unique=True, index=True)
+    mean = Column(Float)
+    median = Column(Float)
+
+    food = relationship("Food")
+
+
 class RecoType(Base):
     __tablename__ = "reco_type"
 

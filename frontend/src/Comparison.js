@@ -8,11 +8,12 @@ import {Select, MenuItem} from "@material-ui/core";
 import {Slider} from "@material-ui/core";
 import { withStyles } from '@material-ui/core/styles';
 
+import {pluralize} from "./utils.js"
+
 const boxStyles = {
     root: {
         backgroundColor: 'transparent',
-    },
-    summary: {
+        textAlign: 'center',
         color: '#ffdbec',
         textDecoration: 'underline'
     },
@@ -68,13 +69,13 @@ class Comparison extends Component {
 
         return (
             <div id="comparison">
-                <Accordion classes={classes} square elevation={0}>
+                <Accordion classes={classes} defaultExpanded elevation={0}>
                     <AccordionSummary>
-                        <Typography className={classes.summary}>See how you compare to others </Typography>
+                        <Typography className={classes.root}>See how you compare to others </Typography>
                     </AccordionSummary>
                     <AccordionDetails className={classes.details}>
                         This list is for a household of {selectNumPeople} to consume over {selectNumDays} days.
-                        <ComparisonScale impact={this.props.totalImpact}
+                        <ComparisonScale totalImpact={this.props.totalImpact}
                                          numPeople={this.state.numPeople}
                                          numDays={this.state.numDays}
                         />
@@ -90,27 +91,41 @@ class Comparison extends Component {
 function ComparisonScale(props) {
     const classes = scaleStyles();
 
-    const normalizedImpact = props.impact /
+    const normalizedImpact = props.totalImpact /
         (props.numPeople / DEFAULT_NUM_PEOPLE) /
         (props.numDays / DEFAULT_NUM_DAYS);
+
+    console.log(props.totalImpact);
+    console.log(normalizedImpact);
 
     return (
         <Slider
             classes={classes}
             component='div'
             disabled
-            value={30}
+            value={normalizedImpact}
             marks={[
-                {value: 10, label: 'Meat Lover'},
-                {value: 20, label: 'Average American'},
-                {value: 40, label: 'Sexy Tofu'}]}
+                {value: 17, label: <PersonaLabel name="Sexy Tofu" weeklyImpact='<17' />},
+                {value: 76, label: <PersonaLabel name="Global Average" weeklyImpact='76' />},
+                {value: 189, label: <PersonaLabel name="Average American" weeklyImpact='189' />},
+                {value: 224, label: <PersonaLabel name="Meat Lover" weeklyImpact='>224' />}]}
             step={1}
-            min={10}
-            max={40}
-            valueLabelFormat={'You'}
+            min={17}
+            max={224}
+            valueLabelFormat={(value) =>
+                `You: ${normalizedImpact.toFixed(1)} ${pluralize('lb', 'lbs', normalizedImpact)} 
+                of CO2 equivalent per week`}
             valueLabelDisplay='on'
             track={false} />
     )
+}
+
+function PersonaLabel(props) {
+    return (
+        <span>
+            <span style={{display: 'block'}}>{props.name}</span>
+            <span style={{display: 'block'}}>{props.weeklyImpact} lbs/week</span>
+        </span>)
 }
 
 export default withStyles(boxStyles)(Comparison);

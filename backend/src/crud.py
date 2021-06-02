@@ -8,7 +8,7 @@ def get_all_recos(db: Session):
     return db.query(models.Recommendation).all()
 
 
-def get_recos_by_food(db: Session, food_id: int, skip: int, limit: int):
+def get_recos_by_food_id(db: Session, food_id: int, skip: int, limit: int):
     return db.query(models.Recommendation).filter(models.Recommendation.food_id == food_id).offset(skip).limit(limit).all()
 
 
@@ -44,3 +44,11 @@ def delete_recommendation(db: Session, reco_id: int):
     db.execute(delete(models.Recommendation).where(models.Recommendation.id == reco_id))
     db.commit()
     return
+
+
+def get_land_use_by_food_id(db: Session, food_id: int):
+    return db.query(models.LandUse).filter(models.LandUse.food_id == food_id).first()
+
+
+def get_water_use_by_food_id(db: Session, food_id: int):
+    return db.query(models.WaterUse).filter(models.WaterUse.food_id == food_id).first()

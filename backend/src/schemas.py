@@ -65,3 +65,23 @@ class FoodNameWithAlias(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+class LandUse(BaseModel):
+    id: int
+    food_id: int
+    mean: Optional[float]
+    median: Optional[float]
+
+    class Config:
+        orm_mode = True
+
+
+class WaterUse(BaseModel):
+    id: int
+    food_id: int
+    mean: Optional[float]
+    median: Optional[float]
+
+    class Config:
+        orm_mode = True

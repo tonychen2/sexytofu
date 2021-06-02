@@ -17,6 +17,8 @@ body{
     background-image: linear-gradient(90deg, #fc0a7e, #bd86ff);
     font-family: 'RobotoCondensed';
     color: #ffdbec;
+    margin: 0;
+    padding: 0;
 }
 
 h1, h2, h3, h4, h5 {
@@ -41,6 +43,7 @@ label {
 #header {
     display: flex;
     width: 100vw;
+    padding: 10px;
 }
 
 #logo {
