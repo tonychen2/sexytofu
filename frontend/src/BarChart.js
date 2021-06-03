@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import Chart from 'chart.js';
+import Typography from "@material-ui/core/Typography";
 // import classes from "./LineGraph.module.css";
 let myBarChart;
 
@@ -18,23 +19,21 @@ export default class BarChart extends Component {
     }
 
     handleClick = event => {
-        // const myChartRef = this.chartRef.current.getContext("2d");
         const points = myBarChart.getElementsAtEventForMode(event, 'nearest', { intersect: true }, true);
         if (points[0]) {
-            // const label = myBarChart.data.labels[points[0]._index];
-            this.props.showRecommendation(points[0]._index);
+            this.props.showRecommendation(points[0].index);
         }
     }
 
     buildChart = () => {
         const myChartRef = this.chartRef.current.getContext("2d");
-        // const {data, labels} = this.props;
         let type = "bar";
-        if (this.props.horizontal) type = "horizontalBar";
 
         if (typeof myBarChart !== "undefined") myBarChart.destroy();
 
+        Chart.defaults.font.size = 16;
         Chart.defaults.color = '#ffdbec';
+        Chart.defaults.borderColor = 'transparent';
 
         myBarChart = new Chart(myChartRef, {
             type: type,
@@ -43,51 +42,32 @@ export default class BarChart extends Component {
                 labels: this.props.labels,
                 datasets: [
                     {
-                        label: 'Impact by ingredient',
                         data: this.props.data,
                         backgroundColor: '#ffdbec',
                     }
                 ]
             },
             options: {
-                "hover": {
-                    "animationDuration": 0
-                },
-                "animation": {
-                    "duration": 1,
-                    "onComplete": function () {
-                        myChartRef.font = Chart.helpers.fontString(Chart.defaults.global.defaultFontSize, Chart.defaults.global.defaultFontStyle, Chart.defaults.global.defaultFontFamily);
-                        myChartRef.textAlign = 'left';
-                        myChartRef.textBaseline = 'middle';
-
-                        let chartInstance = this.chart;
-                        let meta = chartInstance.controller.getDatasetMeta(0);
-                        meta.data.forEach((bar, index) => {
-                            let value = this.data.datasets[0].data[index].toFixed(1);
-                            console.log(bar);
-                            myChartRef.fillText(value, bar._model.x+5, bar._model.y);
-                        });
-                    }
+                indexAxis: 'y',
+                animation: {
+                    onProgress: (props) => drawValueLabel(myChartRef, props),
+                    onComplete: (props) => drawValueLabel(myChartRef, props)
                 },
                 scales: {
-                    xAxes: [{
+                    x: {
+                        display: false,
+                        max: Math.max(...this.props.data) * 1.2
+                    },
+                    y: {
                         ticks: {
-                            beginAtZero: true,
-                            fontColor: '#ffdbec',
-                            display: false,
-                            max: Math.max(...this.props.data) * 1.2
+                            textStrokeColor: '#ffdbec'
                         }
-                    }],
-                    yAxes: [{
-                        ticks: {
-                            fontColor: '#ffdbec'
-                        }
-                    }]
-                },
-                legend: {
-                    labels: {
-                        fontColor: '#ffdbec'
                     }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    },
                 },
                 onClick: this.handleClick
             }
@@ -95,17 +75,32 @@ export default class BarChart extends Component {
     }
 
     render() {
-        let n_bars = this.props.labels.length;
-        console.log(n_bars);
         return (
-            <div className="chartContainer" style={{width:"40vw", margin:"0 auto", minHeight: "100px"}}>
+            <div className="chartContainer" style={{width: '80%', margin: 'auto'}}>
+                <Typography variant='h5' align='left'>Rank my food's carbon footprint</Typography>
                 <canvas
                     id="myChart"
                     ref={this.chartRef}
-                    style={{height: n_bars * 40, minHeight: 200, maxHeight: 400}}
+                    style={{maxHeight: 300}}
                 />
             </div>
         )
     }
 }
 
+function drawValueLabel(chartRef, props) {
+    chartRef.font = Chart.helpers.fontString(
+        Chart.defaults.font.size,
+        Chart.defaults.font.style,
+        Chart.defaults.font.family);
+    chartRef.fillStyle = Chart.defaults.color;
+    chartRef.textAlign = 'left';
+    chartRef.textBaseline = 'middle';
+
+    let chartInstance = props.chart;
+    let meta = chartInstance.getDatasetMeta(0);
+    meta.data.forEach((bar, index) => {
+        let value = chartInstance.data.datasets[0].data[index].toFixed(1);
+        chartRef.fillText(value, bar.x+5, bar.y);
+    });
+}

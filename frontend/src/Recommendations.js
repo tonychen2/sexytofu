@@ -3,8 +3,10 @@ import React, {Component} from "react";
 import BarChart from "./BarChart";
 
 import {Card, CardContent, CardActions} from '@material-ui/core';
-import {Typography} from "@material-ui/core";
+import {Button, Typography, Fab} from "@material-ui/core";
 import {withStyles} from "@material-ui/core";
+
+import FavoriteIcon from '@material-ui/icons/Favorite';
 
 
 const API_ADDRESS = 'http://127.0.0.1:8000';
@@ -15,14 +17,11 @@ const styles = {
     root: {
         backgroundColor: '#ffdbec',
         color: 'grey',
-        margin: '0px 30px'
+        width: '80%'
     },
     colorTextPrimary: {
         color: '#fc0a7e'
     },
-    actions: {
-        justifyContent: 'space-between'
-    }
 };
 
 class Recommendations extends Component {
@@ -47,6 +46,7 @@ class Recommendations extends Component {
             if (reco.type_id === 1) {
                 let random_group = Math.floor(Math.random() * 2);
                 let annual_impact = (this.props.food.grams / 1000) * reco.impact_once * 52;
+                console.log(this.props.food.grams);
                 if (random_group === 1) {
                     let n_trees = Math.round(annual_impact / ANNUAL_IMPACT_PER_TREE);
                     reco_text += ` you can offset as much CO2 as ${n_trees} trees in a year.`;
@@ -116,11 +116,16 @@ class Recommendations extends Component {
                         classes={classes}>
                         How can I do better?
                     </Typography>
+                    {/*<Fab aria-label="like" size='small'>*/}
+                    {/*    <FavoriteIcon />*/}
+                    {/*</Fab>*/}
                     <p align='left' dangerouslySetInnerHTML={this.showRecos()} />
                 </CardContent>
-                <CardActions className={classes.actions}>
-                    {this.isApplicable() && <button onClick={this.applyReco}>Apply to grocery list</button>}
-                    {this.isLast() || <button onClick={this.nextReco}>Show me more</button>}
+                <CardActions>
+                    <span style={{justifyContent: 'space-between'}}>
+                        {this.isApplicable() && <button className={'Button'} onClick={this.applyReco}>Apply to grocery list</button>}
+                        {this.isLast() || <button className={'Button'} onClick={this.nextReco}>Show me more</button>}
+                    </span>
                 </CardActions>
             </Card>
         )

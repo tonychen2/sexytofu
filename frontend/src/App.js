@@ -11,6 +11,7 @@ import Comparison from "./Comparison";
 import Summary from "./Summary";
 
 import Grid from '@material-ui/core/Grid';
+import Typography from "@material-ui/core/Typography";
 
 const GHGI_API_ADDRESS = 'https://api.ghgi.org';
 const NATIVE_API_ADDRESS = 'http://127.0.0.1:8000';
@@ -65,16 +66,16 @@ class App extends Component {
 
     // TODO: Distinguish between L and KG
     getLandUse = async (item) => {
-        let landUse = await fetch(`${NATIVE_API_ADDRESS}/land_use/${item.name}`)
+        let landUse = await fetch(`${NATIVE_API_ADDRESS}/land_use/${item.name}/`)
             .then(response => response.json());
-        return landUse["median"] * (item.grams / 1000);
+        return (landUse === null ? null : landUse["median"] * (item.grams / 1000));
     }
 
     // TODO: Distinguish between L and KG
     getWaterUse = async (item) => {
-        let waterUse = await fetch(`${NATIVE_API_ADDRESS}/water_use/${item.name}`)
+        let waterUse = await fetch(`${NATIVE_API_ADDRESS}/water_use/${item.name}/`)
             .then(response => response.json());
-        return waterUse["median"] * (item.grams / 1000);
+        return (waterUse === null ? null : waterUse["median"] * (item.grams / 1000));
     }
 
     // TODO: Distinguish between originally searched food and actual ingredients
@@ -86,23 +87,22 @@ class App extends Component {
          */
 
         let ingredients = [];
-        console.log(json)
         // Find impact of each ingredient and rank them
         for (let item of json["items"]) {
             ingredients.push({
                 name: item["product"]["alias"],
-                impact: item["impact"],
+                impact: item["impact"] / 1000 * 2.2, // Convert from grams to pounds
                 grams: item["g"]});
         }
         ingredients.sort((a, b) => b.impact - a.impact);
 
-        let totalLandUse = await ingredients
-            .map(async item => await this.getLandUse(item))
-            .reduce((x, y) => x + y);
+        let landUses = await Promise.all(ingredients
+            .map(async item => await this.getLandUse(item)));
+        let totalLandUse = landUses.reduce((x, y) => x + y) * 10.8; // Convert from sq m to sq ft
 
-        let totalWaterUse = await ingredients
-            .map(async item => await this.getWaterUse(item))
-            .reduce((x, y) => x + y);
+        let waterUses = await Promise.all(ingredients
+            .map(async item => await this.getWaterUse(item)));
+        let totalWaterUse = waterUses.reduce((x, y) => x + y) * 4.2; // Convert from liters to cups
 
         let contributors = [];
         let impacts = [];
@@ -118,8 +118,9 @@ class App extends Component {
                 impacts: impacts,
                 grams: grams,
                 driveEq: json["drive_eq"],
-                totalLandUse: totalLandUse / 50, // Convert from sq meters to central parks
-                totalWaterUse: totalWaterUse * 4.2 // Convert from liters to cups
+                totalLandUse: totalLandUse,
+                parkingEq: totalLandUse / 14, // Convert from sq meters to # parking spots
+                totalWaterUse: totalWaterUse * 4.2
         };
     }
 
@@ -133,10 +134,11 @@ class App extends Component {
     //     return this.state.foodQuery.split(",");
     // }
 
-    showRecommendation(index) {
+    showRecommendation = (index) => {
+        console.log(this.state);
         this.setState({selectedFood: {
             alias: this.state.results.contributors[index],
-            gram: this.state.results.grams[index]
+            grams: this.state.results.grams[index]
         }});
     }
 
@@ -144,8 +146,10 @@ class App extends Component {
         const infoSize = 12;
         const summarySize = 6;
         const groceryListSize = 12;
-        const barSize = 6;
-        const recoSize = 6;
+        const barSize = 8;
+        const recoSize = 4;
+
+        let headline = (this.state.hasSearched ? "My food impact" : "Track the climate impact of my food")
 
         return (
             <div id="container">
@@ -154,25 +158,25 @@ class App extends Component {
                         <img src={logo} alt="Sexy Tofu" id="logo"/>
                     </a>
                 </div>
+                <img src={tofuHero} alt="Tofu Hero" id="tofu-hero"/>
+                <h2>{headline}</h2>
+                {this.state.hasSearched &&
                 <Grid container spacing={3} justify={"center"}>
-                    <Grid item xs={12} sm={infoSize}>
-                        <img src={tofuHero} alt="Tofu Hero" id="tofu-hero"/>
-                        <h2>Track the climate impact of your food</h2>
-                    </Grid>
-                    {this.state.hasSearched &&
                     <Grid item xs={12} sm={summarySize}>
                         <Summary
                             totalImpact={this.state.results.totalImpact}
                             driveEq={this.state.results.driveEq}
                             totalLandUse={this.state.results.totalLandUse}
+                            parkingEq={this.state.results.parkingEq}
                             totalWaterUse={this.state.results.totalWaterUse}
                         />
-                    </Grid>}
-                    {this.state.hasSearched &&
+                    </Grid>
                     <Grid item xs={12} sm={12}>
                         <Comparison totalImpact={this.state.results.totalImpact} />
-                    </Grid>}
-                    {this.state.hasSearched &&
+                    </Grid>
+                    <Grid item xs={12} sm={12}>
+                        <h2 style={{marginBottom: '40px'}}>Tell me how I can do better</h2>
+                    </Grid>
                     <Grid item xs={12} sm={barSize}>
                         <BarChart
                             data={this.state.results.impacts}
@@ -180,21 +184,19 @@ class App extends Component {
                             horizontal={true}
                             showRecommendation={this.showRecommendation}
                         />
-                    </Grid>}
-                    {this.state.hasSearched &&
+                    </Grid>
                     <Grid item xs={12} sm={recoSize}>
                         <Recommendations
                             food={this.state.selectedFood}
                             updateGroceryList={this.updateGroceryList}
                         />
-                    </Grid>}
-                    <Grid item xs={12} sm={groceryListSize}>
-                        <GroceryList
-                            search={this.search}
-                            hasSearched={this.state.hasSearched}
-                            requestForUpdate={this.state.requestForUpdate}/>
                     </Grid>
                 </Grid>
+                }
+                    <GroceryList
+                        search={this.search}
+                        hasSearched={this.state.hasSearched}
+                        requestForUpdate={this.state.requestForUpdate}/>
             </div>
         );
     }

@@ -8,7 +8,7 @@ import {withStyles} from "@material-ui/core";
 import {pluralize} from "./utils.js"
 
 import driveEqGraphics from "./assets/summary_graphics/sf-la.png";
-import landUseGraphics from "./assets/summary_graphics/central_park.png";
+import landUseGraphics from "./assets/summary_graphics/parking_spots.png";
 import waterUseGraphics from "./assets/summary_graphics/water.png";
 
 
@@ -17,11 +17,11 @@ const styles = {
         // textAlign: 'left'
     },
     section: {
-        margin: '20px'
+        marginTop: '50px'
     },
     title: {
         borderRadius: '1ch',
-        backgroundColor: 'white',
+        backgroundColor: '#ffdbec',
         width: 'fit-content',
         margin: 'auto',
         padding: '0ch 1ch',
@@ -53,21 +53,22 @@ function Summary(props) {
                 </Typography>
                 <img src={driveEqGraphics} alt='SF-LA' className={classes.image}/>
             </div>
-            {props.totalLandUse &&
+            {props.totalLandUse > 0 &&
             <div id="landUse" className={classes.section}>
                 <Typography variant='subtitle1' className={classes.title}>Land Use</Typography>
                 <Typography variant='subtitle1'>
-                    <span className={classes.highlight}>{props.totalLandUse.toFixed(1)}</span>&nbsp;central&nbsp;
-                    {pluralize('park', 'parks', props.totalLandUse)} deforested to make space
+                    <span className={classes.highlight}>{props.totalLandUse.toFixed(1)}</span> sq.ft. or&nbsp;
+                    <span className={classes.highlight}>{props.parkingEq.toFixed(1)}</span> parking&nbsp;
+                    {pluralize('spot', 'spots', props.parkingEq)} of land used
                 </Typography>
                 <img src={landUseGraphics} alt='Central Park' className={classes.image}/>
             </div>}
-            {props.totalWaterUse &&
+            {props.totalWaterUse > 0 &&
             <div id="waterUse" className={classes.section}>
-                <Typography variant='subtitle1' className={classes.title}>Water Use</Typography>
+                <Typography variant='subtitle1' className={classes.title}>Water Consumption</Typography>
                 <Typography variant='subtitle1'>
                     <span className={classes.highlight}>{props.totalWaterUse.toFixed(1)}</span>&nbsp;
-                    {pluralize('cup', 'cups', props.totalWaterUse)} of water consumed in production
+                    {pluralize('cup', 'cups', props.totalWaterUse)} of water consumed
                 </Typography>
                 <img src={waterUseGraphics} alt='Water' className={classes.image}/>
             </div>}
