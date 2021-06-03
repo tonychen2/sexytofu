@@ -21,7 +21,7 @@ body{
     padding: 0;
 }
 
-h1, h2, h3, h4, h5 {
+h1, h2, h3, h4, h5, h6 {
     font-family: 'EconomicaBold';
     color: #ffdbec
 }
@@ -52,36 +52,19 @@ label {
     width: 120px;
 }
 
-#searchBox {
-    /*width: 30ch;*/
-    width: 100%;
-}
-
-.quantityBox {
-    width: 100%;
-}
-
-.unitBox {
-    width: 100%;
-}
-
-.ingredientBox {
-    width: 100%;
-}
-
-Input {
-    clear: none;
-    -webkit-box-flex: 0;
-    -webkit-flex: 0 auto;
-    -ms-flex: 0 auto;
-    margin: 1px;
-    flex: 0 auto;
-    border-style: none;
-    background-color: #ffdbec;
-    box-shadow: inset 0 0 0 0 #fc0a7e;
-    -webkit-transition: box-shadow 300ms cubic-bezier(.215, .61, .355, 1);
-    transition: box-shadow 300ms cubic-bezier(.215, .61, .355, 1);
-}
+/*Input {*/
+/*    clear: none;*/
+/*    -webkit-box-flex: 0;*/
+/*    -webkit-flex: 0 auto;*/
+/*    -ms-flex: 0 auto;*/
+/*    margin: 1px;*/
+/*    flex: 0 auto;*/
+/*    border-style: none;*/
+/*    background-color: #ffdbec;*/
+/*    box-shadow: inset 0 0 0 0 #fc0a7e;*/
+/*    -webkit-transition: box-shadow 300ms cubic-bezier(.215, .61, .355, 1);*/
+/*    transition: box-shadow 300ms cubic-bezier(.215, .61, .355, 1);*/
+/*}*/
 
 Button {
     display: inline-block;

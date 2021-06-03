@@ -1,7 +1,10 @@
 import React, {Component} from "react";
 import  "regenerator-runtime";
 
-import {Grid, AccordionSummary, Box, Typography} from '@material-ui/core';
+import {Grid, Box, Typography} from '@material-ui/core';
+import {TextField, Button, IconButton} from '@material-ui/core';
+import DeleteIcon from '@material-ui/icons/Delete';
+import {List, ListItem} from '@material-ui/core';
 import {withStyles} from '@material-ui/core';
 
 const GHGI_API_ADDRESS = 'https://api.ghgi.org';
@@ -10,22 +13,51 @@ const NATIVE_API_ADDRESS = 'http://127.0.0.1:8000';
 
 const styles = {
     root: {
-        justifyContent: 'center'
-    },
-    row: {
-        maxWidth: '60ch',
-        margin: 'auto'
+        alignItems: 'center'
     },
     box: {
-        padding: '20px',
-        margin: 'auto',
-        maxWidth: '60ch'
+        padding: '10px',
+        margin: '50px auto',
+        maxWidth: '70ch'
     },
-    input: {
-        display: "flex",
-        clear: 'both',
-        alignItems: 'center',
-        maxWidth: '40ch'
+    title: {
+        marginBottom: '20px'
+    },
+    row: {
+        // paddingTop: '2px',
+        // paddingBottom: '2px'
+        padding: '2px 0px'
+    },
+    inputGrid: {
+        display: "flex"
+    },
+    textField: {
+        width: '100%',
+        borderRadius: '4px',
+        backgroundColor: '#ffdbec',
+        margin: '2px',
+        '&:hover': {
+            borderColor: '#fc0a7e',
+        },
+        '& .MuiOutlinedInput-root': {
+            '&:hover fieldset': {
+                borderColor: 'transparent',
+            },
+            '&.Mui-focused fieldset': {
+                borderColor: 'transparent'
+            },
+        }
+    },
+    button: {
+        border: '0',
+        right: '0',
+        margin: '5px',
+        backgroundColor: '#ffdbec',
+        color: '#fc0a7e',
+        '&:hover': {
+            backgroundColor: '#fc0a7e',
+            color: '#ffdbec'
+        },
     }
 }
 
@@ -75,6 +107,10 @@ class GroceryList extends Component {
         /**
          * Add user input to grocery list
          */
+        if (this.state.currentQuery === "") {
+            return
+        }
+
         let parsed = await fetch(`${NATIVE_API_ADDRESS}/parse/?query=${this.state.currentQuery}`)
             .then(response => response.json());
         let default_grams = await fetch(`${GHGI_API_ADDRESS}/rateCarbon`,
@@ -145,35 +181,46 @@ class GroceryList extends Component {
                 search={() => this.props.search(this.state.groceryList)}
                 classes={this.props.classes}
             />);
-        if (this.state.groceryList.length > 0) {console.log(this.state.groceryList[0]["ingredient"])};
 
         let showBorder = null;
         if (this.props.hasSearched) showBorder = '1px solid #ffdbec';
         // TODO: Move in-line styling out
         return (
             <Box id="groceryList" border={showBorder} className={this.props.classes.box}>
-                {this.props.hasSearched && <Typography variant='h5' align='left'>Your list</Typography>}
                 <Grid container className={this.props.classes.root}>
-                    <Grid item xs={12} sm={11} className={this.props.classes.input}>
-                        <input
+                    {this.props.hasSearched &&
+                    <Grid item xs={12} className={this.props.classes.title}>
+                        <h2>Your List</h2>
+                    </Grid>}
+                    <Grid item xs={12} sm={10} className={this.props.classes.inputGrid}>
+                        <TextField
                             id="searchBox"
+                            variant="outlined"
+                            className={this.props.classes.textField}
                             onChange={this.updateQuery}
                             onKeyPress={this.handleKeyPress}
                             value={this.state.currentQuery}
+                            size='small'
                             placeholder='Try "Tofu" or "2 lbs of chicken breast"'
                         />
                     </Grid>
-                    <Grid item xs={12} sm={1}>
-                        <button onClick={this.addFood}>Add</button>
+                    <Grid item xs={12} sm={2}>
+                        <Button className={this.props.classes.button}
+                                variant="contained"
+                                onClick={this.addFood}>Add</Button>
                     </Grid>
-                </Grid>
                 {/*</div>*/}
                 {/*<ColumnNames />*/}
-                <form>
-                    {list}
-                </form>
+                    <form style={{width: '100%'}}>
+                        <List>
+                            {list}
+                        </List>
+                    </form>
+                </Grid>
                 {this.state.groceryList.length > 0 &&
-                <button onClick={() => this.props.search(this.state.groceryList)}>Search</button>}
+                <Button className={this.props.classes.button}
+                        variant="contained"
+                        onClick={() => this.props.search(this.state.groceryList)}>Search</Button>}
             </Box>
         );
     }
@@ -213,47 +260,54 @@ class GroceryListItem extends Component{
 
     render() {
         return (
-            <div className="groceryListItem">
-                <Grid container className={this.props.classes.row}>
-                    <Grid item xs={12} sm={6} className={this.props.classes.input}>
-                        <input
-                            className="ingredientBox"
-                            id={`${this.props.ingredient}_ingredient`}
-                            onChange={this.handleChange}
-                            onKeyPress={this.handleKeyPress}
-                            value={this.props.ingredient}
-                            // style={{float: "left", clear: 'both'}}
-                        />
-                    </Grid>
-                    <Grid item xs={4} sm={2} className={this.props.classes.input}>
-                        <input
-                            className="quantityBox"
-                            id={`${this.props.name}_quantity`}
-                            type={'number'}
-                            onChange={this.handleChange}
-                            onKeyPress={this.handleKeyPress}
-                            value={this.props.quantity}
-                            // style={{float: "left", clear: 'both'}}
-                        />
-                    </Grid>
-                    <Grid item xs={6} sm={3} className={this.props.classes.input}>
-                        <input
-                            className="unitBox"
-                            id={`${this.props.name}_unit`}
-                            onChange={this.handleChange}
-                            onKeyPress={this.handleKeyPress}
-                            value={this.props.unit}
-                            // style={{float: "left", clear: 'both'}}
-                        />
-                    </Grid>
-                    <Grid item xs={2} sm={1}>
-                        <button
-                            className="close"
-                            onClick={this.props.remove}
-                            style={{float: "right", clear: 'both'}}>x</button>
-                    </Grid>
+            <ListItem className={this.props.classes.row}>
+                <Grid item xs={12} sm={5} className={this.props.classes.inputGrid}>
+                    <TextField
+                        variant="outlined"
+                        className={this.props.classes.textField}
+                        id={`${this.props.ingredient}_ingredient`}
+                        onChange={this.handleChange}
+                        onKeyPress={this.handleKeyPress}
+                        value={this.props.ingredient}
+                        size='small'
+                        // style={{float: "left", clear: 'both'}}
+                    />
                 </Grid>
-            </div>
+                <Grid item xs={4} sm={2} className={this.props.classes.inputGrid}>
+                    <TextField
+                        variant="outlined"
+                        className={this.props.classes.textField}
+                        id={`${this.props.name}_quantity`}
+                        type={'number'}
+                        onChange={this.handleChange}
+                        onKeyPress={this.handleKeyPress}
+                        value={this.props.quantity}
+                        size='small'
+                        // style={{float: "left", clear: 'both'}}
+                    />
+                </Grid>
+                <Grid item xs={6} sm={3} className={this.props.classes.inputGrid}>
+                    <TextField
+                        variant="outlined"
+                        className={this.props.classes.textField}
+                        id={`${this.props.name}_unit`}
+                        onChange={this.handleChange}
+                        onKeyPress={this.handleKeyPress}
+                        value={this.props.unit}
+                        size='small'
+                        // style={{float: "left", clear: 'both'}}
+                    />
+                </Grid>
+                <Grid item xs={2} sm={2}>
+                    <IconButton
+                        style={{width: '100%'}}
+                        aria-label="delete"
+                        size="small"
+                        onClick={this.props.remove}>
+                        <DeleteIcon />
+                    </IconButton>
+                </Grid>
+            </ListItem>
         );
     }
 }
