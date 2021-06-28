@@ -114,7 +114,7 @@ class Recommendations extends Component {
                         variant='h5'
                         color='textPrimary'
                         classes={classes}>
-                        How can I do better?
+                        Sustainable option
                     </Typography>
                     {/*<Fab aria-label="like" size='small'>*/}
                     {/*    <FavoriteIcon />*/}

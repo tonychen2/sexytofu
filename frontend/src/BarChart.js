@@ -1,8 +1,10 @@
 import React, { Component } from 'react'
-import Chart from 'chart.js';
+import {Chart, CategoryScale, LinearScale, BarController, BarElement} from 'chart.js';
+import { fontString } from 'chart.js/helpers'
 import Typography from "@material-ui/core/Typography";
 // import classes from "./LineGraph.module.css";
 let myBarChart;
+Chart.register(CategoryScale, LinearScale, BarController, BarElement)
 
 export default class BarChart extends Component {
     chartRef = React.createRef();
@@ -77,7 +79,7 @@ export default class BarChart extends Component {
     render() {
         return (
             <div className="chartContainer" style={{width: '80%', margin: 'auto'}}>
-                <Typography variant='h5' align='left'>Rank my food's carbon footprint</Typography>
+                <Typography variant='h5' align='left'>Rank my food's carbon footprint (unit: pound)</Typography>
                 <canvas
                     id="myChart"
                     ref={this.chartRef}
@@ -89,7 +91,7 @@ export default class BarChart extends Component {
 }
 
 function drawValueLabel(chartRef, props) {
-    chartRef.font = Chart.helpers.fontString(
+    chartRef.font = fontString(
         Chart.defaults.font.size,
         Chart.defaults.font.style,
         Chart.defaults.font.family);
