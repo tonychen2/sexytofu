@@ -1,10 +1,8 @@
 {
   "name": "sexy-tofu",
   "version": "1.0.0",
-  "main": "index.js",
   "scripts": {
-    "dev": "parcel src/index.html",
-    "addReco": "parcel src/addReco/index.html",
+    "dev": "parcel src/index.html src/addReco/addReco.html",
     "build": "parcel build src/index.html",
     "start": "npm run dev && live-server dist"
   },

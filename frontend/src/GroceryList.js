@@ -62,37 +62,69 @@ const styles = {
 }
 
 class GroceryList extends Component {
+    /**
+     * React class component for the form that users interact with to input their grocery lists
+     *
+     * @param   {Object}    props.classes           Style of the component
+     * @param   {function}  props.search            Callback function for making API calls to get results for the grocery list, of signature (array<Object>) => ()
+     * @param   {boolean}   props.hasSearched       Flag indicating whether a search has happened
+     * @param   {Object}    props.requestForUpdate  Request from the Recommendation component to update the grocery list,
+     *                                              of signature {"food": String, "field": String, "newValue": T}
+     */
     constructor(props) {
         super(props);
         this.state = {groceryList: [], currentQuery: ""};
     }
 
     componentDidUpdate(prevProps) {
+        /**
+         * React lifecycle method.
+         * Updates grocery list when a recommendation is applied by user.
+         *
+         * @param   {Object}  prevProps  Props from last time componentDidMount or componentDidUpdate was called
+         */
         if (this.props.requestForUpdate !== prevProps.requestForUpdate) {
             let request = this.props.requestForUpdate;
-            let index = this.valueToIndex(request['field'], request['oldValue']);
+
+            // Identify the index of the food to be updated
+            let index = this.foodToIndex(request['food']);
+
+            // If the requested food is not found, stop
             // TODO: error handling
             if (index === -1) return;
+
+            // Otherwise, update the grocery list and re-search to refresh the results
             this.updateFood(index, request['field'], request['newValue']);
             this.props.search(this.state.groceryList);
         }
     }
 
-    valueToIndex = (field, value) => {
-        let list = this.state.groceryList.map((item) => item[field]);
-        return list.indexOf(value);
+    foodToIndex = (food) => {
+        /**
+         * Look up the index of a food item
+         *
+         * @param    {String}  food  Name of the food
+         *
+         * @return   {int}     Index of the food in this.state.groceryList
+         */
+        let list = this.state.groceryList.map((item) => item['ingredient']);
+        return list.indexOf(food);
     }
 
     updateQuery = event => {
         /**
          * Update state of GroceryList to store current user input as foodQuery
+         *
+         * @param   {KeyboardEvent}  event  User keyboard entry
          */
         this.setState({currentQuery: event.target.value});
     }
 
     handleKeyPress = event => {
         /**
-         * React to key presses
+         * Add a food to the Submit the search when an item is highlighted and user hits "enter"
+         *
+         * @param   {KeyboardEvent}  event  User key press
          */
         if (event.key === 'Enter') {
             if (this.state.currentQuery === "") {
@@ -105,20 +137,26 @@ class GroceryList extends Component {
 
     addFood = async () => {
         /**
-         * Add user input to grocery list
+         * Parse user input, find default quantity and unit if needed, and add to grocery list
          */
+        // Stop here if there's no query
         if (this.state.currentQuery === "") {
             return
         }
 
+        // Parse user query
         let parsed = await fetch(`${NATIVE_API_ADDRESS}/parse/?query=${this.state.currentQuery}`)
             .then(response => response.json());
+
+        // Find default quantity of food item in gram
         let default_grams = await fetch(`${GHGI_API_ADDRESS}/rateCarbon`,
             {method: 'POST',
+                // headers: {'Content-Type': 'test/plain', 'Origin':'localhost'},
                 body: JSON.stringify({'recipe': [this.state.currentQuery]})})
             .then(response => response.json())
             .then(json => json['items'][0]['g']);
 
+        // Map default grams to different units and quantities based on pre-defined rules
         // TODO: refine this logic to include super
         let default_qty;
         let default_unit;
@@ -135,6 +173,7 @@ class GroceryList extends Component {
             default_unit = "gram";
         }
 
+        // Add food name, quantity, and unit to the grocery list
         let groceryList = this.state.groceryList;
         let name = parsed['names'][0];
         let quantity = parsed['qtys'][0]['qty'][0] || default_qty;
@@ -150,6 +189,10 @@ class GroceryList extends Component {
     updateFood = (index, field, newValue) => {
         /**
          * Update an item in shopping list
+         *
+         * @param   {int}     index  Index of the food item to be updated
+         * @param   {String}  field  Field to be updated for the food item
+         * @param   {T}       newValue  New value of the field
          */
         let groceryList = this.state.groceryList;
         groceryList[index][field] = newValue;
@@ -160,6 +203,8 @@ class GroceryList extends Component {
     removeFood = (index) => {
         /**
          * Remove an item from shopping list
+         *
+         * @param   {int}  index  Index of the food item to be removed from GroceryList
          */
         console.log(`Removing item #${index}`);
         let groceryList = this.state.groceryList;
@@ -170,6 +215,12 @@ class GroceryList extends Component {
     }
 
     render() {
+        /**
+         * React lifecycle method
+         *
+         * @return   {Box}  HTML element for the GroceryList component
+         */
+        // Create a list of grocery items
         let list = this.state.groceryList.map((food, index) =>
             <GroceryListItem
                 key={index}
@@ -182,8 +233,10 @@ class GroceryList extends Component {
                 classes={this.props.classes}
             />);
 
+        // Determine look of the list (before search vs after search)
         let showBorder = null;
         if (this.props.hasSearched) showBorder = '1px solid #ffdbec';
+
         // TODO: Move in-line styling out
         return (
             <Box id="groceryList" border={showBorder} className={this.props.classes.box}>
@@ -226,16 +279,25 @@ class GroceryList extends Component {
     }
 }
 
-function ColumnNames() {
-    return (<div id="columnNames">
-        <span className="ingredientBox">Ingredient</span>
-        <span className="quantityBox">Quantity</span>
-        <span className="unitBox">Unit</span>
-    </div>)
-}
 
 class GroceryListItem extends Component{
+    /**
+     * Individual row in the GroceryList, containing the ingredient, quantity, and unit
+     *
+     * @param   {Object}    props.classes     Style of the component
+     * @param   {String}    props.ingredient  Name of the food item
+     * @param   {float}     props.quantity    Quantity of the food item
+     * @param   {String}    props.unit        Unit of the food item
+     * @param   {function}  props.update      Callback function to update the food item, of signature (String, T) => ()
+     * @param   {function}  props.remove      Callback function to remove the food item from the grocery list, of signature () => ()
+     * @param   {function}  props.search      Callback function to make API calls for getting climate impact of the grocery list, of signature () => ()
+     */
     handleChange = event => {
+        /**
+         * Update state as the user edits grocery list item
+         *
+         * @param   {ChangeEvent<TextField>}  event  User's keyboard entry
+         */
         if (event.target.id.includes("_ingredient")) {
             this.setState({ingredient: event.target.value});
             this.props.update("ingredient", event.target.value);
@@ -251,7 +313,9 @@ class GroceryListItem extends Component{
 
     handleKeyPress = event => {
         /**
-         * React to key presses
+         * Submit the search when an item is highlighted and user hits "enter"
+         *
+         * @param   {KeyboardEvent}  event  User's key press
          */
         if (event.key === 'Enter') {
             this.props.search();
@@ -259,6 +323,11 @@ class GroceryListItem extends Component{
     }
 
     render() {
+        /**
+         * React lifecycle method
+         *
+         * @return   {ListItem}  HTML element for the GroceryListItem component
+         */
         return (
             <ListItem className={this.props.classes.row}>
                 <Grid item xs={12} sm={5} className={this.props.classes.inputGrid}>
@@ -277,7 +346,7 @@ class GroceryListItem extends Component{
                     <TextField
                         variant="outlined"
                         className={this.props.classes.textField}
-                        id={`${this.props.name}_quantity`}
+                        id={`${this.props.ingredient}_quantity`}
                         type={'number'}
                         onChange={this.handleChange}
                         onKeyPress={this.handleKeyPress}
@@ -290,7 +359,7 @@ class GroceryListItem extends Component{
                     <TextField
                         variant="outlined"
                         className={this.props.classes.textField}
-                        id={`${this.props.name}_unit`}
+                        id={`${this.props.ingredient}_unit`}
                         onChange={this.handleChange}
                         onKeyPress={this.handleKeyPress}
                         value={this.props.unit}

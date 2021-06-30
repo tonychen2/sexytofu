@@ -7,7 +7,7 @@ import {withStyles} from "@material-ui/core";
 
 import {pluralize} from "./utils.js"
 
-import driveEqGraphics from "./assets/summary_graphics/sf-la.png";
+import driveEqGraphics from "./assets/summary_graphics/car_driving.png";
 import landUseGraphics from "./assets/summary_graphics/parking_spots.png";
 import waterUseGraphics from "./assets/summary_graphics/water.png";
 
@@ -39,6 +39,18 @@ const styles = {
 };
 
 function Summary(props) {
+    /**
+     * React function component for a summary of climate impact, including carbon emission, land use, and water consumption.
+     *
+     * @param   {Object}  props.classes        Style of the component
+     * @param   {float}   props.totalImpact    Total carbon emission of the grocery list, measured by pounds
+     * @param   {float}   props.driveEq        Total carbon emission of the grocery list, measured by equivalent miles driven in a Toyota Camry
+     * @param   {float}   totalLandUse         Total land use of the grocery list, measured by sq.ft.
+     * @param   {float}   props.parkingEq      Total land use of the grocery list, measured by # of average parking spots
+     * @param   {float}   props.totalWaterUse  Total water consumption of the grocery list, measured by cups
+     *
+     * @return  {HTMLDivElement}               HTML element for the component
+     */
     const classes = props.classes;
 
     return (
@@ -51,7 +63,7 @@ function Summary(props) {
                     <span className={classes.highlight}>{props.driveEq}</span>&nbsp;
                     {pluralize('mile', 'miles', props.driveEq)} driven in a Toyota Camry
                 </Typography>
-                <img src={driveEqGraphics} alt='SF-LA' className={classes.image}/>
+                <img src={driveEqGraphics} alt='car_driving' className={classes.image}/>
             </div>
             {props.totalLandUse > 0 &&
             <div id="landUse" className={classes.section}>

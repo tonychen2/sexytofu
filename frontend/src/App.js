@@ -18,6 +18,10 @@ const NATIVE_API_ADDRESS = 'http://127.0.0.1:8000';
 
 
 class App extends Component {
+    /**
+     * Top-level React class component for the main body of the app
+     *
+     */
 
     state = {
         hasSearched: false,
@@ -26,18 +30,25 @@ class App extends Component {
         results: {}
     };
 
-    updateGroceryList = (field, oldValue, newValue) => {
-        this.setState({requestForUpdate: {'field': field, 'oldValue': oldValue, 'newValue': newValue}});
+    updateGroceryList = (food, field, newValue) => {
+        /**
+         * Callback function for use by the Recommendation component to apply recommendations to grocery list
+         *
+         * @param   {String}  food      Name of the food the update applies to
+         * @param   {String}  field     Name of the field to be updated
+         * @param   {T}       newValue  New value of the field for the food
+         */
+        this.setState({requestForUpdate: {'food': food, 'field': field, 'newValue': newValue}});
     }
 
     search = async (groceryList) => {
         /**
          * Send grocery list to the GHGI API to retrieve median carbon emission
          * Future extension: error handling
+         *
+         * @param   {array<Object>}  groceryList  Food items with the signature {"ingredient": String, "quantity": float, "unit": String}
          */
-
-        // const recipe = this.parseQuery();
-        groceryList = [...groceryList]
+        // Convert grocery list into a format consumable by the GHGI API
         for (let i = 0; i < groceryList.length; i++) {
             let food = groceryList[i];
             if (food["unit"] === "ea") {
@@ -47,13 +58,14 @@ class App extends Component {
             }
         }
 
+        // Make the API call and parse the response
         let results = await fetch(`${GHGI_API_ADDRESS}/rateCarbon`,
             {method: 'POST',
-                //headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({'recipe': groceryList})})
             .then(response => response.json())
             .then(json => this.parseResponse(json));
 
+        // Persist the response into state of the App
         this.setState({
             hasSearched: true,
             selectedFood: {
@@ -66,6 +78,13 @@ class App extends Component {
 
     // TODO: Distinguish between L and KG
     getLandUse = async (item) => {
+        /**
+         * Get land use data of the food item
+         *
+         * @param   {Object}  item  Food item of signature {"name": String, "impact": float, "grams": float}
+         *
+         * @return  {float}         Land use, measured by square meter (null if not available)
+         */
         let landUse = await fetch(`${NATIVE_API_ADDRESS}/land_use/${item.name}/`)
             .then(response => response.json());
         return (landUse === null ? null : landUse["median"] * (item.grams / 1000));
@@ -73,6 +92,13 @@ class App extends Component {
 
     // TODO: Distinguish between L and KG
     getWaterUse = async (item) => {
+        /**
+         * Get water consumption data of the food item
+         *
+         * @param   {Object}  item  Food item of signature {"name": String, "impact": float, "grams": float}
+         *
+         * @return  {float}         Water use, measured by liter (null if not available)
+         */
         let waterUse = await fetch(`${NATIVE_API_ADDRESS}/water_use/${item.name}/`)
             .then(response => response.json());
         return (waterUse === null ? null : waterUse["median"] * (item.grams / 1000));
@@ -82,8 +108,10 @@ class App extends Component {
     parseResponse = async (json) => {
         /**
          * Parse response from GHGI API to access data points for display
-         * @param   {String} json      Response body in json format
-         * @return  {[Number, Array]}  Requested data points assembled in an array
+         *
+         * @param    {String} json      Response body in json format
+         *
+         * @return   {Object}  Requested data points
          */
 
         let ingredients = [];
@@ -124,17 +152,12 @@ class App extends Component {
         };
     }
 
-    // parseQuery() {
-    //     /**
-    //      * Parse foodQuery into an array of items
-    //      * Future extension: check for spelling and units
-    //      * @param   {String} text  User input
-    //      * @return  {Array}        List of food items with units, e.g. ["a cup of diced onion", "100g of beef"]
-    //      */
-    //     return this.state.foodQuery.split(",");
-    // }
-
-    showRecommendation = (index) => {
+    selectFood = (index) => {
+        /**
+         * Callback function passes into the BarChart component for selecting a food item to show recommendations
+         *
+         * @param   {int}  index  Index of the food item in sorted contributors (not grocery list) to be selected
+         */
         console.log(this.state);
         this.setState({selectedFood: {
             alias: this.state.results.contributors[index],
@@ -143,6 +166,11 @@ class App extends Component {
     }
 
     render(){
+        /**
+         * React lifecycle method
+         *
+         * @return   {HTMLDivElement}  HTML element for the App component
+         */
         const infoSize = 12;
         const summarySize = 6;
         const groceryListSize = 12;
@@ -181,8 +209,7 @@ class App extends Component {
                         <BarChart
                             data={this.state.results.impacts}
                             labels={this.state.results.contributors}
-                            horizontal={true}
-                            showRecommendation={this.showRecommendation}
+                            selectFood={this.selectFood}
                         />
                     </Grid>
                     <Grid item xs={12} sm={recoSize}>

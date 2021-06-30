@@ -23,7 +23,12 @@ let RECO_TYPES = [];
 let FOOD_ALIASES = [];
 
 
-class App extends Component {
+class AddRecoApp extends Component {
+    /**
+     * Top-level React class component for the main body of the AddReco Portal
+     *
+     * @param   {Object}  classes  Style of the component
+     */
     state = {
         newReco: {
             food_name: null,
@@ -40,12 +45,21 @@ class App extends Component {
     };
 
     componentDidMount() {
+        /**
+         * React lifecycle method.
+         * Makes API calls to get reco types, food aliases, and existing recommendations from the database
+         */
         fetch(`${API_ADDRESS}/reco-types/`).then(response => response.json()).then(json => this.setState({_RECO_TYPES: json}));
         fetch(`${API_ADDRESS}/food-aliases/`).then(response => response.json()).then(json => this.setState({_FOOD_ALIASES: json}));
         fetch(`${API_ADDRESS}/recommendations/`).then(response => response.json()).then(json => this.setState({allRecos: json}));
     }
 
     handleChange = (event, newValue) => {
+        /**
+         * Update component state based on user input
+         *
+         * @param   {ChangeEvent}  event  User's change to form entry
+         */
         let fieldId = event.target.id.split("-")[0];
         let newReco = this.state.newReco;
         if (["food_name", "replacement_food_name"].includes(fieldId)) {
@@ -59,6 +73,9 @@ class App extends Component {
     }
 
     handleCreate = () => {
+        /**
+         * Create a new recommendation in the database based on form entries
+         */
         fetch(`${API_ADDRESS}/recommendations/`,
             {method: 'POST',
                 body: JSON.stringify(this.state.newReco)})
@@ -67,6 +84,11 @@ class App extends Component {
     }
 
     handleDelete = (reco_id) => {
+        /**
+         * Delete a new recommendation from the database
+         *
+         * @param   {int}  reco_id  Database id of the recommendation to be deleted
+         */
         fetch(`${API_ADDRESS}/recommendations/${reco_id}/`,
             {method: 'DELETE'})
             .then(response => response.json())
@@ -74,6 +96,11 @@ class App extends Component {
     }
 
     render () {
+        /**
+         * React lifecycle method
+         *
+         * @return   {Grid}  HTML element for the AddRecoApp component
+         */
         return (
             <Grid container id="container">
                 <Grid item xs={4} id="input">
@@ -146,6 +173,14 @@ class App extends Component {
 }
 
 function RecoRow(props) {
+    /**
+     * React function component for each row in the recommendation table
+     *
+     * @param    {Object}    props.reco    JSON object of the recommendation as returned from database
+     * @param    {function}  props.delete  Callback function for deleting a recommendation from the database, of signature (int) => ()
+     *
+     * @return   {ListItem}                HTML element for the component
+     */
     return (
         <ListItem>
             <span>{JSON.stringify(props.reco)}</span>
@@ -156,4 +191,4 @@ function RecoRow(props) {
     );
 }
 
-export default withStyles(styles)(App);
+export default withStyles(styles)(AddRecoApp);
