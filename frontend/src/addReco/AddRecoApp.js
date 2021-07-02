@@ -152,7 +152,7 @@ class AddRecoApp extends Component {
                             </p>
                             <p>
                                 3. To add a recipe link, use the following html format:
-                                &lt;a href="[link url]"&gt;link text&lt;a/&gt;
+                                &lt;a href="[link url]"&gt;link text&lt;/a&gt;
                             </p>
                     </form>
                 </Grid>
