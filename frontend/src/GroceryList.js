@@ -84,6 +84,7 @@ class GroceryList extends Component {
          * @param   {Object}  prevProps  Props from last time componentDidMount or componentDidUpdate was called
          */
         if (this.props.requestForUpdate !== prevProps.requestForUpdate) {
+            console.log(this.state.groceryList);
             let request = this.props.requestForUpdate;
 
             // Identify the index of the food to be updated

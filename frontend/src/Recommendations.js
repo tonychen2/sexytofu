@@ -6,6 +6,8 @@ import {Card, CardContent, CardActions} from '@material-ui/core';
 import {Button, Typography, Fab} from "@material-ui/core";
 import {withStyles} from "@material-ui/core";
 
+import {joinText} from "./utils.js"
+
 import FavoriteIcon from '@material-ui/icons/Favorite';
 
 
@@ -67,10 +69,10 @@ class Recommendations extends Component {
                 console.log(this.props.food.grams);
                 if (random_group === 1) {
                     let n_trees = Math.round(annual_impact / ANNUAL_IMPACT_PER_TREE);
-                    reco_text += ` you can offset as much CO2 as ${n_trees} trees in a year.`;
+                    reco_text = joinText(reco_text, `you can offset as much CO2 as ${n_trees} trees in a year!`);
                 } else {
                     let n_miles = Math.round(annual_impact / IMPACT_PER_MILE);
-                    reco_text += ` you'll be saving the equivalent of ${n_miles} miles driven in a car`;
+                    reco_text = joinText(reco_text, `you'll be saving the equivalent of ${n_miles} miles driven in a car!`);
                 }
             }
         }
@@ -128,7 +130,6 @@ class Recommendations extends Component {
          * Handles clicks on the "apply to grocery list" button
          */
         let reco = this.state.recos[this.state.indexOnDisplay];
-        console.log(reco);
         this.props.updateGroceryList(this.props.food.alias, 'ingredient', reco['replacement']['name']);
     }
 

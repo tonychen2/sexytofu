@@ -48,20 +48,23 @@ class App extends Component {
          *
          * @param   {array<Object>}  groceryList  Food items with the signature {"ingredient": String, "quantity": float, "unit": String}
          */
+        // Copy out groceryList so we don't change the original array
+        let searchList = [...groceryList];
+
         // Convert grocery list into a format consumable by the GHGI API
-        for (let i = 0; i < groceryList.length; i++) {
-            let food = groceryList[i];
+        for (let i = 0; i < searchList.length; i++) {
+            let food = searchList[i];
             if (food["unit"] === "ea") {
-                groceryList[i] = `${food["quantity"]} ${food["ingredient"]}`;
+                searchList[i] = `${food["quantity"]} ${food["ingredient"]}`;
             } else {
-                groceryList[i] = `${food["quantity"]} ${food["unit"]} of ${food["ingredient"]}`;
+                searchList[i] = `${food["quantity"]} ${food["unit"]} of ${food["ingredient"]}`;
             }
         }
 
         // Make the API call and parse the response
         let results = await fetch(`${GHGI_API_ADDRESS}/rateCarbon`,
             {method: 'POST',
-                body: JSON.stringify({'recipe': groceryList})})
+                body: JSON.stringify({'recipe': searchList})})
             .then(response => response.json())
             .then(json => this.parseResponse(json));
 
