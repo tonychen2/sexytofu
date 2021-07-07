@@ -62,7 +62,7 @@ class App extends Component {
         }
 
         // Make the API call and parse the response
-        let results = await fetch(`${GHGI_API_ADDRESS}/rateCarbon`,
+        let results = await fetch(`${GHGI_API_ADDRESS}/rate`,
             {method: 'POST',
                 body: JSON.stringify({'recipe': searchList})})
             .then(response => response.json())

@@ -150,7 +150,7 @@ class GroceryList extends Component {
             .then(response => response.json());
 
         // Find default quantity of food item in gram
-        let default_grams = await fetch(`${GHGI_API_ADDRESS}/rateCarbon`,
+        let default_grams = await fetch(`${GHGI_API_ADDRESS}/rate`,
             {method: 'POST',
                 // headers: {'Content-Type': 'test/plain', 'Origin':'localhost'},
                 body: JSON.stringify({'recipe': [this.state.currentQuery]})})
