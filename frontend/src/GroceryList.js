@@ -6,6 +6,8 @@ import {TextField, Button, IconButton} from '@material-ui/core';
 import DeleteIcon from '@material-ui/icons/Delete';
 import {List, ListItem} from '@material-ui/core';
 import {withStyles} from '@material-ui/core';
+import { withTheme } from "@material-ui/styles";
+import { color } from "chart.js/helpers";
 
 const GHGI_API_ADDRESS = 'https://api.ghgi.org';
 const NATIVE_API_ADDRESS = 'http://127.0.0.1:8000';
@@ -17,11 +19,19 @@ const styles = {
     },
     box: {
         padding: '10px',
-        margin: '50px auto',
-        maxWidth: '70ch'
+        paddingBottom: '50px',
+        margin: '50px auto 0px',
+        maxWidth: '70ch',
+    },
+    boxHasSearchedBG: {
+        backgroundColor: '#ffffff',
+        width: '100%'
     },
     title: {
         marginBottom: '20px'
+    },
+    groceryTitle: {
+        color: '#000000'
     },
     row: {
         // paddingTop: '2px',
@@ -46,7 +56,26 @@ const styles = {
             '&.Mui-focused fieldset': {
                 borderColor: 'transparent'
             },
-        }
+        },
+    },
+    textFieldHasSearched: {
+        /* TODO: How to extend textField class? And some better method than this? */
+        width: '100%',
+        borderRadius: '4px',
+        margin: '2px',
+        backgroundColor: '#ece8ed',
+        borderColor: '#F4E6F2',
+        '& .MuiOutlinedInput-root': {
+            '& fieldset': { /* default border style */
+                borderColor: '#F0D6F8',
+            },
+            '&:hover fieldset': {
+                borderColor: 'transparent',
+            },
+            '&.Mui-focused fieldset': {
+                borderColor: '#E9D5E5',
+            },
+        },
     },
     button: {
         border: '0',
@@ -57,6 +86,18 @@ const styles = {
         '&:hover': {
             backgroundColor: '#fc0a7e',
             color: '#ffdbec'
+        },
+    },
+    buttonHasSearched : {
+    /* TODO: How to extend button class? */
+        border: '0',
+        right: '0',
+        margin: '5px',
+        backgroundColor: '#F5F5F5',
+        color: '#B45BD4',
+        '&:hover': {
+            backgroundColor: '#E9D5E5',
+            color: '#B45BD4',
         },
     }
 }
@@ -232,25 +273,26 @@ class GroceryList extends Component {
                 remove={() => this.removeFood(index)}
                 search={() => this.props.search(this.state.groceryList)}
                 classes={this.props.classes}
+                hasSearched = {this.props.hasSearched}
             />);
 
-        // Determine look of the list (before search vs after search)
-        let showBorder = null;
-        if (this.props.hasSearched) showBorder = '1px solid #ffdbec';
-
-        // TODO: Move in-line styling out
+        // TODO: better method than just switching class names?
+        // Change style after search
+        let textFieldClass = this.props.hasSearched ? this.props.classes.textFieldHasSearched : this.props.classes.textField;
+        let buttonClass = this.props.hasSearched ? this.props.classes.buttonHasSearched : this.props.classes.button;
         return (
-            <Box id="groceryList" border={showBorder} className={this.props.classes.box}>
+            <Box className={this.props.hasSearched ? this.props.classes.boxHasSearchedBG : null}>
+            <Box id="groceryList" className={this.props.classes.box}>
                 <Grid container className={this.props.classes.root}>
                     {this.props.hasSearched &&
                     <Grid item xs={12} className={this.props.classes.title}>
-                        <h2>Your List</h2>
+                        <h2 className={this.props.classes.groceryTitle}>Your List</h2>
                     </Grid>}
                     <Grid item xs={12} sm={10} className={this.props.classes.inputGrid}>
                         <TextField
                             id="searchBox"
                             variant="outlined"
-                            className={this.props.classes.textField}
+                            className={textFieldClass}
                             onChange={this.updateQuery}
                             onKeyPress={this.handleKeyPress}
                             value={this.state.currentQuery}
@@ -259,7 +301,7 @@ class GroceryList extends Component {
                         />
                     </Grid>
                     <Grid item xs={12} sm={2}>
-                        <Button className={this.props.classes.button}
+                        <Button className={buttonClass}
                                 variant="contained"
                                 onClick={this.addFood}>Add</Button>
                     </Grid>
@@ -272,9 +314,10 @@ class GroceryList extends Component {
                     </form>
                 </Grid>
                 {this.state.groceryList.length > 0 &&
-                <Button className={this.props.classes.button}
+                <Button className={buttonClass}
                         variant="contained"
                         onClick={() => this.props.search(this.state.groceryList)}>Search</Button>}
+            </Box>
             </Box>
         );
     }
@@ -292,6 +335,7 @@ class GroceryListItem extends Component{
      * @param   {function}  props.update      Callback function to update the food item, of signature (String, T) => ()
      * @param   {function}  props.remove      Callback function to remove the food item from the grocery list, of signature () => ()
      * @param   {function}  props.search      Callback function to make API calls for getting climate impact of the grocery list, of signature () => ()
+     * @param   {boolean}   props.hasSearched       Flag indicating whether a search has happened
      */
     handleChange = event => {
         /**
@@ -329,12 +373,13 @@ class GroceryListItem extends Component{
          *
          * @return   {ListItem}  HTML element for the GroceryListItem component
          */
+        let textFieldClass = this.props.hasSearched ? this.props.classes.textFieldHasSearched : this.props.classes.textField;
         return (
             <ListItem className={this.props.classes.row}>
                 <Grid item xs={12} sm={5} className={this.props.classes.inputGrid}>
                     <TextField
                         variant="outlined"
-                        className={this.props.classes.textField}
+                        className={textFieldClass}
                         id={`${this.props.ingredient}_ingredient`}
                         onChange={this.handleChange}
                         onKeyPress={this.handleKeyPress}
@@ -346,7 +391,7 @@ class GroceryListItem extends Component{
                 <Grid item xs={4} sm={2} className={this.props.classes.inputGrid}>
                     <TextField
                         variant="outlined"
-                        className={this.props.classes.textField}
+                        className={textFieldClass}
                         id={`${this.props.ingredient}_quantity`}
                         type={'number'}
                         onChange={this.handleChange}
@@ -359,7 +404,7 @@ class GroceryListItem extends Component{
                 <Grid item xs={6} sm={3} className={this.props.classes.inputGrid}>
                     <TextField
                         variant="outlined"
-                        className={this.props.classes.textField}
+                        className={textFieldClass}
                         id={`${this.props.ingredient}_unit`}
                         onChange={this.handleChange}
                         onKeyPress={this.handleKeyPress}

@@ -45,7 +45,18 @@ export default class BarChart extends Component {
         if (points[0]) {
             this.props.selectFood(points[0].index);
         }
+
+        this.highlightSelectedBar(points[0].index)
     }
+
+    highlightSelectedBar = (bar_index) => {
+        /**
+         * Keeps highlighted the selected bar at bar_index white and the rest of the bars another color.
+         */
+        myBarChart.data.datasets[0].backgroundColor = this.props.labels.map((food, index) => {return index == bar_index ?  '#ffffff' :  '#ffffff99'});
+        myBarChart.update();
+      }
+      
 
     buildChart = () => {
         /**
@@ -71,7 +82,8 @@ export default class BarChart extends Component {
                 datasets: [
                     {
                         data: this.props.data,
-                        backgroundColor: '#ffdbec',
+                        backgroundColor:'#ffffffaa',
+                        hoverBackgroundColor: '#ffffffee',
                     }
                 ]
             },
@@ -102,6 +114,9 @@ export default class BarChart extends Component {
                 onClick: this.handleClick
             }
         });
+        
+        // By default, selects the first bar.
+        this.highlightSelectedBar(0);
     }
 
     render() {
@@ -112,7 +127,7 @@ export default class BarChart extends Component {
          */
         return (
             <div className="chartContainer" style={{width: '80%', margin: 'auto'}}>
-                <Typography variant='h5' align='left'>Rank my food's carbon footprint (unit: pound)</Typography>
+                <Typography variant='h5' align='left'>Rank my food's carbon footprint: {this.props.data.reduce((a, b) => a + b, 0).toFixed(1)} pounds</Typography>
                 <canvas
                     id="myChart"
                     ref={this.chartRef}
