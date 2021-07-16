@@ -17,12 +17,32 @@ const IMPACT_PER_MILE = 0.35;
 
 const styles = {
     root: {
-        backgroundColor: '#ffdbec',
+        backgroundColor: '#ffffff',
         color: 'grey',
-        width: '80%'
+        width: '80%',
+        padding: '20px 25px',
+        '& p': {
+            margin: '0px',
+        },
+        '& h5': {
+            paddingTop:'0px',
+            paddingLeft: '0px',
+            paddingRight: '0px',
+        },
+        '& .MuiCardContent-root': {
+            padding: '100px 0px',
+            padding: 0,
+            '&:last-child': {
+            paddingBottom: 0,
+            },
+        },
+        '& .MuiCardActions-root': {
+            paddingTop: '20px',
+            paddingBottom: '0px',
+        },
     },
     colorTextPrimary: {
-        color: '#fc0a7e'
+        color: '#fc0a7e',
     },
 };
 
@@ -155,27 +175,42 @@ class Recommendations extends Component {
         return (
             <Card id="recommendations" className={classes.root}>
                 <CardContent>
-                    <Typography
-                        align='left'
-                        variant='h5'
-                        color='textPrimary'
-                        classes={classes}>
-                        Sustainable option
-                    </Typography>
+                    <div align='center'>
+                        <Typography
+                            align='center'
+                            variant='h5'
+                            color='textPrimary'
+                            classes={classes}>
+                            {this.props.food.alias[0].toUpperCase() + this.props.food.alias.substring(1)} - Sustainable options
+                        </Typography>
+                    </div>
                     {/*<Fab aria-label="like" size='small'>*/}
                     {/*    <FavoriteIcon />*/}
                     {/*</Fab>*/}
                     <p align='left' dangerouslySetInnerHTML={this.showReco()} />
                 </CardContent>
-                <CardActions>
+                {(!this.isLast() || this.isApplicable()) && <CardActions>
                     <span style={{justifyContent: 'space-between'}}>
                         {this.isApplicable() && <button className={'Button'} onClick={this.applyReco}>Apply to grocery list</button>}
                         {this.isLast() || <button className={'Button'} onClick={this.nextReco}>Show me more</button>}
                     </span>
-                </CardActions>
+                </CardActions>}
             </Card>
         )
     }
 }
 
 export default withStyles(styles)(Recommendations);
+
+// textContent: {
+//     padding: '0px 0px',
+// },
+// textBody: {
+//     margin: '0px',
+// },
+    // cardcontent: {
+    //     padding: 0,
+    //     '&:last-child': {
+    //       paddingBottom: 0,
+    //     },
+    // },

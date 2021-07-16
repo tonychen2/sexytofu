@@ -10,6 +10,9 @@ import BarChart from "./BarChart";
 import Comparison from "./Comparison";
 import Summary from "./Summary";
 
+import {Accordion, AccordionSummary, AccordionDetails} from "@material-ui/core";
+import {Box} from '@material-ui/core';
+import {Hidden} from '@material-ui/core';
 import Grid from '@material-ui/core/Grid';
 import Typography from "@material-ui/core/Typography";
 
@@ -168,6 +171,10 @@ class App extends Component {
         }});
     }
 
+    onLogoClicked = () => {
+        this.setState({hasSearched:false});
+    }
+
     render(){
         /**
          * React lifecycle method
@@ -186,7 +193,7 @@ class App extends Component {
             <div id="container">
                 <div id="header">
                     <a href="#">
-                        <img src={logo} alt="Sexy Tofu" id="logo"/>
+                        <img src={logo} alt="Sexy Tofu" id="logo" onClick={this.onLogoClicked}/>
                     </a>
                 </div>
                 <img src={tofuHero} alt="Tofu Hero" id="tofu-hero"/>
@@ -205,6 +212,7 @@ class App extends Component {
                     <Grid item xs={12} sm={12}>
                         <Comparison totalImpact={this.state.results.totalImpact} />
                     </Grid>
+                    {/* TODO: Maybe change this all to accordian to match? Or disable it. */}
                     <Grid item xs={12} sm={12}>
                         <h2 style={{marginBottom: '40px'}}>Tell me how I can do better</h2>
                     </Grid>
@@ -216,10 +224,17 @@ class App extends Component {
                         />
                     </Grid>
                     <Grid item xs={12} sm={recoSize}>
-                        <Recommendations
-                            food={this.state.selectedFood}
-                            updateGroceryList={this.updateGroceryList}
-                        />
+                        {/* TODO: better way of aligning recommendation to chart than this empty box that disappears on small screen? */}
+                        <Hidden only='xs'>
+                            <Box width="100%" height="60px" />
+                        </Hidden>
+                        {/* TODO: better way of adding padding than box to auto align with chart? */}
+                        <Box paddingX="20px" align='center'> 
+                            <Recommendations
+                                food={this.state.selectedFood}
+                                updateGroceryList={this.updateGroceryList}
+                            />
+                        </Box>
                     </Grid>
                 </Grid>
                 }
