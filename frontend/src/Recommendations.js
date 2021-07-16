@@ -23,6 +23,9 @@ const styles = {
         padding: '20px 25px',
         '& p': {
             margin: '0px',
+            // TODO: change height dynamically to not exceed "Show More" for scroll bar.
+            height: '120px',
+            overflowY: 'auto',
         },
         '& h5': {
             paddingTop:'0px',
@@ -30,14 +33,14 @@ const styles = {
             paddingRight: '0px',
         },
         '& .MuiCardContent-root': {
-            padding: '100px 0px',
+            height: '200px',
             padding: 0,
             '&:last-child': {
             paddingBottom: 0,
             },
         },
         '& .MuiCardActions-root': {
-            paddingTop: '20px',
+            paddingTop: '0px',
             paddingBottom: '0px',
         },
     },
@@ -100,11 +103,11 @@ class Recommendations extends Component {
         return {__html: reco_text};
     }
 
-    isLast = () => {
+    isMore = () => {
         /**
-         * Determines if the recommendation on display is already the last one; if so, we won't render the "show me more" button
+         * Determines if the recommendation on display is already the only one; if so, we won't render the "show me more" button
          */
-        return (this.state.indexOnDisplay + 1 >= this.state.recos.length);
+        return (this.state.recos.length > 0);
     }
 
     isApplicable = () => {
@@ -156,10 +159,9 @@ class Recommendations extends Component {
     nextReco = () => {
         /**
          * Handles clicks on the "show me more" button
-         * This function assumes what's on display is not the last recommendation
-         * Otherwise the button should not have shown, hence this function won't be triggered
+         * This function assumes what's on display is not the only recommendation
          */
-        let newIndex = this.state.indexOnDisplay + 1;
+        let newIndex = (this.state.indexOnDisplay + 1) % this.state.recos.length;
         this.setState({indexOnDisplay: newIndex});
     }
 
@@ -189,28 +191,23 @@ class Recommendations extends Component {
                     {/*</Fab>*/}
                     <p align='left' dangerouslySetInnerHTML={this.showReco()} />
                 </CardContent>
-                {(!this.isLast() || this.isApplicable()) && <CardActions>
+                <CardActions>
+                    {/* TODO: Added minimum height to keep overall space constant regardless if Show More visible; change to something less hacky.*/}
+                    <span style={{justifyContent: 'space-between', minHeight: "26px"}}>
+                        {this.isApplicable() && <button className={'Button'} onClick={this.applyReco}>Apply to grocery list</button>}
+                        {this.isMore() && <button className={'Button'} onClick={this.nextReco}>Show me more</button>}
+                    </span>
+                </CardActions>
+                {/* Below is old code that hides "show more" including space.*/}
+                {/* {(!this.isLast() || this.isApplicable()) && <CardActions>
                     <span style={{justifyContent: 'space-between'}}>
                         {this.isApplicable() && <button className={'Button'} onClick={this.applyReco}>Apply to grocery list</button>}
                         {this.isLast() || <button className={'Button'} onClick={this.nextReco}>Show me more</button>}
                     </span>
-                </CardActions>}
+                </CardActions>} */}
             </Card>
         )
     }
 }
 
 export default withStyles(styles)(Recommendations);
-
-// textContent: {
-//     padding: '0px 0px',
-// },
-// textBody: {
-//     margin: '0px',
-// },
-    // cardcontent: {
-    //     padding: 0,
-    //     '&:last-child': {
-    //       paddingBottom: 0,
-    //     },
-    // },
