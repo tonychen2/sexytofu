@@ -62,7 +62,7 @@ async def get_all_recommendations(db: Session = Depends(get_db)) -> list[schemas
 @app.get("/recommendations/{food_alias}/", response_model=list[schemas.Recommendation])
 async def get_recommendations_by_food_alias(food_alias: str,
                                             skip: Optional[int] = 0,
-                                            limit: Optional[int] = 5,
+                                            limit: Optional[int] = 10,
                                             db: Session = Depends(get_db)) -> list[schemas.Recommendation]:
     food = crud.get_food_by_alias(db=db, alias=food_alias)
     if food is None:

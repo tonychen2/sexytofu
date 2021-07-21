@@ -8,7 +8,7 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import {List, ListItem} from '@material-ui/core';
 import {withStyles} from '@material-ui/core';
 
-const GHGI_API_ADDRESS = 'https://api.ghgi.org';
+const GHGI_API_ADDRESS = 'http://localhost:8080/api.ghgi.org:443';
 const NATIVE_API_ADDRESS = 'http://127.0.0.1:8000';
 
 
@@ -96,6 +96,7 @@ class GroceryList extends Component {
          * @param   {Object}  prevProps  Props from last time componentDidMount or componentDidUpdate was called
          */
         if (this.props.requestForUpdate !== prevProps.requestForUpdate) {
+            console.log(this.state.groceryList);
             let request = this.props.requestForUpdate;
 
             // Identify the index of the food to be updated
@@ -167,7 +168,7 @@ class GroceryList extends Component {
             .then(response => response.json());
 
         // Find default quantity of food item in gram
-        let default_grams = await fetch(`${GHGI_API_ADDRESS}/rateCarbon`,
+        let default_grams = await fetch(`${GHGI_API_ADDRESS}/rate`,
             {method: 'POST',
                 // headers: {'Content-Type': 'test/plain', 'Origin':'localhost'},
                 body: JSON.stringify({'recipe': [this.state.currentQuery]})})
