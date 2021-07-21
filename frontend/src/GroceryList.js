@@ -173,16 +173,26 @@ class GroceryList extends Component {
                 // headers: {'Content-Type': 'test/plain', 'Origin':'localhost'},
                 body: JSON.stringify({'recipe': [this.state.currentQuery]})})
             .then(response => {
-                return response.json();
+                if (!response.ok) {
+                    // POST: 404 (ie. status not ok)
+                    throw "Oops! We have a technical issue, but rest assured that help is on the way. Please try again later - thanks for being a Sexy Tofu!";
+                } else {
+                    return response.json();
+                }
             })
             .then(json => {
                 if (!('items' in json)) {
-                    // Either POST: 404 (ie. status not ok) or GHGI returned a json in unreadable format.
-                    errorMessage = json.ok ? "Wasn't able to find " + parsed['names'][0] + " in GHGI database. Please check your spelling." : 
-                    "Wasn't able to connect to the GHGI database. Please try again later.";
+                    // GHGI returned a json in unreadable format
+                    throw "Oops! We have a technical issue, but rest assured that help is on the way. Please try again later - thanks for being a Sexy Tofu!";
+                } else if (json['items'][0]['match_conf'] < 0.5) {
+                    // GHGI returned an item with low matching confidence
+                    throw `We did our best but weren't able to find "${parsed['names'][0]}" in our database. Perhaps check your spelling or try a different name? Sexy Tofu is working hard to provide data for more food!`;
                 } else {
                     return json['items'][0]['g'];
                 }
+            })
+            .catch(err => {
+                errorMessage = err;
             });
 
         if (!default_grams) {
