@@ -7,7 +7,7 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import {List, ListItem} from '@material-ui/core';
 import {withStyles} from '@material-ui/core';
 
-const GHGI_API_ADDRESS = 'https://api.ghgi.org';
+const GHGI_API_ADDRESS = 'http://localhost:8080/api.ghgi.org:443';
 const NATIVE_API_ADDRESS = 'http://127.0.0.1:8000';
 
 
