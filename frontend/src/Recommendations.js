@@ -23,8 +23,6 @@ const styles = {
         padding: '20px 25px',
         '& p': {
             margin: '0px',
-            // TODO: change height dynamically to not exceed "Show More" for scroll bar.
-            height: '120px',
             overflowY: 'auto',
         },
         '& h5': {
@@ -34,6 +32,9 @@ const styles = {
         },
         '& .MuiCardContent-root': {
             height: '200px',
+            overflowY: 'hidden',
+            display: 'flex',
+            flexDirection: 'column',
             padding: 0,
             '&:last-child': {
             paddingBottom: 0,
@@ -43,9 +44,19 @@ const styles = {
             paddingTop: '0px',
             paddingBottom: '0px',
         },
+        // https://stackoverflow.com/questions/53772429/material-ui-how-can-i-style-the-scrollbar-with-css-in-js
+        // https://www.w3schools.com/howto/howto_css_custom_scrollbar.asp
+        // TODO: increase gap between scroll and text
+        // '*::-webkit-scrollbar': {
+        //     width: '5px',
+        // },
     },
-    colorTextPrimary: {
+    textHead: {
         color: '#fc0a7e',
+    },
+    textBody: {
+        overflowY: 'auto',
+        flexGrow: '1',
     },
 };
 
@@ -177,25 +188,27 @@ class Recommendations extends Component {
         return (
             <Card id="recommendations" className={classes.root}>
                 <CardContent>
-                    <div align='center'>
+                    <div align='center' className={classes.textHead}>
                         <Typography
                             align='center'
                             variant='h5'
-                            color='textPrimary'
-                            classes={classes}>
+                            className={classes.textHead}
+                            >
                             {this.props.food.alias[0].toUpperCase() + this.props.food.alias.substring(1)} - Sustainable options
                         </Typography>
                     </div>
                     {/*<Fab aria-label="like" size='small'>*/}
                     {/*    <FavoriteIcon />*/}
                     {/*</Fab>*/}
-                    <p align='left' dangerouslySetInnerHTML={this.showReco()} />
+                    <div className={classes.textBody}>
+                        <p align='left' dangerouslySetInnerHTML={this.showReco()} />
+                    </div>
                 </CardContent>
                 <CardActions>
                     {/* TODO: Added minimum height to keep overall space constant regardless if Show More visible; change to something less hacky.*/}
                     <span style={{justifyContent: 'space-between', minHeight: "26px"}}>
-                        {this.isApplicable() && <button className={'Button'} onClick={this.applyReco}>Apply to grocery list</button>}
                         {this.isMore() && <button className={'Button'} onClick={this.nextReco}>Show me more</button>}
+                        {this.isApplicable() && <button className={'Button'} onClick={this.applyReco}>Apply to grocery list</button>}
                     </span>
                 </CardActions>
                 {/* Below is old code that hides "show more" including space.*/}
