@@ -44,9 +44,9 @@ export default class BarChart extends Component {
         const points = myBarChart.getElementsAtEventForMode(event, 'nearest', { intersect: true }, true);
         if (points[0]) {
             this.props.selectFood(points[0].index);
-        }
 
-        this.highlightSelectedBar(points[0].index)
+            this.highlightSelectedBar(points[0].index);
+        }
     }
 
     highlightSelectedBar = (bar_index) => {
@@ -84,11 +84,14 @@ export default class BarChart extends Component {
                         data: this.props.data,
                         backgroundColor:'#ffffffaa',
                         hoverBackgroundColor: '#ffffffee',
+                        // categoryPercentage: 1.0,
+                        // barPercentage: 1.0,
                     }
                 ]
             },
             options: {
                 indexAxis: 'y',
+                // clip: {top: 0, right: -2, bottom: 0}, // TODO: remove extra space right and top
                 // Show the value for each bar while rendering the chart
                 animation: {
                     onProgress: (props) => drawValueLabel(myChartRef, props),
@@ -101,6 +104,8 @@ export default class BarChart extends Component {
                         max: Math.max(...this.props.data) * 1.2
                     },
                     y: {
+                        // TODO: https://stackoverflow.com/questions/60188584/chartjs-remove-padding-on-first-and-last-bars-on-barchart remove padding only first and last bars; offset: false,
+                        //https://github.com/chartjs/Chart.js/issues/5556
                         ticks: {
                             textStrokeColor: '#ffdbec'
                         }
