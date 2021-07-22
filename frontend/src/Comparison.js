@@ -81,9 +81,6 @@ const scaleStyles = makeStyles((theme) => ({
     valueLabel: {
         left: 'auto',
     },
-    label: {
-        color: "green",
-    },
     // Each persona's mark on the scale
     mark: {
         width: '5px',
