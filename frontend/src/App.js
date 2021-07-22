@@ -13,6 +13,7 @@ import Summary from "./Summary";
 import {Accordion, AccordionSummary, AccordionDetails} from "@material-ui/core";
 import {Box} from '@material-ui/core';
 import {Hidden} from '@material-ui/core';
+import {MuiThemeProvider, createMuiTheme} from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import Typography from "@material-ui/core/Typography";
 
@@ -189,15 +190,40 @@ class App extends Component {
 
         let headline = (this.state.hasSearched ? "My food impact" : "Track the climate impact of my food")
 
+        // Override global themes for Typography
+        const theme = createMuiTheme({
+            typography: {
+                body1: {
+                },
+                body2: {
+                    fontFamily: 'sans-serif',
+                    fontSize: '1rem',
+                },
+                h2: {
+                    fontFamily: 'EconomicaBold',
+                    fontSize: '2rem',
+                    color: '#ffdbec',
+                },
+                h5: {
+                    color: 'white',
+                }
+            },
+          });
+          
+
         return (
+
+            <MuiThemeProvider theme={theme}>
             <div id="container">
                 <div id="header">
                     <a href="#">
                         <img src={logo} alt="Sexy Tofu" id="logo" onClick={this.onLogoClicked}/>
                     </a>
                 </div>
+                {/* TODO: scroll to recommendation card after bar chart clicked new item. */}
+                {/* https://stackoverflow.com/questions/24739126/scroll-to-a-specific-element-using-html */}
                 <img src={tofuHero} alt="Tofu Hero" id="tofu-hero"/>
-                <h2>{headline}</h2>
+                <Typography variant='h2'>{headline}</Typography>
                 {this.state.hasSearched &&
                 <Grid container spacing={3} justify={"center"}>
                     <Grid item xs={12} sm={summarySize}>
@@ -214,22 +240,24 @@ class App extends Component {
                     </Grid>
                     {/* TODO: Maybe change this all to accordian to match? Or disable it. */}
                     <Grid item xs={12} sm={12}>
-                        <h2 style={{marginBottom: '40px'}}>Tell me how I can do better</h2>
+                        <Typography variant='h2' style={{marginBottom: '40px'}}>Tell me how I can do better</Typography>
                     </Grid>
-                    <Grid item xs={12} sm={barSize}>
+                    <Grid item xs={12} md={barSize}>
                         <BarChart
                             data={this.state.results.impacts}
                             labels={this.state.results.contributors}
                             selectFood={this.selectFood}
                         />
                     </Grid>
-                    <Grid item xs={12} sm={recoSize}>
+                    <Grid item xs={12} md={recoSize}>
+                        {/* container alignItems='stretch' (old code to center align vertically)*/}
                         {/* TODO: better way of aligning recommendation to chart than this empty box that disappears on small screen? */}
-                        <Hidden only='xs'>
+                        <Hidden smDown>
                             <Box width="100%" height="60px" />
                         </Hidden>
                         {/* TODO: better way of adding padding than box to auto align with chart? */}
-                        <Box paddingX="20px" align='center'> 
+                        <Box paddingX="20px" align='center'>
+                            <div id="reco" /> 
                             <Recommendations
                                 food={this.state.selectedFood}
                                 updateGroceryList={this.updateGroceryList}
@@ -243,6 +271,7 @@ class App extends Component {
                         hasSearched={this.state.hasSearched}
                         requestForUpdate={this.state.requestForUpdate}/>
             </div>
+            </MuiThemeProvider>
         );
     }
 }

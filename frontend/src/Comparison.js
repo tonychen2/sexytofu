@@ -7,6 +7,7 @@ import {Typography} from "@material-ui/core";
 import {Select, MenuItem} from "@material-ui/core";
 import {Slider} from "@material-ui/core";
 import { withStyles } from '@material-ui/core/styles';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
 
 import {pluralize} from "./utils.js"
 
@@ -31,9 +32,14 @@ const boxStyles = {
         paddingTop: '20px'
     },
     details: {
-        padding: "0px 60px",
+        // padding: "0px 60px",
         color: 'grey',
-        flexWrap: 'wrap'
+        width: '100%',
+        display: 'flex',
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     dropDown: {
         color: 'grey',
@@ -41,6 +47,9 @@ const boxStyles = {
     config: {
         width: '100%',
         textAlign: 'center'
+    },
+    scaleContainer: {
+        width: '100%',
     }
 };
 
@@ -50,14 +59,30 @@ const scaleStyles = makeStyles((theme) => ({
      */
     root: {
         margin: '50px auto 180px',
-        maxWidth: '1000px'
+        maxWidth: '1000px',
+        width: '100%',
+        // Set vertical slider style for small screens only; use horizontal otherwise.
+        '@media only screen and (max-width: 600px)': {
+            minHeight: '500px',
+            marginTop: '80px',
+            '&:last-child': {
+                marginBottom: '50px',
+            }
+        }
     },
     // User's impact shown on the scale
     thumb: {
-        color: '#fc0a7e'
+        color: '#fc0a7e',
+        // Rotate thumb when vertical slider. TODO: do not rotate text "You"
+        '@media only screen and (max-width: 600px)': {
+            transform: 'rotate(-45deg)',
+        }
     },
     valueLabel: {
-        left: 'auto'
+        left: 'auto',
+    },
+    label: {
+        color: "green",
     },
     // Each persona's mark on the scale
     mark: {
@@ -134,19 +159,23 @@ class Comparison extends Component {
             <div className={classes.div}>
                 <Accordion className={classes.accordion} square defaultExpanded elevation={0}>
                     <AccordionSummary>
-                        <h2 className={classes.summary}>How do I compare to others? </h2>
+                        <Typography variant='h2' className={classes.summary}>How do I compare to others? </Typography>
                     </AccordionSummary>
                     <AccordionDetails className={classes.details}>
                         <div id="config" className={classes.config}>
-                            This list is for&nbsp;
-                            {selectNumPeople} {pluralize('person', 'people', this.state.numPeople)}&nbsp;
-                            to consume over&nbsp;
-                            {selectNumDays} {pluralize('day', 'days', this.state.numDays)}.
+                            <Typography variant='h5' style={{color: 'grey'}} >
+                                This list is for&nbsp;
+                                {selectNumPeople} {pluralize('person', 'people', this.state.numPeople)}&nbsp;
+                                to consume over&nbsp;
+                                {selectNumDays} {pluralize('day', 'days', this.state.numDays)}.
+                            </Typography>
                         </div>
-                        <ComparisonScale totalImpact={this.props.totalImpact}
-                                         numPeople={this.state.numPeople}
-                                         numDays={this.state.numDays}
-                        />
+                        <div className={classes.scaleContainer}>
+                            <ComparisonScale totalImpact={this.props.totalImpact}
+                                            numPeople={this.state.numPeople}
+                                            numDays={this.state.numDays}
+                            />
+                        </div>
 
                     </AccordionDetails>
                 </Accordion>
@@ -171,11 +200,15 @@ function ComparisonScale(props) {
         (props.numPeople / DEFAULT_NUM_PEOPLE) /
         (props.numDays / DEFAULT_NUM_DAYS);
 
+    // Sets slider to horizontal or vertical depending on screen size.
+    let scaleOrientation = useMediaQuery('(max-width:600px)') ? "vertical" : "horizontal";
+
     return (
         <Slider
             classes={classes}
             component='div'
             disabled
+            orientation={scaleOrientation}
             value={normalizedImpact}
             marks={[
                 {value: 17, label: <PersonaLabel name="Sexy Tofu" weeklyImpact='<17' icon={sexyTofuIcon} classes={classes} />},

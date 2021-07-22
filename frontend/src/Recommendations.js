@@ -201,7 +201,7 @@ class Recommendations extends Component {
                     {/*    <FavoriteIcon />*/}
                     {/*</Fab>*/}
                     <div className={classes.textBody}>
-                        <p align='left' dangerouslySetInnerHTML={this.showReco()} />
+                        <Typography variant="body2" align='left' dangerouslySetInnerHTML={this.showReco()} />
                     </div>
                 </CardContent>
                 <CardActions>

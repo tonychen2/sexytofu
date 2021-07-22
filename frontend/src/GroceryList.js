@@ -31,7 +31,8 @@ const styles = {
         marginBottom: '20px'
     },
     groceryTitle: {
-        color: '#000000'
+        color: '#000000',
+        paddingTop: '30px',
     },
     row: {
         // paddingTop: '2px',
@@ -286,7 +287,7 @@ class GroceryList extends Component {
                 <Grid container className={this.props.classes.root}>
                     {this.props.hasSearched &&
                     <Grid item xs={12} className={this.props.classes.title}>
-                        <h2 className={this.props.classes.groceryTitle}>Your List</h2>
+                        <Typography variant='h2' className={this.props.classes.groceryTitle}>Your List</Typography>
                     </Grid>}
                     <Grid item xs={12} sm={10} className={this.props.classes.inputGrid}>
                         <TextField
