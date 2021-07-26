@@ -70,9 +70,6 @@ const scaleStyles = makeStyles((theme) => ({
                 marginBottom: '50px',
             }
         }
-        // TODO: fix vertical marks height
-        // https://stackoverflow.com/questions/60599413/material-ui-vertical-slider-how-to-change-the-thickness-of-the-rail-in-vertical
-        // https://codesandbox.io/s/material-demo-60upy?fontsize=14&hidenavigation=1&theme=dark
     },
     // User's impact shown on the scale
     thumb: {
@@ -90,9 +87,13 @@ const scaleStyles = makeStyles((theme) => ({
         width: '5px',
         height: '5px',
         borderRadius: '2.5px',
-        // TODO: ask why was top used? If necessary to use, only enable top when 
-        // slider is horizontal (as causes tick mark spacing issue when vertical)
-        // top: '12px', 
+        // Fix tick marks being slightly off center, to be on center, depending on if horizontal or vertical slider
+        '@media only screen and (max-width: 600px)': {
+            left: '12px',
+        },
+        '@media only screen and (min-width: 600px)': {
+            top: '12px', 
+        }
     },
     markLabel: {
         color: 'grey'
