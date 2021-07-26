@@ -1,13 +1,13 @@
 from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
-from ghgi.ghgi import parser
+from .ghgi.ghgi import parser
 from typing import Any, Optional, Dict, List
 from pydantic import BaseModel
 
 from sqlalchemy.orm import Session
-import crud, models, schemas
-from database import SessionLocal, engine
+from . import crud, models, schemas
+from .database import SessionLocal, engine
 
 models.Base.metadata.create_all(bind=engine)
 
