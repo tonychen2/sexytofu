@@ -64,11 +64,15 @@ const scaleStyles = makeStyles((theme) => ({
         // Set vertical slider style for small screens only; use horizontal otherwise.
         '@media only screen and (max-width: 600px)': {
             minHeight: '500px',
+            
             marginTop: '80px',
             '&:last-child': {
                 marginBottom: '50px',
             }
         }
+        // TODO: fix vertical marks height
+        // https://stackoverflow.com/questions/60599413/material-ui-vertical-slider-how-to-change-the-thickness-of-the-rail-in-vertical
+        // https://codesandbox.io/s/material-demo-60upy?fontsize=14&hidenavigation=1&theme=dark
     },
     // User's impact shown on the scale
     thumb: {
@@ -86,7 +90,9 @@ const scaleStyles = makeStyles((theme) => ({
         width: '5px',
         height: '5px',
         borderRadius: '2.5px',
-        top: '12px',
+        // TODO: ask why was top used? If necessary to use, only enable top when 
+        // slider is horizontal (as causes tick mark spacing issue when vertical)
+        // top: '12px', 
     },
     markLabel: {
         color: 'grey'
@@ -210,7 +216,8 @@ function ComparisonScale(props) {
             marks={[
                 {value: 17, label: <PersonaLabel name="Sexy Tofu" weeklyImpact='<17' icon={sexyTofuIcon} classes={classes} />},
                 {value: 76, label: <PersonaLabel name="Global Average" weeklyImpact='76' icon={globalAvgIcon} classes={classes} />},
-                {value: 189, label: <PersonaLabel name="Average American" weeklyImpact='189' icon={avgAmericanIcon} classes={classes} />},
+                // TODO: discuss if true value '189' is necessary; an approximation instead allows better spacing at sacrifice of accuracy
+                {value: 180, label: <PersonaLabel name="Average American" weeklyImpact='189' icon={avgAmericanIcon} classes={classes} />},
                 {value: 224, label: <PersonaLabel name="Meat Lover" weeklyImpact='>224' icon={meatLoverIcon} classes={classes} />}]}
             step={1}
             min={17}
