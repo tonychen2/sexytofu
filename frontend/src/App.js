@@ -190,21 +190,53 @@ class App extends Component {
 
         let headline = (this.state.hasSearched ? "My food impact" : "Track the climate impact of my food")
 
-        // Override global themes for Typography
+        // Override global themes for Typography. TODO: place in separate imported doc. like index.css
         const theme = createMuiTheme({
             typography: {
+                subtitle1: {
+                    // Summary text + sub-headers
+                    fontFamily: ['Lato', 'sans-serif'],
+                    fontSize: '1.2rem',
+                },
                 body1: {
+                    // textField
+                    fontFamily: ['Lato', 'sans-serif'],
                 },
                 body2: {
-                    fontFamily: 'sans-serif',
-                    fontSize: '1rem',
+                    // Recos text + slider labels
+                    fontFamily: ['Lato', 'sans-serif'],
+                    fontWeight: 'normal',
+                    fontSize: '1.2rem',
                 },
                 h2: {
-                    fontFamily: 'EconomicaBold',
+                    // Section headers
+                    // fontFamily: 'EconomicaBold',
+                    fontFamily: ['Lato', 'sans-serif'],
+                    fontWeight: 'bolder',
                     fontSize: '2rem',
-                    color: '#ffdbec',
+                    // color: '#ffdbec',
+                    color: 'white',
+                },
+                h3: {
+                    // Section headers
+                    // fontFamily: 'EconomicaBold',
+                    fontFamily: ['Lato', 'sans-serif'],
+                    fontWeight: 'bolder',
+                    fontSize: '1.5rem',
+                    // color: '#ffdbec',
+                    color: 'white',
+                },
+                h4: {
+                    fontFamily: ['Lato', 'sans-serif'],
+                    fontWeight: 'normal',
+                    fontSize: '1.5rem',
+                    // color: '#ffdbec',
+                    color: '#322737',
                 },
                 h5: {
+                    // Sub-headers bar chart + recos
+                    fontFamily: ['Lato', 'sans-serif'],
+                    fontWeight: 'bold',
                     color: 'white',
                 }
             },
@@ -215,17 +247,19 @@ class App extends Component {
 
             <MuiThemeProvider theme={theme}>
             <div id="container">
+            <div id="background"></div>
                 <div id="header">
                     <a href="#">
                         <img src={logo} alt="Sexy Tofu" id="logo" onClick={this.onLogoClicked}/>
                     </a>
                 </div>
+                <div id="content">
                 {/* TODO: scroll to recommendation card after bar chart clicked new item. */}
                 {/* https://stackoverflow.com/questions/24739126/scroll-to-a-specific-element-using-html */}
                 <img src={tofuHero} alt="Tofu Hero" id="tofu-hero"/>
-                <Typography variant='h2'>{headline}</Typography>
+                <Typography variant='h2' style={{marginBottom: '40px'}}>{headline}</Typography>
                 {this.state.hasSearched &&
-                <Grid container spacing={3} justify={"center"}>
+                <Grid container justify={"center"}>
                     <Grid item xs={12} sm={summarySize}>
                         <Summary
                             totalImpact={this.state.results.totalImpact}
@@ -238,30 +272,34 @@ class App extends Component {
                     <Grid item xs={12} sm={12}>
                         <Comparison totalImpact={this.state.results.totalImpact} />
                     </Grid>
-                    {/* TODO: Maybe change this all to accordian to match? Or disable it. */}
-                    <Grid item xs={12} sm={12}>
-                        <Typography variant='h2' style={{marginBottom: '40px'}}>Tell me how I can do better</Typography>
-                    </Grid>
-                    <Grid item xs={12} md={barSize}>
-                        <BarChart
-                            data={this.state.results.impacts}
-                            labels={this.state.results.contributors}
-                            selectFood={this.selectFood}
-                        />
-                    </Grid>
-                    <Grid item xs={12} md={recoSize}>
-                        {/* container alignItems='stretch' (old code to center align vertically)*/}
-                        {/* TODO: better way of aligning recommendation to chart than this empty box that disappears on small screen? */}
-                        <Hidden smDown>
-                            <Box width="100%" height="60px" />
-                        </Hidden>
-                        {/* TODO: better way of adding padding than box to auto align with chart? */}
-                        <Box paddingX="20px" align='center'>
-                            <div id="reco" /> 
-                            <Recommendations
-                                food={this.state.selectedFood}
-                                updateGroceryList={this.updateGroceryList}
-                            />
+                    <Grid item xs={12} sm={12} style={{backgroundImage: 'linear-gradient(180deg, #CF7DE9, #E97DD1)'}}>
+                        <Box paddingY='50px'> 
+                        {/* TODO: better way of formatting than box? -- rowGap would be best, but need workaround for gradient background */}
+                            <Typography variant='h2' style={{marginBottom: '40px'}}>Tell me how I can do better</Typography>
+                            <Grid container>
+                                <Grid item xs={12} md={barSize}>
+                                    <BarChart
+                                        data={this.state.results.impacts}
+                                        labels={this.state.results.contributors}
+                                        selectFood={this.selectFood}
+                                    />
+                                </Grid>
+                                <Grid item xs={12} md={recoSize}>
+                                    {/* container alignItems='stretch' (old code to center align vertically)*/}
+                                    {/* TODO: better way of aligning recommendation to chart than this empty box that disappears on small screen? */}
+                                    <Hidden smDown>
+                                        <Box width="100%" height="60px" />
+                                    </Hidden>
+                                    {/* TODO: better way of adding padding than box to auto align with chart? */}
+                                    <Box paddingX="20px" align='center'>
+                                        <div id="reco" /> 
+                                        <Recommendations
+                                            food={this.state.selectedFood}
+                                            updateGroceryList={this.updateGroceryList}
+                                        />
+                                    </Box>
+                                </Grid>
+                            </Grid>
                         </Box>
                     </Grid>
                 </Grid>
@@ -270,6 +308,7 @@ class App extends Component {
                         search={this.search}
                         hasSearched={this.state.hasSearched}
                         requestForUpdate={this.state.requestForUpdate}/>
+                </div>
             </div>
             </MuiThemeProvider>
         );

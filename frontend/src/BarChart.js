@@ -132,7 +132,8 @@ export default class BarChart extends Component {
          */
         return (
             <div className="chartContainer" style={{width: '80%', margin: 'auto'}}>
-                <Typography variant='h5' align='left'>Rank my food's carbon footprint: {this.props.data.reduce((a, b) => a + b, 0).toFixed(1)} pounds</Typography>
+                <Typography variant='h3' align='left'>Rank my food's carbon footprint: {this.props.data.reduce((a, b) => a + b, 0).toFixed(1)} pounds</Typography>
+                <Typography variant='subtitle1' align='left'>Click each food to learn about sustainable options.</Typography>
                 <canvas
                     id="myChart"
                     ref={this.chartRef}

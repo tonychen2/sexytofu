@@ -20,7 +20,8 @@ const styles = {
     box: {
         padding: '10px',
         paddingBottom: '50px',
-        margin: '50px auto 0px',
+        // margin: '50px auto 0px',
+        margin: '0px auto 0px',
         maxWidth: '70ch',
     },
     boxHasSearchedBG: {
@@ -31,7 +32,8 @@ const styles = {
         marginBottom: '20px'
     },
     groceryTitle: {
-        color: '#000000',
+        // color: '#000000',
+        color: '#322737',
         paddingTop: '30px',
     },
     row: {
@@ -44,7 +46,7 @@ const styles = {
     },
     textField: {
         width: '100%',
-        borderRadius: '4px',
+        borderRadius: '10px',
         backgroundColor: '#ffdbec',
         margin: '2px',
         '&:hover': {
@@ -55,35 +57,57 @@ const styles = {
                 borderColor: 'transparent',
             },
             '&.Mui-focused fieldset': {
-                borderColor: 'transparent'
+                borderColor: 'transparent',
+                borderRadius: '10px',
             },
+        },
+        '& .MuiOutlinedInput-input:-webkit-autofill': {
+            // Autofill style
+            backgroundColor: '#F2F2F2 !important',
+            borderRadius: '10px',
         },
     },
     textFieldHasSearched: {
         /* TODO: How to extend textField class? And some better method than this? */
         width: '100%',
-        borderRadius: '4px',
+        borderRadius: '10px',
         margin: '2px',
-        backgroundColor: '#ece8ed',
+        // backgroundColor: '#ece8ed',
+        backgroundColor: '#F2F2F2',
         borderColor: '#F4E6F2',
         '& .MuiOutlinedInput-root': {
             '& fieldset': { /* default border style */
-                borderColor: '#F0D6F8',
+                // borderColor: '#F0D6F8',
+                borderColor: '#DFAAF1',
+                borderRadius: '10px',
             },
             '&:hover fieldset': {
-                borderColor: 'transparent',
+                // borderColor: 'transparent',
+                // borderColor: '#DFAAF1',
+                borderColor: '#E8A9DE',
             },
             '&.Mui-focused fieldset': {
-                borderColor: '#E9D5E5',
+                // borderColor: '#E9D5E5',
+                // borderColor: '#DFAAF1',
+                borderColor: '#E8A9DE',
+                borderRadius: '10px',
             },
+        },
+        '& .MuiOutlinedInput-input:-webkit-autofill': {
+            // Autofill style
+            backgroundColor: '#F2F2F2 !important',
+            borderRadius: '10px',
         },
     },
     button: {
         border: '0',
+        borderRadius: '10px',
         right: '0',
         margin: '5px',
         backgroundColor: '#ffdbec',
         color: '#fc0a7e',
+        fontFamily: ['Lato', 'sans-serif'],
+        fontWeight: 'bold',
         '&:hover': {
             backgroundColor: '#fc0a7e',
             color: '#ffdbec'
@@ -92,13 +116,18 @@ const styles = {
     buttonHasSearched : {
     /* TODO: How to extend button class? */
         border: '0',
+        borderRadius: '10px',
         right: '0',
         margin: '5px',
-        backgroundColor: '#F5F5F5',
-        color: '#B45BD4',
+        // backgroundColor: '#F5F5F5',
+        backgroundColor: '#FEF1FC',
+        // color: '#B45BD4',
+        color: '#B155D3',
+        fontWeight: 'bold',
         '&:hover': {
             backgroundColor: '#E9D5E5',
-            color: '#B45BD4',
+            // color: '#B45BD4',
+            color: '#B155D3',
         },
     }
 }

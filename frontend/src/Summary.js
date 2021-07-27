@@ -15,17 +15,20 @@ import waterUseGraphics from "./assets/summary_graphics/water.png";
 const styles = {
     root: {
         // textAlign: 'left'
+        marginBottom: '70px'
     },
     section: {
         marginTop: '50px'
     },
     title: {
         borderRadius: '1ch',
-        backgroundColor: '#ffdbec',
+        // backgroundColor: '#ffdbec',
+        backgroundColor: 'white',
         width: 'fit-content',
         margin: 'auto',
         padding: '0ch 1ch',
-        color: '#fc0a7e'
+        // color: '#fc0a7e'
+        color: '#E45FC3',
     },
     highlight: {
         fontSize: '200%',

@@ -18,9 +18,10 @@ const IMPACT_PER_MILE = 0.35;
 const styles = {
     root: {
         backgroundColor: '#ffffff',
-        color: 'grey',
+        // color: 'grey',
         width: '80%',
-        padding: '20px 25px',
+        padding: '20px 35px',
+        borderRadius: '20px',
         '& p': {
             margin: '0px',
             overflowY: 'auto',
@@ -52,11 +53,13 @@ const styles = {
         // },
     },
     textHead: {
-        color: '#fc0a7e',
+        // color: '#fc0a7e',
+        color: '#322737',
     },
     textBody: {
         overflowY: 'auto',
         flexGrow: '1',
+        color: '#322737',
     },
 };
 

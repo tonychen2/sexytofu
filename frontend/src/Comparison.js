@@ -21,15 +21,19 @@ const boxStyles = {
      * Style for box element outside the comparisons
      */
     div: {
-        margin: '50px 0px 10px'
+        // margin: '50px 0px 10px'
+        margin: '0px'
     },
     accordion: {
-        backgroundColor: '#ffdbec',
+        // backgroundColor: '#ffdbec',
+        backgroundColor: 'white',
+        paddingTop: '20px',
     },
     summary: {
-        color: '#fc0a7e',
+        // color: '#fc0a7e',
+        color: '#322737',
         margin: 'auto',
-        paddingTop: '20px'
+        // paddingTop: '20px'
     },
     details: {
         // padding: "0px 60px",
@@ -42,7 +46,7 @@ const boxStyles = {
         alignItems: 'center',
     },
     dropDown: {
-        color: 'grey',
+        color: '#322737',
     },
     config: {
         width: '100%',
@@ -167,7 +171,7 @@ class Comparison extends Component {
                     </AccordionSummary>
                     <AccordionDetails className={classes.details}>
                         <div id="config" className={classes.config}>
-                            <Typography variant='h5' style={{color: 'grey'}} >
+                            <Typography variant='h4' style={{color: '#322737'}} >
                                 This list is for&nbsp;
                                 {selectNumPeople} {pluralize('person', 'people', this.state.numPeople)}&nbsp;
                                 to consume over&nbsp;
@@ -224,6 +228,10 @@ function ComparisonScale(props) {
             min={17}
             max={224}
             valueLabelFormat={(value) => 'You'}
+            // TODO: formatting you
+            //<p style={{transform: 'rotate(45deg)'}}} >You</p>
+            // '@media only screen and (max-width: 600px)': {transform: 'rotate(45deg)'}} TODO: change to typography + text instead
+            // TODO: valueLabelFormat most likely returns a styled html component, so try some inline styling to see if you can change "You"- Tony
             valueLabelDisplay='on'
             track={false} />
     )
@@ -240,11 +248,11 @@ function PersonaLabel(props) {
      * @return  {HTMLSpanElement}  HTML element for the component
      */
     return (
-        <span>
-            <span style={{display: 'block'}}>{props.name}</span>
+        <Typography variant='body2' style={{color: '#322737'}}>
+            <span style={{display: 'block', fontWeight: 'bold'}}>{props.name}</span>
             <span style={{display: 'block'}}>{props.weeklyImpact} lbs/week</span>
             <img src={props.icon} alt={props.name} style={{width: '7vw', minWidth: '8ch'}} />
-        </span>)
+        </Typography>)
 }
 
 export default withStyles(boxStyles)(Comparison);
