@@ -13,7 +13,7 @@ import Summary from "./Summary";
 import Grid from '@material-ui/core/Grid';
 import Typography from "@material-ui/core/Typography";
 
-const GHGI_API_ADDRESS = 'http://172.26.10.80:8080/api.ghgi.org:443';
+const GHGI_API_ADDRESS = 'http://35.162.13.216:8080/api.ghgi.org:443';
 const NATIVE_API_ADDRESS = 'http://127.0.0.1:80';
 
 
