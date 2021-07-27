@@ -15,7 +15,7 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://www.sexytofu.org", "https://dev.sexytofu.org"],
+    allow_origins=["https://www.sexytofu.org", "https://dev.sexytofu.org", "http://35.162.13.216:5000"],
     allow_methods=["*"]
 )
 
