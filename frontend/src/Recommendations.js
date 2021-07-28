@@ -11,8 +11,7 @@ import {joinText} from "./utils.js"
 import FavoriteIcon from '@material-ui/icons/Favorite';
 
 
-const NATIVE_API_HOST = process.env.API_HOST || "127.0.0.1";
-const NATIVE_API_ADDRESS =  `http://${NATIVE_API_HOST}:8000`;
+const NATIVE_API_ADDRESS =  process.env.API_HOST || "http://localhost:8000";
 
 const ANNUAL_IMPACT_PER_TREE = 26.6;
 const IMPACT_PER_MILE = 0.35;

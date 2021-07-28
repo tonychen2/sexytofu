@@ -8,9 +8,8 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import {List, ListItem} from '@material-ui/core';
 import {withStyles} from '@material-ui/core';
 
-const GHGI_API_ADDRESS = 'http://35.162.13.216:8080/api.ghgi.org:443';
-const NATIVE_API_HOST = process.env.API_HOST || "127.0.0.1";
-const NATIVE_API_ADDRESS =  `http://${NATIVE_API_HOST}:8000`;
+const GHGI_API_ADDRESS = 'https://api.sexytofu.org/api.ghgi.org:443';
+const NATIVE_API_ADDRESS =  process.env.API_HOST || "http://localhost:8000";
 
 
 const styles = {

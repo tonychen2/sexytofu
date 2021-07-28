@@ -18,8 +18,7 @@ const styles = {
     },
 };
 
-const API_HOST = process.env.API_HOST || "127.0.0.1";
-const API_ADDRESS =  `http://${API_HOST}:8000`;
+const API_ADDRESS =  process.env.API_HOST || "http://localhost:8000";
 
 let RECO_TYPES = [];
 let FOOD_ALIASES = [];
