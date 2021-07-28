@@ -14,7 +14,8 @@ import Grid from '@material-ui/core/Grid';
 import Typography from "@material-ui/core/Typography";
 
 const GHGI_API_ADDRESS = 'http://35.162.13.216:8080/api.ghgi.org:443';
-const NATIVE_API_ADDRESS = 'http://127.0.0.1:80';
+const NATIVE_API_HOST = process.env.API_HOST || "127.0.0.1";
+const NATIVE_API_ADDRESS =  `http://${NATIVE_API_HOST}:8000`;
 
 
 class App extends Component {
