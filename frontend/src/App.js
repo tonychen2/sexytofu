@@ -193,7 +193,9 @@ class App extends Component {
                 <img src={tofuHero} alt="Tofu Hero" id="tofu-hero"/>
                 <h2>{headline}</h2>
                 {this.state.hasSearched &&
-                <Grid container spacing={3} justify={"center"}>
+                <Grid container justify={"center"} style={{rowGap: '12px',}}>
+                    {/* TODO: standarize grid items so rowGap is placed appropriately between rows, 
+                    and define grid item rows accordingly/consistently (ie. pull header text into or out of child components; standarize). */}
                     <Grid item xs={12} sm={summarySize}>
                         <Summary
                             totalImpact={this.state.results.totalImpact}
