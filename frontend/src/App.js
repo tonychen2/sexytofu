@@ -257,10 +257,10 @@ class App extends Component {
                 {/* TODO: scroll to recommendation card after bar chart clicked new item. */}
                 {/* https://stackoverflow.com/questions/24739126/scroll-to-a-specific-element-using-html */}
                 <img src={tofuHero} alt="Tofu Hero" id="tofu-hero"/>
-                <Typography variant='h2' style={{marginBottom: '40px'}}>{headline}</Typography>
+                <Typography variant='h2' style={{marginBottom: '60px'}}>{headline}</Typography>
                 {this.state.hasSearched &&
                 <Grid container justify={"center"}>
-                    <Grid item xs={12} sm={summarySize}>
+                    <Grid item sm={12} md={summarySize}>
                         <Summary
                             totalImpact={this.state.results.totalImpact}
                             driveEq={this.state.results.driveEq}
@@ -273,7 +273,7 @@ class App extends Component {
                         <Comparison totalImpact={this.state.results.totalImpact} />
                     </Grid>
                     <Grid item xs={12} sm={12} style={{backgroundImage: 'linear-gradient(180deg, #CF7DE9, #E97DD1)'}}>
-                        <Box paddingY='50px'> 
+                        <Box paddingY='100px'> 
                         {/* TODO: better way of formatting than box? -- rowGap would be best, but need workaround for gradient background */}
                             <Typography variant='h2' style={{marginBottom: '40px'}}>Tell me how I can do better</Typography>
                             <Grid container>

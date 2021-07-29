@@ -27,7 +27,8 @@ const boxStyles = {
     accordion: {
         // backgroundColor: '#ffdbec',
         backgroundColor: 'white',
-        paddingTop: '20px',
+        paddingTop: '80px',
+        paddingBottom: '80px',
     },
     summary: {
         // color: '#fc0a7e',

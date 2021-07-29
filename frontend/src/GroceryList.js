@@ -22,6 +22,13 @@ const styles = {
         paddingBottom: '50px',
         // margin: '50px auto 0px',
         margin: '0px auto 0px',
+        maxWidth: '45ch',
+    },
+    boxHasSearched: {
+        padding: '10px',
+        paddingBottom: '50px',
+        // margin: '50px auto 0px',
+        margin: '0px auto 0px',
         maxWidth: '70ch',
     },
     boxHasSearchedBG: {
@@ -312,7 +319,7 @@ class GroceryList extends Component {
         let buttonClass = this.props.hasSearched ? this.props.classes.buttonHasSearched : this.props.classes.button;
         return (
             <Box className={this.props.hasSearched ? this.props.classes.boxHasSearchedBG : null}>
-            <Box id="groceryList" className={this.props.classes.box}>
+            <Box id="groceryList" className={this.props.hasSearched ? this.props.classes.boxHasSearched : this.props.classes.box}>
                 <Grid container className={this.props.classes.root}>
                     {this.props.hasSearched &&
                     <Grid item xs={12} className={this.props.classes.title}>
@@ -330,7 +337,7 @@ class GroceryList extends Component {
                             placeholder='Try "Tofu" or "2 lbs of chicken breast"'
                         />
                     </Grid>
-                    <Grid item xs={12} sm={2}>
+                    <Grid item xs={12} sm={2} container justify="flex-end">
                         <Button className={buttonClass}
                                 variant="contained"
                                 onClick={this.addFood}>Add</Button>

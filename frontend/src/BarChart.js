@@ -111,10 +111,23 @@ export default class BarChart extends Component {
                         }
                     }
                 },
+                // https://quickchart.io/documentation/chart-js/custom-pie-doughnut-chart-labels/
+                // TODO: button style - try border radius?
+                // https://stackoverflow.com/questions/42315589/chart-js-how-to-change-font-styles-for-labels-array
                 plugins: {
                     legend: {
                         display: false
                     },
+                    // https://chartjs-plugin-datalabels.netlify.app/guide/options.html#scriptable-options
+                    datalabels: {
+                        display: true,
+                        align: 'bottom',
+                        backgroundColor: '#ccc',
+                        borderRadius: 3,
+                        font: {
+                          size: 18,
+                        }
+                      },
                 },
                 onClick: this.handleClick
             }

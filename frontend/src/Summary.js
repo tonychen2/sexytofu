@@ -15,10 +15,14 @@ import waterUseGraphics from "./assets/summary_graphics/water.png";
 const styles = {
     root: {
         // textAlign: 'left'
-        marginBottom: '70px'
+        marginBottom: '100px',
+        marginLeft: '20px',
+        marginRight: '20px',
     },
     section: {
-        marginTop: '50px'
+        '&:not(:first-child)': {
+            marginTop: '100px'
+        }
     },
     title: {
         borderRadius: '1ch',
