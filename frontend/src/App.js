@@ -10,7 +10,6 @@ import BarChart from "./BarChart";
 import Comparison from "./Comparison";
 import Summary from "./Summary";
 
-import {Accordion, AccordionSummary, AccordionDetails} from "@material-ui/core";
 import {Box} from '@material-ui/core';
 import {Hidden} from '@material-ui/core';
 import {MuiThemeProvider, createMuiTheme} from '@material-ui/core/styles';
@@ -188,7 +187,7 @@ class App extends Component {
         const barSize = 8;
         const recoSize = 4;
 
-        let headline = (this.state.hasSearched ? "My food impact" : "Track the climate impact of my food")
+        let headline = (this.state.hasSearched ? "\u2014 My food impact \u2014" : "Track the climate impact of my food")
 
         // Override global themes for Typography. TODO: place in separate imported doc. like index.css
         const theme = createMuiTheme({
@@ -208,29 +207,33 @@ class App extends Component {
                     fontWeight: 'normal',
                     fontSize: '1.2rem',
                 },
+                h1: {
+                    // Headline and Tell Me...
+                    fontFamily: ['Lato', 'sans-serif'],
+                    fontWeight: 'bolder',
+                    fontSize: '2.8rem',
+                    color: 'white',
+                    '@media only screen and (max-width: 600px)': {
+                        fontSize: '2rem', 
+                    },
+                },
                 h2: {
                     // Section headers
-                    // fontFamily: 'EconomicaBold',
                     fontFamily: ['Lato', 'sans-serif'],
                     fontWeight: 'bolder',
                     fontSize: '2rem',
-                    // color: '#ffdbec',
                     color: 'white',
                 },
                 h3: {
-                    // Section headers
-                    // fontFamily: 'EconomicaBold',
                     fontFamily: ['Lato', 'sans-serif'],
                     fontWeight: 'bolder',
                     fontSize: '1.5rem',
-                    // color: '#ffdbec',
                     color: 'white',
                 },
                 h4: {
                     fontFamily: ['Lato', 'sans-serif'],
                     fontWeight: 'normal',
                     fontSize: '1.5rem',
-                    // color: '#ffdbec',
                     color: '#322737',
                 },
                 h5: {
@@ -247,7 +250,6 @@ class App extends Component {
 
             <MuiThemeProvider theme={theme}>
             <div id="container">
-            <div id="background"></div>
                 <div id="header">
                     <a href="#">
                         <img src={logo} alt="Sexy Tofu" id="logo" onClick={this.onLogoClicked}/>
@@ -257,7 +259,7 @@ class App extends Component {
                 {/* TODO: scroll to recommendation card after bar chart clicked new item. */}
                 {/* https://stackoverflow.com/questions/24739126/scroll-to-a-specific-element-using-html */}
                 <img src={tofuHero} alt="Tofu Hero" id="tofu-hero"/>
-                <Typography variant='h2' style={{marginBottom: '60px'}}>{headline}</Typography>
+                <Typography variant='h1' style={{marginBottom: '60px'}}>{headline}</Typography>
                 {this.state.hasSearched &&
                 <Grid container justify={"center"}>
                     <Grid item sm={12} md={summarySize}>
@@ -275,7 +277,7 @@ class App extends Component {
                     <Grid item xs={12} sm={12} style={{backgroundImage: 'linear-gradient(180deg, #CF7DE9, #E97DD1)'}}>
                         <Box paddingY='100px'> 
                         {/* TODO: better way of formatting than box? -- rowGap would be best, but need workaround for gradient background */}
-                            <Typography variant='h2' style={{marginBottom: '40px'}}>Tell me how I can do better</Typography>
+                            <Typography variant='h1' style={{marginBottom: '40px'}}>Tell me how I can do better</Typography>
                             <Grid container>
                                 <Grid item xs={12} md={barSize}>
                                     <BarChart
@@ -285,7 +287,6 @@ class App extends Component {
                                     />
                                 </Grid>
                                 <Grid item xs={12} md={recoSize}>
-                                    {/* container alignItems='stretch' (old code to center align vertically)*/}
                                     {/* TODO: better way of aligning recommendation to chart than this empty box that disappears on small screen? */}
                                     <Hidden smDown>
                                         <Box width="100%" height="60px" />
