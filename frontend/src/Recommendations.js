@@ -16,25 +16,7 @@ const NATIVE_API_ADDRESS =  process.env.API_HOST || "http://localhost:8000";
 const ANNUAL_IMPACT_PER_TREE = 26.6;
 const IMPACT_PER_MILE = 0.35;
 
-const styles = {
-    '@global': {
-        // Set global scrollbar style.
-        '*::-webkit-scrollbar': {
-            // Set default appearance to none, then added custom scroll style, to show up on MacOS
-            // https://stackoverflow.com/questions/7855590/preventing-scroll-bars-from-being-hidden-for-macos-trackpad-users-in-webkit-blin
-            '-webkit-appearance' : 'none',
-            width: '11px',
-        },
-        '*::-webkit-scrollbar-track': {
-            backgroundColor: 'white',
-            borderRadius: '8px',
-        },
-        '*::-webkit-scrollbar-thumb': {
-          backgroundColor: 'grey',
-          borderRadius: '8px',
-          border: '2px solid white'
-        },
-      },    
+const styles = {   
     root: {
         backgroundColor: 'white',
         width: '80%',
@@ -61,6 +43,21 @@ const styles = {
         },
         '& .MuiCardActions-root': {
             padding: '0px',
+        },
+        '& ::-webkit-scrollbar': {
+            // Set default appearance to none, then added custom scroll style, to show up on MacOS
+            // https://stackoverflow.com/questions/7855590/preventing-scroll-bars-from-being-hidden-for-macos-trackpad-users-in-webkit-blin
+            '& -webkit-appearance' : 'none',
+            width: '11px',
+        },
+        '& ::-webkit-scrollbar-track': {
+            backgroundColor: 'white',
+            borderRadius: '8px',
+        },
+        '& ::-webkit-scrollbar-thumb': {
+          backgroundColor: 'grey',
+          borderRadius: '8px',
+          border: '2px solid white'
         },
     },
     textHead: {
