@@ -22,7 +22,8 @@ const styles = {
         paddingBottom: '50px',
         // margin: '50px auto 0px',
         margin: '0px auto 0px',
-        maxWidth: '45ch',
+        // TODO: better way of aligning size of box to headline than maxWidth, and be responsive
+        maxWidth: '60ch',
     },
     boxHasSearched: {
         padding: '10px',
@@ -39,14 +40,16 @@ const styles = {
         marginBottom: '20px'
     },
     groceryTitle: {
-        // color: '#000000',
         color: '#322737',
         paddingTop: '30px',
+        textAlign: 'left',
+        '@media only screen and (max-width: 600px)': {
+            textAlign: 'center',
+        },
     },
     row: {
-        // paddingTop: '2px',
-        // paddingBottom: '2px'
-        padding: '2px 0px'
+        padding: '2px 0px',
+        flexGrow: 1,
     },
     inputGrid: {
         display: "flex"
@@ -54,12 +57,15 @@ const styles = {
     textField: {
         width: '100%',
         borderRadius: '10px',
-        backgroundColor: '#ffdbec',
+        backgroundColor: '#F2F2F2',
         margin: '2px',
         '&:hover': {
             borderColor: '#fc0a7e',
         },
         '& .MuiOutlinedInput-root': {
+            '& fieldset': { /* default border style */
+                borderColor: 'transparent',
+            },
             '&:hover fieldset': {
                 borderColor: 'transparent',
             },
@@ -79,23 +85,17 @@ const styles = {
         width: '100%',
         borderRadius: '10px',
         margin: '2px',
-        // backgroundColor: '#ece8ed',
         backgroundColor: '#F2F2F2',
         borderColor: '#F4E6F2',
         '& .MuiOutlinedInput-root': {
             '& fieldset': { /* default border style */
-                // borderColor: '#F0D6F8',
                 borderColor: '#DFAAF1',
                 borderRadius: '10px',
             },
             '&:hover fieldset': {
-                // borderColor: 'transparent',
-                // borderColor: '#DFAAF1',
                 borderColor: '#E8A9DE',
             },
             '&.Mui-focused fieldset': {
-                // borderColor: '#E9D5E5',
-                // borderColor: '#DFAAF1',
                 borderColor: '#E8A9DE',
                 borderRadius: '10px',
             },
@@ -111,8 +111,8 @@ const styles = {
         borderRadius: '10px',
         right: '0',
         margin: '5px',
-        backgroundColor: '#ffdbec',
-        color: '#fc0a7e',
+        backgroundColor: '#F2F2F2',
+        color: '#B155D3',
         fontFamily: ['Lato', 'sans-serif'],
         fontWeight: 'bold',
         '&:hover': {
@@ -126,14 +126,11 @@ const styles = {
         borderRadius: '10px',
         right: '0',
         margin: '5px',
-        // backgroundColor: '#F5F5F5',
         backgroundColor: '#FEF1FC',
-        // color: '#B45BD4',
         color: '#B155D3',
         fontWeight: 'bold',
         '&:hover': {
             backgroundColor: '#E9D5E5',
-            // color: '#B45BD4',
             color: '#B155D3',
         },
     }
@@ -325,23 +322,27 @@ class GroceryList extends Component {
                     <Grid item xs={12} className={this.props.classes.title}>
                         <Typography variant='h2' className={this.props.classes.groceryTitle}>Your List</Typography>
                     </Grid>}
-                    <Grid item xs={12} sm={10} className={this.props.classes.inputGrid}>
-                        <TextField
-                            id="searchBox"
-                            variant="outlined"
-                            className={textFieldClass}
-                            onChange={this.updateQuery}
-                            onKeyPress={this.handleKeyPress}
-                            value={this.state.currentQuery}
-                            size='small'
-                            placeholder='Try "Tofu" or "2 lbs of chicken breast"'
+                    {/* TODO: make search bar handle its own states eg updateQuery, and make more generic. */}
+                    {!this.props.hasSearched && <Grid item xs={12} sm={12}> 
+                        <SearchBar 
+                            textFieldClass={textFieldClass} 
+                            updateQuery={this.updateQuery} 
+                            handleKeyPress={this.handleKeyPress} 
+                            currentQuery={this.state.currentQuery}
+                            buttonClass={buttonClass}
+                            addFood={this.addFood}
+                            inputGrid={this.props.classes.inputGrid}
                         />
                     </Grid>
-                    <Grid item xs={12} sm={2} container justify="flex-end">
-                        <Button className={buttonClass}
-                                variant="contained"
-                                onClick={this.addFood}>Add</Button>
+                    }
+
+                    {!this.props.hasSearched &&
+                    <Grid item xs={12} sm={12}> 
+                        <Typography variant='body2' align="left" style={{margin: '40px 0px'}}>
+                            *Enter common foods with amount you would buy on in a grocery run. Estimates are fine. :)
+                        </Typography> 
                     </Grid>
+                    }
                 {/*</div>*/}
                 {/*<ColumnNames />*/}
                     <form style={{width: '100%'}}>
@@ -350,6 +351,20 @@ class GroceryList extends Component {
                         </List>
                     </form>
                 </Grid>
+                {/* Change search bar position to the bottom after search. */}
+                {this.props.hasSearched && <Grid item xs={12} sm={12}> 
+                        <SearchBar 
+                            textFieldClass={textFieldClass} 
+                            updateQuery={this.updateQuery} 
+                            handleKeyPress={this.handleKeyPress} 
+                            currentQuery={this.state.currentQuery}
+                            buttonClass={buttonClass}
+                            addFood={this.addFood}
+                            inputGrid={this.props.classes.inputGrid}
+                        />
+                    </Grid>
+                    }
+
                 {this.state.groceryList.length > 0 &&
                 <Button className={buttonClass}
                         variant="contained"
@@ -358,6 +373,43 @@ class GroceryList extends Component {
             </Box>
         );
     }
+}
+
+function SearchBar(props){
+    /**
+     * Search bar with Add food button for the GroceryList
+     * 
+     * @param   {Object}    props.textFieldClass    Style of component's textField
+     * @param   {function}  props.updateQuery       Callback function to update the current query
+     * @param   {function}  props.handleKeyPress    Callback function to handle a key press
+     * @param   {String}    props.currentQuery      The current query
+     * @param   {Object}    props.buttonClass       Style of component's Add button
+     * @param   {function}  props.addFood           Callback function to add food (handle when Add pressed)
+     * @param   {Object}    props.inputGrid         Style of component's Grid
+     *
+     * @return  {HTMLSpanElement}  HTML element for the component
+     */
+    return (
+    <Grid container>
+        <Grid item xs={12} sm={10} className={props.inputGrid}>
+            <TextField
+                id="searchBox"
+                variant="outlined"
+                className={props.textFieldClass}
+                onChange={props.updateQuery}
+                onKeyPress={props.handleKeyPress}
+                value={props.currentQuery}
+                size='small'
+                placeholder='Try "Tofu" or "2 lbs of chicken breast"'
+            />
+        </Grid>
+        <Grid item xs={12} sm={2} container justify="flex-end">
+            <Button className={props.buttonClass}
+                    variant="contained"
+                    onClick={props.addFood}><span style={{padding: '0px 30px'}}>Add</span></Button>
+        </Grid>
+    </Grid>
+    )
 }
 
 
@@ -413,7 +465,7 @@ class GroceryListItem extends Component{
         let textFieldClass = this.props.hasSearched ? this.props.classes.textFieldHasSearched : this.props.classes.textField;
         return (
             <ListItem className={this.props.classes.row}>
-                <Grid item xs={12} sm={5} className={this.props.classes.inputGrid}>
+                <Grid item xs sm className={this.props.classes.inputGrid}>
                     <TextField
                         variant="outlined"
                         className={textFieldClass}
@@ -438,7 +490,7 @@ class GroceryListItem extends Component{
                         // style={{float: "left", clear: 'both'}}
                     />
                 </Grid>
-                <Grid item xs={6} sm={3} className={this.props.classes.inputGrid}>
+                <Grid item xs sm className={this.props.classes.inputGrid}>
                     <TextField
                         variant="outlined"
                         className={textFieldClass}
@@ -450,7 +502,7 @@ class GroceryListItem extends Component{
                         // style={{float: "left", clear: 'both'}}
                     />
                 </Grid>
-                <Grid item xs={2} sm={2}>
+                <Grid item xs={1} sm={1}>
                     <IconButton
                         style={{width: '100%'}}
                         aria-label="delete"
