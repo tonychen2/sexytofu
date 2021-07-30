@@ -1,6 +1,7 @@
 import React, {Component} from "react";
 import  "regenerator-runtime";
 
+import { Collapse } from '@material-ui/core';
 import {Grid, Box, Typography} from '@material-ui/core';
 import {TextField, Button, IconButton} from '@material-ui/core';
 import DeleteIcon from '@material-ui/icons/Delete';
@@ -9,7 +10,7 @@ import {withStyles} from '@material-ui/core';
 import { withTheme } from "@material-ui/styles";
 import { color } from "chart.js/helpers";
 
-const GHGI_API_ADDRESS = 'https://api.ghgi.org';
+const GHGI_API_ADDRESS = 'http://localhost:8080/api.ghgi.org:443';
 const NATIVE_API_ADDRESS = 'http://127.0.0.1:8000';
 
 
@@ -132,6 +133,17 @@ const styles = {
         '&:hover': {
             backgroundColor: '#E9D5E5',
             color: '#B155D3',
+        }
+    },
+    errorPopup: {
+        border: '0',
+        right: '0',
+        margin: '5px',
+        backgroundColor: '#ef0000',
+        color: '#ffdbec',
+        '&:hover': {
+            backgroundColor: '#b00035',
+            color: '#ffbdd9'
         },
     }
 }
@@ -148,7 +160,7 @@ class GroceryList extends Component {
      */
     constructor(props) {
         super(props);
-        this.state = {groceryList: [], currentQuery: ""};
+        this.state = {groceryList: [], currentQuery: "", hasSearchError:false, searchErrorMessage : "defaultErrorMessage"};
     }
 
     componentDidUpdate(prevProps) {
@@ -202,6 +214,9 @@ class GroceryList extends Component {
          *
          * @param   {KeyboardEvent}  event  User key press
          */
+        if (this.state.hasSearchError) {
+            this.setState({hasSearchError : false})
+        }   
         if (event.key === 'Enter') {
             if (this.state.currentQuery === "") {
                 this.props.search(this.state.groceryList);
@@ -220,6 +235,9 @@ class GroceryList extends Component {
             return
         }
 
+        // Default error message to show if something in search goes wrong.
+        let errorMessage = "Something went wrong. Adding food was unsuccessful."
+
         // Parse user query
         let parsed = await fetch(`${NATIVE_API_ADDRESS}/parse/?query=${this.state.currentQuery}`)
             .then(response => response.json());
@@ -229,8 +247,36 @@ class GroceryList extends Component {
             {method: 'POST',
                 // headers: {'Content-Type': 'test/plain', 'Origin':'localhost'},
                 body: JSON.stringify({'recipe': [this.state.currentQuery]})})
-            .then(response => response.json())
-            .then(json => json['items'][0]['g']);
+            .then(response => {
+                if (!response.ok) {
+                    // POST: 404 (ie. status not ok)
+                    throw "Oops! We have a technical issue, but rest assured that help is on the way. Please try again later - thanks for being a Sexy Tofu!";
+                } else {
+                    return response.json();
+                }
+            })
+            .then(json => {
+                if (!('items' in json)) {
+                    // GHGI returned a json in unreadable format
+                    throw "Oops! We have a technical issue, but rest assured that help is on the way. Please try again later - thanks for being a Sexy Tofu!";
+                } else if (json['items'][0]['match_conf'] < 0.5) {
+                    // GHGI returned an item with low matching confidence
+                    throw `We did our best but weren't able to find "${parsed['names'][0]}" in our database. Perhaps check your spelling or try a different name? Sexy Tofu is working hard to provide data for more food!`;
+                } else {
+                    return json['items'][0]['g'];
+                }
+            })
+            .catch(err => {
+                errorMessage = err;
+            });
+
+        if (!default_grams) {
+            // Set food search error message for user and stop here if couldn't find food in GHGI database.
+            // TODO: use better condition than !default_grams to detect if something in search went wrong?
+            console.log("Something went wrong, default grams wasn't retrievable from GHGI.")
+            this.showSearchError(errorMessage)
+            return;
+        }
 
         // Map default grams to different units and quantities based on pre-defined rules
         // TODO: refine this logic to include super
@@ -290,6 +336,11 @@ class GroceryList extends Component {
         this.setState({groceryList: groceryList});
     }
 
+    showSearchError = (message) => {
+        this.setState({searchErrorMessage : message})
+        this.setState({hasSearchError : true})
+    }
+
     render() {
         /**
          * React lifecycle method
@@ -343,13 +394,23 @@ class GroceryList extends Component {
                         </Typography> 
                     </Grid>
                     }
-                {/*</div>*/}
-                {/*<ColumnNames />*/}
-                    <form style={{width: '100%'}}>
-                        <List>
-                            {list}
-                        </List>
-                    </form>
+
+                    {/*An error message if search for food fails.*/}
+                    <SearchError 
+                        shown={this.state.hasSearchError}
+                        message={this.state.searchErrorMessage}
+                        classes={this.props.classes}
+                        onClick = { () => {
+                            this.setState({hasSearchError : false})
+                        }}
+                    />
+                    {/*</div>*/}
+                    {/*<ColumnNames />*/}
+                        <form style={{width: '100%'}}>
+                            <List>
+                                {list}
+                            </List>
+                        </form>
                 </Grid>
                 {/* Change search bar position to the bottom after search. */}
                 {this.props.hasSearched && <Grid item xs={12} sm={12}> 
@@ -410,6 +471,33 @@ function SearchBar(props){
         </Grid>
     </Grid>
     )
+}
+
+class SearchError extends Component {
+    /**
+    A dismissable error message that pops up if a search for particular food fails.
+    *
+    * @param   {Object}    props.classes     Style of the component
+    * @param   {bool}  props.hidden      Whether message should be hidden or not.
+    */
+    constructor(props) {
+        super(props);
+    }
+
+    render() {
+        return (
+            <Grid item xs={12} sm={12} >
+                <Collapse in={this.props.shown}>
+                    <Button className={this.props.classes.errorPopup}
+                        variant="contained"
+                        onClick={this.props.onClick} > 
+                        {this.props.message}
+                    </Button>
+                </Collapse>
+            </Grid>
+        )
+    }
+
 }
 
 

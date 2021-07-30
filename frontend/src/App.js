@@ -16,7 +16,7 @@ import {MuiThemeProvider, createMuiTheme} from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import Typography from "@material-ui/core/Typography";
 
-const GHGI_API_ADDRESS = 'https://api.ghgi.org';
+const GHGI_API_ADDRESS = 'http://localhost:8080/api.ghgi.org:443';
 const NATIVE_API_ADDRESS = 'http://127.0.0.1:8000';
 
 
