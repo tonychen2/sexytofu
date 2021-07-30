@@ -1,0 +1,36 @@
+{
+  "api": {
+    "fastapi": {
+      "resourceName": "fastapi",
+      "dependsOn": [
+        {
+          "category": "",
+          "resourceName": "NetworkStack",
+          "attributes": [
+            "ClusterName",
+            "VpcId",
+            "VpcCidrBlock",
+            "SubnetIds",
+            "VpcLinkId",
+            "CloudMapNamespaceId"
+          ]
+        }
+      ],
+      "deploymentMechanism": "INDENPENDENTLY_MANAGED",
+      "imageSource": {
+        "type": "CUSTOM"
+      },
+      "restrictAccess": false,
+      "build": false,
+      "providerPlugin": "awscloudformation",
+      "service": "ElasticContainer",
+      "gitHubInfo": {
+        "path": "https://github.com/tonychen2/sexy-tofu.git",
+        "tokenSecretArn": "arn:aws:secretsmanager:us-west-2:335263317036:secret:amplify-sexytofu-prod-171250-api-fastapi-github-token-Fw1ivD"
+      },
+      "skipHashing": false,
+      "apiType": "REST",
+      "iamAccessUnavailable": true
+    }
+  }
+}

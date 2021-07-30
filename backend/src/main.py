@@ -1,25 +1,25 @@
 from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
-from ghgi.ghgi import parser
+from .ghgi.ghgi import parser
 from typing import Any, Optional, Dict, List
 from pydantic import BaseModel
 
 from sqlalchemy.orm import Session
-import crud, models, schemas
-from database import SessionLocal, engine
+from . import crud, models, schemas
+from .database import SessionLocal, engine
 
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
-origins = [
-    "http://localhost:1234",
-]
-
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=["https://www.sexytofu.org",
+                   "https://dev.sexytofu.org",
+                   "https://qa.sexytofu.org",
+                   "http://35.162.13.216:5000",
+                   "http://localhost:1234"],
     allow_methods=["*"]
 )
 

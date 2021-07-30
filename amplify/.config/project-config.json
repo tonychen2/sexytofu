@@ -1,0 +1,18 @@
+{
+  "projectName": "sexytofu",
+  "version": "3.1",
+  "frontend": "javascript",
+  "javascript": {
+    "framework": "react",
+    "config": {
+      "SourceDir": "frontend/src",
+      "DistributionDir": "frontend/dist",
+      "BuildCommand": "npm run build",
+      "StartCommand": "npm start",
+      "ServerlessContainers": true
+    }
+  },
+  "providers": [
+    "awscloudformation"
+  ]
+}

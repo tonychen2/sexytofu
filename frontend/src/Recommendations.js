@@ -11,7 +11,8 @@ import {joinText} from "./utils.js"
 import FavoriteIcon from '@material-ui/icons/Favorite';
 
 
-const API_ADDRESS = 'http://127.0.0.1:8000';
+const NATIVE_API_ADDRESS =  process.env.API_HOST || "http://localhost:8000";
+
 const ANNUAL_IMPACT_PER_TREE = 26.6;
 const IMPACT_PER_MILE = 0.35;
 
@@ -152,7 +153,7 @@ class Recommendations extends Component {
          * React lifecycle method.
          * Makes API call to get recommendations for the highest-impact food.
          */
-        fetch(`${API_ADDRESS}/recommendations/${this.props.food.alias}/`)
+        fetch(`${NATIVE_API_ADDRESS}/recommendations/${this.props.food.alias}/`)
             .then(response => response.json())
             .then(recos => this.setState({recos: recos}));
     }
@@ -166,7 +167,7 @@ class Recommendations extends Component {
          */
         // TODO: eliminate the intermediate state of displaying "beef is a great choice"
         if (prevProps !== this.props) {
-            fetch(`${API_ADDRESS}/recommendations/${this.props.food.alias}/`)
+            fetch(`${NATIVE_API_ADDRESS}/recommendations/${this.props.food.alias}/`)
                 .then(response => response.json())
                 .then(recos => this.setState({recos: recos, indexOnDisplay: 0}));
         }

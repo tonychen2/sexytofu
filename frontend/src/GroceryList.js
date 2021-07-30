@@ -11,8 +11,8 @@ import {withStyles} from '@material-ui/core';
 import { withTheme } from "@material-ui/styles";
 import { color } from "chart.js/helpers";
 
-const GHGI_API_ADDRESS = 'http://localhost:8080/api.ghgi.org:443';
-const NATIVE_API_ADDRESS = 'http://127.0.0.1:8000';
+const GHGI_API_ADDRESS = 'https://api.sexytofu.org/api.ghgi.org:443';
+const NATIVE_API_ADDRESS =  process.env.API_HOST || "http://localhost:8000";
 
 
 const styles = {

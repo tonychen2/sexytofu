@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import select, delete
 
-import schemas, models
+from . import schemas, models
 
 
 def get_all_recos(db: Session):

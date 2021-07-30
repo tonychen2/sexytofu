@@ -16,8 +16,8 @@ import {MuiThemeProvider, createMuiTheme} from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import Typography from "@material-ui/core/Typography";
 
-const GHGI_API_ADDRESS = 'http://localhost:8080/api.ghgi.org:443';
-const NATIVE_API_ADDRESS = 'http://127.0.0.1:8000';
+const GHGI_API_ADDRESS = 'https://api.sexytofu.org/api.ghgi.org:443';
+const NATIVE_API_ADDRESS =  process.env.API_HOST || "http://localhost:8000";
 
 
 class App extends Component {
@@ -263,7 +263,7 @@ class App extends Component {
                 <Typography variant='h1' style={{marginBottom: '60px'}}>{headline}</Typography>
                 {this.state.hasSearched &&
                 <Grid container justify={"center"}>
-                    <Grid item sm={12} md={summarySize}>
+                    <Grid item xs={12} sm={summarySize}>
                         <Summary
                             totalImpact={this.state.results.totalImpact}
                             driveEq={this.state.results.driveEq}
@@ -277,7 +277,7 @@ class App extends Component {
                     </Grid>
                     <Grid item xs={12} sm={12} style={{backgroundImage: 'linear-gradient(180deg, #CF7DE9, #E97DD1)'}}>
                         <Box paddingY='100px'> 
-                        {/* TODO: better way of formatting than box? -- rowGap would be best, but need workaround for gradient background */}
+                        {/* TODO: better way of formatting than box? */}
                             <Typography variant='h1' style={{marginBottom: '40px'}}>Tell me how I can do better</Typography>
                             <Grid container>
                                 <Grid item xs={12} md={barSize}>
