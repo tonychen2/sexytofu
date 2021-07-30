@@ -34,7 +34,7 @@ const boxStyles = {
         paddingBottom: '1em',
     },
     details: {
-        width: '100%',
+        maxWidth: '100%',
     },
     dropDown: {
         color: '#322737',
