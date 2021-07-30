@@ -250,15 +250,16 @@ class App extends Component {
 
             <MuiThemeProvider theme={theme}>
             <div id="container">
-                <div id="header">
+                <div id="header" style={{display: "flex", justifyContent: "space-between"}}>
                     <a href="#">
                         <img src={logo} alt="Sexy Tofu" id="logo" onClick={this.onLogoClicked}/>
                     </a>
+                    {this.state.hasSearched && <img src={tofuHero} alt="Tofu Hero" id="tofu-hero" style={{height: '61px'}}/>}
                 </div>
                 <div id="content">
                 {/* TODO: scroll to recommendation card after bar chart clicked new item. */}
                 {/* https://stackoverflow.com/questions/24739126/scroll-to-a-specific-element-using-html */}
-                <img src={tofuHero} alt="Tofu Hero" id="tofu-hero"/>
+                {!this.state.hasSearched && <img src={tofuHero} alt="Tofu Hero" id="tofu-hero"/>}
                 <Typography variant='h1' style={{marginBottom: '60px'}}>{headline}</Typography>
                 {this.state.hasSearched &&
                 <Grid container justify={"center"}>
