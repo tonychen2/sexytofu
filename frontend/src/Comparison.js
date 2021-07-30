@@ -3,6 +3,7 @@ import  "regenerator-runtime";
 
 import { makeStyles } from '@material-ui/core/styles';
 import {Accordion, AccordionSummary, AccordionDetails} from "@material-ui/core";
+import {Container} from "@material-ui/core";
 import {Typography} from "@material-ui/core";
 import {Select, MenuItem} from "@material-ui/core";
 import {Slider} from "@material-ui/core";
@@ -21,40 +22,35 @@ const boxStyles = {
      * Style for box element outside the comparisons
      */
     div: {
-        // margin: '50px 0px 10px'
         margin: '0px'
     },
     accordion: {
-        // backgroundColor: '#ffdbec',
         backgroundColor: 'white',
-        paddingTop: '80px',
-        paddingBottom: '80px',
+        padding: '80px 0px',
     },
     summary: {
-        // color: '#fc0a7e',
         color: '#322737',
         margin: 'auto',
-        // paddingTop: '20px'
+        paddingBottom: '1em',
     },
     details: {
-        // padding: "0px 60px",
-        color: 'grey',
         width: '100%',
-        display: 'flex',
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        justifyContent: 'center',
-        alignItems: 'center',
     },
     dropDown: {
         color: '#322737',
     },
     config: {
         width: '100%',
-        textAlign: 'center'
+        textAlign: 'left',
     },
     scaleContainer: {
         width: '100%',
+        // TODO: center vertical slider
+        // display: 'flex',
+        // flexDirection: 'row',
+        // flexWrap: 'wrap',
+        // justifyContent: 'center',
+        // alignItems: 'center',
     }
 };
 
@@ -63,49 +59,79 @@ const scaleStyles = makeStyles((theme) => ({
      * Style for the horizontal scale
      */
     root: {
-        margin: '50px auto 180px',
+        margin: '100px auto 180px',
         maxWidth: '1000px',
-        width: '100%',
+        // width: '100%',
         // Set vertical slider style for small screens only; use horizontal otherwise.
         '@media only screen and (max-width: 600px)': {
             minHeight: '500px',
-            
-            marginTop: '80px',
             '&:last-child': {
                 marginBottom: '50px',
             }
-        }
+        },
+        // Override style of Mui-thumb.Mui-disabled
+        "& .MuiSlider-thumb": {
+            height: '14px',
+            width: '14px',
+          }
+    },
+    rail: {
+        color: '#828282',
+        height: '5px',  
     },
     // User's impact shown on the scale
     thumb: {
-        color: '#fc0a7e',
-        // Rotate thumb when vertical slider. TODO: do not rotate text "You"
-        '@media only screen and (max-width: 600px)': {
-            transform: 'rotate(-45deg)',
-        }
-    },
-    valueLabel: {
-        left: 'auto',
-    },
-    // Each persona's mark on the scale
-    mark: {
-        width: '5px',
-        height: '5px',
-        borderRadius: '2.5px',
+        color: '#F251AF',
         // Fix tick marks being slightly off center, to be on center, depending on if horizontal or vertical slider
         '@media only screen and (max-width: 600px)': {
             left: '12px',
         },
         '@media only screen and (min-width: 600px)': {
             top: '12px', 
-        }
+        },
+    },
+    valueLabel: {
+        left: 'auto',
+        top: '-50px',
+        // Hide default valueLabel teardrop shape
+        '& *': {
+            background: 'transparent',
+            color: '#000',
+          },
+        // Change position of label accordingly when vertical slider
+        '@media only screen and (max-width: 600px)': {
+            top: '0px',
+            right: '8ch',
+        },
+    },
+    // Each persona's mark on the scale
+    mark: {
+        width: '22px',
+        height: '22px',
+        color: '#C4C4C4',
+        borderRadius: '11px',
+        // Color of mark when valueLabel is at the same position (markActive)
+        backgroundColor: '#C4C4C4',
+        opacity: '1',
+        // Fix tick marks being slightly off center, to be on center, depending on if horizontal or vertical slider
+        '@media only screen and (max-width: 600px)': {
+            left: '4px',
+        },
+        '@media only screen and (min-width: 600px)': {
+            top: '4px', 
+        },
     },
     markLabel: {
-        color: 'grey'
+        color: '#C4C4C4'
     },
     markLabelActive: {
-        color: 'grey'
-    }
+        color: '#C4C4C4',
+    },
+    vertical: {
+        '& $rail': {
+            width: "5px",
+        },
+      }
 }));
 
 const DEFAULT_NUM_PEOPLE = 1;
@@ -167,25 +193,25 @@ class Comparison extends Component {
         return (
             <div className={classes.div}>
                 <Accordion className={classes.accordion} square defaultExpanded elevation={0}>
-                    <AccordionSummary>
-                        <Typography variant='h2' className={classes.summary}>How do I compare to others? </Typography>
-                    </AccordionSummary>
                     <AccordionDetails className={classes.details}>
-                        <div id="config" className={classes.config}>
-                            <Typography variant='h4' style={{color: '#322737'}} >
-                                This list is for&nbsp;
-                                {selectNumPeople} {pluralize('person', 'people', this.state.numPeople)}&nbsp;
-                                to consume over&nbsp;
-                                {selectNumDays} {pluralize('day', 'days', this.state.numDays)}.
-                            </Typography>
-                        </div>
-                        <div className={classes.scaleContainer}>
-                            <ComparisonScale totalImpact={this.props.totalImpact}
-                                            numPeople={this.state.numPeople}
-                                            numDays={this.state.numDays}
-                            />
-                        </div>
-
+                        {/* Container is to left align text with scale - note maxWidth must match that of scale. */}
+                        <Container style={{maxWidth:'1000px', padding: '0px 40px'}}> 
+                            <Typography variant='h2' className={classes.summary} align="left">How do I compare to others? </Typography>
+                            <div id="config" className={classes.config}>
+                                <Typography variant='h4' style={{color: '#322737'}} >
+                                    This list is for&nbsp;
+                                    {selectNumPeople} {pluralize('person', 'people', this.state.numPeople)}&nbsp;
+                                    to consume over&nbsp;
+                                    {selectNumDays} {pluralize('day', 'days', this.state.numDays)}.
+                                </Typography>
+                            </div>
+                            <div className={classes.scaleContainer}>
+                                    <ComparisonScale totalImpact={this.props.totalImpact}
+                                                    numPeople={this.state.numPeople}
+                                                    numDays={this.state.numDays}
+                                    />
+                            </div>
+                        </Container>
                     </AccordionDetails>
                 </Accordion>
             </div>
@@ -222,20 +248,38 @@ function ComparisonScale(props) {
             marks={[
                 {value: 17, label: <PersonaLabel name="Sexy Tofu" weeklyImpact='<17' icon={sexyTofuIcon} classes={classes} />},
                 {value: 76, label: <PersonaLabel name="Global Average" weeklyImpact='76' icon={globalAvgIcon} classes={classes} />},
-                // TODO: discuss if true value '189' is necessary; an approximation instead allows better spacing at sacrifice of accuracy
-                {value: 180, label: <PersonaLabel name="Average American" weeklyImpact='189' icon={avgAmericanIcon} classes={classes} />},
+                // TODO: scale value is inaccurate for better spacing at sacrifice of accuracy -- try alternating position of labels
+                {value: 170, label: <PersonaLabel name="Average American" weeklyImpact='189' icon={avgAmericanIcon} classes={classes} />},
                 {value: 224, label: <PersonaLabel name="Meat Lover" weeklyImpact='>224' icon={meatLoverIcon} classes={classes} />}]}
             step={1}
             min={17}
             max={224}
-            valueLabelFormat={(value) => 'You'}
-            // TODO: formatting you
-            //<p style={{transform: 'rotate(45deg)'}}} >You</p>
-            // '@media only screen and (max-width: 600px)': {transform: 'rotate(45deg)'}} TODO: change to typography + text instead
-            // TODO: valueLabelFormat most likely returns a styled html component, so try some inline styling to see if you can change "You"- Tony
+            valueLabelFormat={(value) => <ValueLabel numPeople={props.numPeople} weeklyImpact={value} realImpact={normalizedImpact}/>}
             valueLabelDisplay='on'
             track={false} />
     )
+}
+
+function ValueLabel(props) {
+    /**
+     * React function component for the label of the value (your impact), used in the ComparisonScale's valueLabel
+     *
+     * @param   {int}   props.numPeople       Number of people this value is for
+     * @param   {int}     props.weeklyImpact    Weekly carbon emission of each person, measured by pounds, as clamped by Mui slider
+     * @param   {int}     props.realImpact      Weekly carbon emission of each person, measured by pounds, not clamped by Mui slider
+     *
+     * @return  {HTMLSpanElement}  HTML element for the component
+     */
+    let label = props.numPeople > 1 ? 'Per person' : 'You';
+    // Handle case when weekly impact is greater than or less than lower and upper bounds of Mui slider
+    let overflowSign = '';
+    if (props.realImpact > props.weeklyImpact) { overflowSign = '>'};
+    if (props.realImpact < props.weeklyImpact) { overflowSign = '<'};
+    return (
+        <Typography variant='body2' style={{color: '#322737', minWidth: '15ch'}}>
+            <span style={{display: 'block', fontWeight: 'bold'}}>{label}</span>
+            <span style={{display: 'block'}}>{overflowSign}{Math.round(props.weeklyImpact)} lbs/week</span>
+        </Typography>)
 }
 
 function PersonaLabel(props) {
