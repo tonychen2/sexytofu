@@ -5,6 +5,7 @@ import { Collapse } from '@material-ui/core';
 import {Grid, Box, Typography} from '@material-ui/core';
 import {TextField, Button, IconButton} from '@material-ui/core';
 import DeleteIcon from '@material-ui/icons/Delete';
+import ExpandMoreRoundedIcon from '@material-ui/icons/ExpandMoreRounded';
 import {List, ListItem} from '@material-ui/core';
 import {withStyles} from '@material-ui/core';
 import { withTheme } from "@material-ui/styles";
@@ -387,11 +388,20 @@ class GroceryList extends Component {
                     </Grid>
                     }
 
-                    {!this.props.hasSearched &&
+                    {!this.props.hasSearched && this.state.groceryList.length < 1 &&
                     <Grid item xs={12} sm={12}> 
                         <Typography variant='body2' align="left" style={{margin: '40px 0px'}}>
                             *Enter common foods with amount you would buy on in a grocery run. Estimates are fine. :)
                         </Typography> 
+                    </Grid>
+                    }
+
+                    {!this.props.hasSearched && this.state.groceryList.length > 0 &&
+                    <Grid item xs={12} sm={12}> 
+                        <Typography variant='h3' align="center" style={{marginTop: '40px'}}>
+                            Your List
+                        </Typography> 
+                        <ExpandMoreRoundedIcon fontSize="large"/>
                     </Grid>
                     }
 
