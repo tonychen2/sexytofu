@@ -21,17 +21,18 @@ const styles = {
     },
     section: {
         '&:not(:first-child)': {
-            marginTop: '100px'
+            marginTop: '100px',
+            '@media only screen and (max-width: 600px)': {
+                marginTop: '50px'
+            },
         }
     },
     title: {
         borderRadius: '1ch',
-        // backgroundColor: '#ffdbec',
         backgroundColor: 'white',
         width: 'fit-content',
         margin: 'auto',
         padding: '0ch 1ch',
-        // color: '#fc0a7e'
         color: '#E45FC3',
     },
     highlight: {

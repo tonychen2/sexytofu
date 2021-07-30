@@ -17,8 +17,7 @@ const IMPACT_PER_MILE = 0.35;
 
 const styles = {
     root: {
-        backgroundColor: '#ffffff',
-        // color: 'grey',
+        backgroundColor: 'white',
         width: '80%',
         padding: '20px 35px',
         borderRadius: '20px',
@@ -42,24 +41,23 @@ const styles = {
             },
         },
         '& .MuiCardActions-root': {
-            paddingTop: '0px',
-            paddingBottom: '0px',
+            padding: '0px',
         },
+        // TODO: increase gap between scroll and text
         // https://stackoverflow.com/questions/53772429/material-ui-how-can-i-style-the-scrollbar-with-css-in-js
         // https://www.w3schools.com/howto/howto_css_custom_scrollbar.asp
-        // TODO: increase gap between scroll and text
         // '*::-webkit-scrollbar': {
         //     width: '5px',
         // },
     },
     textHead: {
-        // color: '#fc0a7e',
         color: '#322737',
     },
     textBody: {
         overflowY: 'auto',
         flexGrow: '1',
         color: '#322737',
+        marginTop: '1ch',
     },
 };
 
@@ -197,6 +195,8 @@ class Recommendations extends Component {
                             variant='h5'
                             className={classes.textHead}
                             >
+                            {/* TODO: font scaling to fit in one line, https://stackoverflow.com/questions/16056591/font-scaling-based-on-width-of-container
+                            https://stackoverflow.com/questions/13358181/resize-font-size-according-to-div-size */}
                             {this.props.food.alias[0].toUpperCase() + this.props.food.alias.substring(1)} - Sustainable options
                         </Typography>
                     </div>
@@ -208,19 +208,13 @@ class Recommendations extends Component {
                     </div>
                 </CardContent>
                 <CardActions>
-                    {/* TODO: Added minimum height to keep overall space constant regardless if Show More visible; change to something less hacky.*/}
-                    <span style={{justifyContent: 'space-between', minHeight: "26px"}}>
+                    {/* TODO: Added hard-coded minimum height to keep overall space constant regardless if Show More visible; change to something less hacky.*/}
+                    <div style={{display: 'flex', justifyContent: 'space-between', minHeight: "26px", width: "100%"}}>
+                        {/* NOTE: wrap each button in div if you want to align "Apply to list" to right */}
                         {this.isMore() && <button className={'Button'} onClick={this.nextReco}>Show me more</button>}
                         {this.isApplicable() && <button className={'Button'} onClick={this.applyReco}>Apply to grocery list</button>}
-                    </span>
+                    </div>
                 </CardActions>
-                {/* Below is old code that hides "show more" including space.*/}
-                {/* {(!this.isLast() || this.isApplicable()) && <CardActions>
-                    <span style={{justifyContent: 'space-between'}}>
-                        {this.isApplicable() && <button className={'Button'} onClick={this.applyReco}>Apply to grocery list</button>}
-                        {this.isLast() || <button className={'Button'} onClick={this.nextReco}>Show me more</button>}
-                    </span>
-                </CardActions>} */}
             </Card>
         )
     }
