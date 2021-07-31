@@ -435,7 +435,7 @@ class GroceryList extends Component {
                 </Grid>}
 
                 {this.state.groceryList.length > 0 &&
-                <Grid container xs={12} sm={12} justify={"flex-end"}>
+                <Grid container justify={"flex-end"}>
                 <Button className={buttonClass}
                         variant="contained"
                         align="end"
