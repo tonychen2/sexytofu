@@ -375,7 +375,8 @@ class GroceryList extends Component {
                         <Typography variant='h2' className={this.props.classes.groceryTitle}>Your List</Typography>
                     </Grid>}
                     {/* TODO: make search bar handle its own states eg updateQuery, and make more generic. */}
-                    {!this.props.hasSearched && <Grid item xs={12} sm={12}> 
+                    {!this.props.hasSearched &&
+                    <Grid item xs={12} sm={12}> 
                         <SearchBar 
                             textFieldClass={textFieldClass} 
                             updateQuery={this.updateQuery} 
@@ -385,16 +386,14 @@ class GroceryList extends Component {
                             addFood={this.addFood}
                             inputGrid={this.props.classes.inputGrid}
                         />
-                    </Grid>
-                    }
+                    </Grid>}
 
                     {!this.props.hasSearched && this.state.groceryList.length < 1 &&
                     <Grid item xs={12} sm={12}> 
                         <Typography variant='body2' align="left" style={{margin: '40px 0px'}}>
                             *Enter common foods with amount you would buy on in a grocery run. Estimates are fine. :)
                         </Typography> 
-                    </Grid>
-                    }
+                    </Grid>}
 
                     {!this.props.hasSearched && this.state.groceryList.length > 0 &&
                     <Grid item xs={12} sm={12}> 
@@ -402,8 +401,7 @@ class GroceryList extends Component {
                             Your List
                         </Typography> 
                         <ExpandMoreRoundedIcon fontSize="large"/>
-                    </Grid>
-                    }
+                    </Grid>}
 
                     {/*An error message if search for food fails.*/}
                     <SearchError 
@@ -423,23 +421,26 @@ class GroceryList extends Component {
                         </form>
                 </Grid>
                 {/* Change search bar position to the bottom after search. */}
-                {this.props.hasSearched && <Grid item xs={12} sm={12}> 
-                        <SearchBar 
-                            textFieldClass={textFieldClass} 
-                            updateQuery={this.updateQuery} 
-                            handleKeyPress={this.handleKeyPress} 
-                            currentQuery={this.state.currentQuery}
-                            buttonClass={buttonClass}
-                            addFood={this.addFood}
-                            inputGrid={this.props.classes.inputGrid}
-                        />
-                    </Grid>
-                    }
+                {this.props.hasSearched && 
+                <Grid item xs={12} sm={12}> 
+                    <SearchBar 
+                        textFieldClass={textFieldClass} 
+                        updateQuery={this.updateQuery} 
+                        handleKeyPress={this.handleKeyPress} 
+                        currentQuery={this.state.currentQuery}
+                        buttonClass={buttonClass}
+                        addFood={this.addFood}
+                        inputGrid={this.props.classes.inputGrid}
+                    />
+                </Grid>}
 
                 {this.state.groceryList.length > 0 &&
+                <Grid container xs={12} sm={12} justify={"flex-end"}>
                 <Button className={buttonClass}
                         variant="contained"
-                        onClick={() => this.props.search(this.state.groceryList)}>Search</Button>}
+                        align="end"
+                        onClick={() => this.props.search(this.state.groceryList)}><span style={{padding: '0px 15px'}}>Search</span></Button>
+                </Grid>}
             </Box>
             </Box>
         );
@@ -601,13 +602,15 @@ class GroceryListItem extends Component{
                     />
                 </Grid>
                 <Grid item xs={1} sm={1}>
-                    <IconButton
-                        style={{width: '100%'}}
-                        aria-label="delete"
-                        size="small"
-                        onClick={this.props.remove}>
-                        <DeleteIcon />
-                    </IconButton>
+                    <Grid container justify={"center"}>
+                        <IconButton
+                            // style={{width: '100%'}}
+                            aria-label="delete"
+                            size="small"
+                            onClick={this.props.remove}>
+                            <DeleteIcon />
+                        </IconButton>
+                    </Grid>
                 </Grid>
             </ListItem>
         );
