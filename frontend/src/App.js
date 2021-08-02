@@ -250,6 +250,7 @@ class App extends Component {
 
             <MuiThemeProvider theme={theme}>
             <div id="container">
+                <div id="background"></div>
                 <div id="header" style={{display: "flex", justifyContent: "space-between"}}>
                     <a href="#">
                         <img src={logo} alt="Sexy Tofu" id="logo" onClick={this.onLogoClicked}/>
@@ -260,7 +261,7 @@ class App extends Component {
                 {/* TODO: scroll to recommendation card after bar chart clicked new item. */}
                 {/* https://stackoverflow.com/questions/24739126/scroll-to-a-specific-element-using-html */}
                 {!this.state.hasSearched && <img src={tofuHero} alt="Tofu Hero" id="tofu-hero"/>}
-                <Typography variant='h1' style={{marginBottom: '60px'}}>{headline}</Typography>
+                <Typography variant='h1' style={{marginBottom: '60px', padding: '0px 20px'}}>{headline}</Typography>
                 {this.state.hasSearched &&
                 <Grid container justify={"center"}>
                     <Grid item xs={12} sm={summarySize}>
@@ -278,7 +279,7 @@ class App extends Component {
                     <Grid item xs={12} sm={12} style={{backgroundImage: 'linear-gradient(180deg, #CF7DE9, #E97DD1)'}}>
                         <Box paddingY='100px'> 
                         {/* TODO: better way of formatting than box? */}
-                            <Typography variant='h1' style={{marginBottom: '40px'}}>Tell me how I can do better</Typography>
+                            <Typography variant='h1' style={{marginBottom: '40px', padding: '0px 20px'}}>Tell me how I can do better</Typography>
                             <Grid container>
                                 <Grid item xs={12} md={barSize}>
                                     <BarChart

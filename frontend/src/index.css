@@ -29,16 +29,6 @@ body{
     padding: 0;
 }
 
-#container{
-    background-image: linear-gradient(180deg, #F251B1, #BD86FF);
-    background-repeat: no-repeat;
-    /* Background size solution taken from: https://stackoverflow.com/a/17067528 TODO: evaluate necessity of 'height' lines*/
-    min-height: 100vh; /* Minimum height to make background gradient stretch to fill */
-    height:auto !important; /* Important rule for a modern browser */
-    height:100%; /* Minimum height for Internet Explorer */
-    overflow: hidden !important; /* Get rid of extraneous scroll-bar */
-}
-
 h1, h2, h3, h4, h5, h6 {
     font-family: 'Lato', 'sans-serif';
     color: white;
@@ -68,6 +58,20 @@ label {
     position: relative;
     float: left;
     width: 120px;
+}
+
+#background{
+    background-image: linear-gradient(180deg, #F251B1, #BD86FF);
+    background-repeat: no-repeat;
+    position:fixed;
+    z-index:0;
+    width: 100vw;
+    height: 100vh;
+}
+ 
+#content{
+    z-index:1;
+    position:relative;
 }
 
 /*Input {*/
