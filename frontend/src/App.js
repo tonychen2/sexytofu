@@ -13,6 +13,7 @@ import Summary from "./Summary";
 import Grid from '@material-ui/core/Grid';
 import Typography from "@material-ui/core/Typography";
 
+
 const GHGI_API_ADDRESS = 'https://api.sexytofu.org/api.ghgi.org:443';
 const NATIVE_API_ADDRESS =  process.env.API_HOST || "http://localhost:8000";
 

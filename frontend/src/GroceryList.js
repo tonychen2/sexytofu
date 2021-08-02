@@ -8,6 +8,9 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import {List, ListItem} from '@material-ui/core';
 import {withStyles} from '@material-ui/core';
 
+import TagManager from 'react-gtm-module'
+
+
 const GHGI_API_ADDRESS = 'https://api.sexytofu.org/api.ghgi.org:443';
 const NATIVE_API_ADDRESS =  process.env.API_HOST || "http://localhost:8000";
 
@@ -159,6 +162,13 @@ class GroceryList extends Component {
         if (this.state.currentQuery === "") {
             return
         }
+
+        let tagManagerArgs = {
+            events: {
+                query: this.state.currentQuery
+            }
+        };
+        TagManager.dataLayer(tagManagerArgs);
 
         // Default error message to show if something in search goes wrong.
         let errorMessage = "Something went wrong. Adding food was unsuccessful."
