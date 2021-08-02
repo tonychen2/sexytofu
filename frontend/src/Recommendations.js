@@ -43,22 +43,28 @@ const styles = {
         },
         '& .MuiCardActions-root': {
             padding: '0px',
+            paddingTop: '1ch',
         },
         '& ::-webkit-scrollbar': {
             // Set default appearance to none, then added custom scroll style, to show up on MacOS
             // https://stackoverflow.com/questions/7855590/preventing-scroll-bars-from-being-hidden-for-macos-trackpad-users-in-webkit-blin
             '& -webkit-appearance' : 'none',
-            width: '11px',
+            width: '24px',
         },
         '& ::-webkit-scrollbar-track': {
             backgroundColor: 'white',
             borderRadius: '8px',
         },
         '& ::-webkit-scrollbar-thumb': {
-          backgroundColor: 'grey',
-          borderRadius: '8px',
-          border: '2px solid white'
+          backgroundColor: 'silver',
+        //   borderRadius: '12px',
+        //   border: '4px solid white',
+          borderLeft: '14px white solid',
+          backgroundClip: 'padding-box',
         },
+        '& ::-webkit-scrollbar-thumb:hover': {
+            backgroundColor: 'darkGrey',
+          },
     },
     textHead: {
         color: '#322737',
