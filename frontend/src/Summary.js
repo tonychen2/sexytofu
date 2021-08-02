@@ -36,7 +36,7 @@ const styles = {
         color: '#E45FC3',
     },
     highlight: {
-        fontSize: '200%',
+        fontSize: '150%',
         fontWeight: 'bold'
     },
     image: {

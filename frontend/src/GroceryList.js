@@ -20,7 +20,7 @@ const styles = {
         alignItems: 'center'
     },
     box: {
-        padding: '10px',
+        padding: '20px',
         paddingBottom: '50px',
         // margin: '50px auto 0px',
         margin: '0px auto 0px',
@@ -28,7 +28,7 @@ const styles = {
         maxWidth: '60ch',
     },
     boxHasSearched: {
-        padding: '10px',
+        padding: '20px',
         paddingBottom: '50px',
         // margin: '50px auto 0px',
         margin: '0px auto 0px',
