@@ -163,13 +163,6 @@ class GroceryList extends Component {
             return
         }
 
-        let tagManagerArgs = {
-            events: {
-                query: this.state.currentQuery
-            }
-        };
-        TagManager.dataLayer(tagManagerArgs);
-
         // Default error message to show if something in search goes wrong.
         let errorMessage = "Something went wrong. Adding food was unsuccessful."
 
@@ -240,7 +233,20 @@ class GroceryList extends Component {
             "quantity": quantity,
             "unit": unit});
 
-        this.setState({groceryList: groceryList, currentQuery: "",});
+        // Send data to Google Tag Manager
+        let tagManagerArgs = {
+            dataLayer: {
+                event: "parsingComplete",
+                query: this.state.currentQuery,
+                ingredient: name,
+                quantity: quantity,
+                unit: unit
+            }
+        };
+        TagManager.dataLayer(tagManagerArgs);
+
+        // Set React state
+        this.setState({groceryList: groceryList, currentQuery: ""});
     }
 
     updateFood = (index, field, newValue) => {
@@ -252,6 +258,8 @@ class GroceryList extends Component {
          * @param   {T}       newValue  New value of the field
          */
         let groceryList = this.state.groceryList;
+
+        // Update item in grocery list
         groceryList[index][field] = newValue;
 
         this.setState({groceryList: groceryList});
@@ -263,10 +271,19 @@ class GroceryList extends Component {
          *
          * @param   {int}  index  Index of the food item to be removed from GroceryList
          */
-        console.log(`Removing item #${index}`);
         let groceryList = this.state.groceryList;
+
+        // Send data to Google Tag Manager
+        let tagManagerArgs = {
+            dataLayer: {
+                event: "removeFood",
+                ingredient: groceryList[index]["ingredient"],
+            }
+        };
+        TagManager.dataLayer(tagManagerArgs);
+
+        // Remove item from grocery list
         groceryList.splice(index, 1);
-        console.log(`New list: ${groceryList[0]}`);
 
         this.setState({groceryList: groceryList});
     }
@@ -310,6 +327,7 @@ class GroceryList extends Component {
                     <Grid item xs={12} sm={10} className={this.props.classes.inputGrid}>
                         <TextField
                             id="searchBox"
+                            autoFocus
                             variant="outlined"
                             className={this.props.classes.textField}
                             onChange={this.updateQuery}
@@ -343,6 +361,7 @@ class GroceryList extends Component {
                 </Grid>
                 {this.state.groceryList.length > 0 &&
                 <Button className={this.props.classes.button}
+                        id="search"
                         variant="contained"
                         onClick={() => this.props.search(this.state.groceryList)}>Search</Button>}
             </Box>

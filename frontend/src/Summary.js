@@ -11,6 +11,8 @@ import driveEqGraphics from "./assets/summary_graphics/car_driving.png";
 import landUseGraphics from "./assets/summary_graphics/parking_spots.png";
 import waterUseGraphics from "./assets/summary_graphics/water.png";
 
+import TagManager from "react-gtm-module";
+
 
 const styles = {
     root: {
