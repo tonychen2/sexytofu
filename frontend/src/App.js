@@ -196,7 +196,7 @@ class App extends Component {
         let tagManagerArgs = {
             dataLayer: {
                 event: "checkReco",
-                alias: this.state.results.contributors[index],
+                ingredient: this.state.results.contributors[index],
                 index: index
             }
         };
