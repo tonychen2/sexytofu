@@ -10,6 +10,7 @@ import BarChart from "./BarChart";
 import Comparison from "./Comparison";
 import Summary from "./Summary";
 
+import {Button} from '@material-ui/core';
 import {Box} from '@material-ui/core';
 import {Hidden} from '@material-ui/core';
 import {MuiThemeProvider, createMuiTheme} from '@material-ui/core/styles';
@@ -257,6 +258,10 @@ class App extends Component {
                     </a>
                     {this.state.hasSearched && <img src={tofuHero} alt="Tofu Hero" id="tofu-hero" style={{height: '61px'}}/>}
                 </div>
+                {/* TODO: make Share feedback floating button. */}
+                {/* <div id="sticky">
+                    <Button variant="contained"> Share your feedback! </Button>
+                </div> */}
                 <div id="content">
                 {/* TODO: scroll to recommendation card after bar chart clicked new item. */}
                 {/* https://stackoverflow.com/questions/24739126/scroll-to-a-specific-element-using-html */}
