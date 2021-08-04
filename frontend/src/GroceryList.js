@@ -447,11 +447,19 @@ function SearchBar(props){
      *
      * @return  {HTMLSpanElement}  HTML element for the component
      */
+    const input = React.useRef(); 
+
+    const setFocus = () => {
+        input.current.focus();
+    };
+
     return (
     <Grid container>
         <Grid item xs={12} sm={10} className={props.inputGrid}>
             <TextField
                 id="searchBox"
+                inputRef={input}
+                autoFocus={true}
                 variant="outlined"
                 className={props.textFieldClass}
                 onChange={props.updateQuery}
@@ -464,7 +472,7 @@ function SearchBar(props){
         <Grid item xs={12} sm={2} container justify="flex-end">
             <Button className={props.buttonClass}
                     variant="contained"
-                    onClick={props.addFood}><span style={{padding: '0px 30px'}}>Add</span></Button>
+                    onClick={() => {props.addFood(); setFocus();}}><span style={{padding: '0px 30px'}}>Add</span></Button>
         </Grid>
     </Grid>
     )
