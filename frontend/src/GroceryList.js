@@ -375,7 +375,6 @@ class GroceryList extends Component {
                         <Typography variant='h2' className={this.props.classes.groceryTitle}>Your List</Typography>
                     </Grid>}
                     {/* TODO: make search bar handle its own states eg updateQuery, and make more generic. */}
-                    {!this.props.hasSearched &&
                     <Grid item xs={12} sm={12}> 
                         <SearchBar 
                             textFieldClass={textFieldClass} 
@@ -386,7 +385,7 @@ class GroceryList extends Component {
                             addFood={this.addFood}
                             inputGrid={this.props.classes.inputGrid}
                         />
-                    </Grid>}
+                    </Grid>
 
                     {!this.props.hasSearched && this.state.groceryList.length < 1 &&
                     <Grid item xs={12} sm={12}> 
@@ -420,19 +419,6 @@ class GroceryList extends Component {
                             </List>
                         </form>
                 </Grid>
-                {/* Change search bar position to the bottom after search. */}
-                {this.props.hasSearched && 
-                <Grid item xs={12} sm={12}> 
-                    <SearchBar 
-                        textFieldClass={textFieldClass} 
-                        updateQuery={this.updateQuery} 
-                        handleKeyPress={this.handleKeyPress} 
-                        currentQuery={this.state.currentQuery}
-                        buttonClass={buttonClass}
-                        addFood={this.addFood}
-                        inputGrid={this.props.classes.inputGrid}
-                    />
-                </Grid>}
 
                 {this.state.groceryList.length > 0 &&
                 <Grid container justify={"flex-end"}>
