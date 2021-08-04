@@ -195,7 +195,7 @@ class Comparison extends Component {
                 <Accordion className={classes.accordion} square defaultExpanded elevation={0}>
                     <AccordionDetails className={classes.details}>
                         {/* Container is to left align text with scale - note maxWidth must match that of scale. */}
-                        <Container style={{maxWidth:'1000px', padding: '0px 40px'}}> 
+                        <Container style={{maxWidth:'1000px', padding: '0px 50px'}}> 
                             <Typography variant='h2' className={classes.summary} align="left">How do I compare to others? </Typography>
                             <div id="config" className={classes.config}>
                                 <Typography variant='h4' style={{color: '#322737'}} >

@@ -43,7 +43,7 @@ const styles = {
         },
         '& .MuiCardActions-root': {
             padding: '0px',
-            paddingTop: '1ch',
+            paddingTop: '2ch',
         },
         '& ::-webkit-scrollbar': {
             // Set default appearance to none, then added custom scroll style, to show up on MacOS
