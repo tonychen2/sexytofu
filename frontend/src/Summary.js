@@ -57,7 +57,7 @@ function Summary(props) {
 
     return (
         <div id="summary" className={classes.root}>
-            <div id="driveEq" className={classes.section}>
+            <div id="carbonEmission" className={classes.section}>
                 <Typography variant='subtitle1' className={classes.title}>Carbon Emissions</Typography>
                 <Typography variant='subtitle1'>
                     <span className={classes.highlight}>{props.totalImpact.toFixed(1)}</span>&nbsp;

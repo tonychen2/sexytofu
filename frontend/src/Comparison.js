@@ -139,14 +139,14 @@ class Comparison extends Component {
             <Select value={this.state.numPeople}
                     onChange={this.handleNumPeopleChange}
                     className={classes.dropDown}>
-                {[...Array(10).keys()].map((x) => <MenuItem value={x} key={`numPeople-${x}`}>{x}</MenuItem>)}
+                {[...Array(10).keys()].map((x) => <MenuItem value={x+1} key={`numPeople-${x+1}`}>{x+1}</MenuItem>)}
             </Select>;
         // Allows users to specify how many days the grocery list is for
         const selectNumDays =
             <Select value={this.state.numDays}
                     onChange={this.handleNumDaysChange}
                     className={classes.dropDown}>
-                {[...Array(14).keys()].map((x) => <MenuItem value={x} key={`numDays-${x}`}>{x}</MenuItem>)}
+                {[...Array(14).keys()].map((x) => <MenuItem value={x+1} key={`numDays-${x+1}`}>{x+1}</MenuItem>)}
             </Select>;
 
         return (

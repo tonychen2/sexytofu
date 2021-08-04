@@ -201,8 +201,20 @@ class GroceryList extends Component {
         if (!default_grams) {
             // Set food search error message for user and stop here if couldn't find food in GHGI database.
             // TODO: use better condition than !default_grams to detect if something in search went wrong?
-            console.log("Something went wrong, default grams wasn't retrievable from GHGI.")
-            this.showSearchError(errorMessage)
+            this.showSearchError(errorMessage);
+            console.warn("Something went wrong, default grams wasn't retrievable from GHGI.");
+
+            // Send data to Google Tag Manager
+            let tagManagerArgs = {
+                dataLayer: {
+                    event: "dataNotFound",
+                    gtm: {
+                        errorMessage: errorMessage
+                    }
+                }
+            };
+            TagManager.dataLayer(tagManagerArgs);
+
             return;
         }
 
@@ -229,7 +241,8 @@ class GroceryList extends Component {
         let quantity = parsed['qtys'][0]['qty'][0] || default_qty;
         let unit = parsed['qtys'][0]['unit'][0] || default_unit;
 
-        groceryList.push({"ingredient": name,
+        groceryList.push({
+            "ingredient": name,
             "quantity": quantity,
             "unit": unit});
 
@@ -276,7 +289,7 @@ class GroceryList extends Component {
         // Send data to Google Tag Manager
         let tagManagerArgs = {
             dataLayer: {
-                event: "removeFood",
+                event: "removeItem",
                 ingredient: groceryList[index]["ingredient"],
             }
         };
@@ -291,6 +304,7 @@ class GroceryList extends Component {
     showSearchError = (message) => {
         this.setState({searchErrorMessage : message})
         this.setState({hasSearchError : true})
+
     }
 
     render() {
