@@ -17,6 +17,8 @@ import {Hidden} from '@material-ui/core';
 import {MuiThemeProvider, createMuiTheme} from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import Typography from "@material-ui/core/Typography";
+import TagManager from "react-gtm-module";
+
 
 const GHGI_API_ADDRESS = 'https://api.sexytofu.org/api.ghgi.org:443';
 const NATIVE_API_ADDRESS =  process.env.API_HOST || "http://localhost:8000";
@@ -53,6 +55,19 @@ class App extends Component {
          *
          * @param   {array<Object>}  groceryList  Food items with the signature {"ingredient": String, "quantity": float, "unit": String}
          */
+        // Send data to Google Tag Manager
+        for (let i = 0; i < groceryList.length; i++) {
+            let tagManagerArgs = {
+                dataLayer: {
+                    event: "searchItem",
+                    ingredient: groceryList[i]["ingredient"],
+                    quantity: groceryList[i]["quantity"],
+                    unit: groceryList[i]["unit"]
+                }
+            };
+            TagManager.dataLayer(tagManagerArgs);
+        }
+
         // Copy out groceryList so we don't change the original array
         let searchList = [...groceryList];
 
@@ -82,6 +97,16 @@ class App extends Component {
             },
             results: results
         });
+
+        // Track search and results in Google Tag Manager
+        let tagManagerArgs = {
+            dataLayer: {
+                event: "search",
+                groceryListLength: groceryList.length,
+                results: results
+            }
+        };
+        TagManager.dataLayer(tagManagerArgs);
     }
 
     // TODO: Distinguish between L and KG
@@ -171,6 +196,16 @@ class App extends Component {
             alias: this.state.results.contributors[index],
             grams: this.state.results.grams[index]
         }});
+
+        // Send data to Google Tag Manager
+        let tagManagerArgs = {
+            dataLayer: {
+                event: "checkReco",
+                ingredient: this.state.results.contributors[index],
+                index: index
+            }
+        };
+        TagManager.dataLayer(tagManagerArgs);
     }
 
     onLogoClicked = () => {
