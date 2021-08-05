@@ -1,9 +1,11 @@
 import React, {useState, Component} from "react";
-import {withStyles} from "@material-ui/core";
+
+import tofuHero from "./assets/tofu-hero.gif";
 
 import {Button} from '@material-ui/core';
 import {Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle} from '@material-ui/core';
 import {Grid, Box, TextField, Typography} from '@material-ui/core';
+import {withStyles} from "@material-ui/core";
 
 
 const styles = {
@@ -11,9 +13,12 @@ const styles = {
         '& .MuiButton-contained:hover': {
             // Button hover style
             color: '#2e3032',
+            animation: '$slideOut 0.5s ease-in-out',
+            transform: "translateX(0%)",
         }
     },
     button: {
+        paddingLeft: '10px',
         textTransform: "none",
         color: '#53575B',
         backgroundColor: '#F9F7F7',
@@ -21,6 +26,24 @@ const styles = {
         border: '3px solid #F2F2F2',
         borderRight: 'none',
         marginBottom: '1ch',
+        transform: "translateX(80%)",
+        animation: '$slideIn 0.5s ease-in-out',
+    },
+    '@keyframes slideOut': {
+        '0%': {
+            transform: "translateX(80%)",
+        },
+        '100%': {
+            transform: "translateX(0%)",
+        },
+    },
+    '@keyframes slideIn': {
+        '0%': {
+            transform: "translateX(0%)",
+        },
+        '100%': {
+            transform: "translateX(80%)",
+        },
     },
 }
 
@@ -47,6 +70,7 @@ class Feedback extends Component {
         return (
             <Grid container justify={"flex-end"} className={this.props.classes.root}>
                 <Button variant="contained" className={this.props.classes.button} onClick={this.openPopUp}> 
+                    <img src={tofuHero} alt="Tofu Hero" id="tofu-hero" style={{height: '25px', marginRight: '6px'}}/>
                     <Typography variant="body2">
                         Share your thoughts!
                     </Typography> 
@@ -81,9 +105,10 @@ class FeedbackPopUp extends Component {
                 <DialogContent>
                     <DialogContentText>
                         <Typography component={'span'} variant="body2"> 
-                            To participate in beta phase, please enter your email address here. We will send updates
+                            Like Sexy Tofu? Please support us by giving feedback!
+                            To participate in beta phase, enter your email address here. We will send updates
                             occasionally.
-                            To show you our gratitue, you'll be entered into a raffle.
+                            To show you our gratitute, you'll be entered into a raffle.
                         </Typography>  
                     </DialogContentText>
                     <TextField
