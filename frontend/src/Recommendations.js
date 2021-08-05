@@ -9,6 +9,7 @@ import {withStyles} from "@material-ui/core";
 import {joinText} from "./utils.js"
 
 import FavoriteIcon from '@material-ui/icons/Favorite';
+import TagManager from "react-gtm-module";
 
 
 const NATIVE_API_ADDRESS =  process.env.API_HOST || "http://localhost:8000";
@@ -132,6 +133,16 @@ class Recommendations extends Component {
          */
         let reco = this.state.recos[this.state.indexOnDisplay];
         this.props.updateGroceryList(this.props.food.alias, 'ingredient', reco['replacement']['name']);
+
+        // Send data to Google Tag Manager
+        let tagManagerArgs = {
+            dataLayer: {
+                event: "applyReco",
+                ingredient: this.props.food.alias,
+                replacement: reco['replacement']['name']
+            }
+        };
+        TagManager.dataLayer(tagManagerArgs);
     }
 
     nextReco = () => {
@@ -142,6 +153,15 @@ class Recommendations extends Component {
          */
         let newIndex = this.state.indexOnDisplay + 1;
         this.setState({indexOnDisplay: newIndex});
+
+        // Send data to Google Tag Manager
+        let tagManagerArgs = {
+            dataLayer: {
+                event: "nextReco",
+                index: newIndex
+            }
+        };
+        TagManager.dataLayer(tagManagerArgs);
     }
 
     render() {

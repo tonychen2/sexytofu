@@ -8,6 +8,9 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import {List, ListItem} from '@material-ui/core';
 import {withStyles} from '@material-ui/core';
 
+import TagManager from 'react-gtm-module'
+
+
 const GHGI_API_ADDRESS = 'https://api.sexytofu.org/api.ghgi.org:443';
 const NATIVE_API_ADDRESS =  process.env.API_HOST || "http://localhost:8000";
 
@@ -198,8 +201,20 @@ class GroceryList extends Component {
         if (!default_grams) {
             // Set food search error message for user and stop here if couldn't find food in GHGI database.
             // TODO: use better condition than !default_grams to detect if something in search went wrong?
-            console.log("Something went wrong, default grams wasn't retrievable from GHGI.")
-            this.showSearchError(errorMessage)
+            this.showSearchError(errorMessage);
+            console.warn("Something went wrong, default grams wasn't retrievable from GHGI.");
+
+            // Send data to Google Tag Manager
+            let tagManagerArgs = {
+                dataLayer: {
+                    event: "dataNotFound",
+                    gtm: {
+                        errorMessage: errorMessage
+                    }
+                }
+            };
+            TagManager.dataLayer(tagManagerArgs);
+
             return;
         }
 
@@ -226,11 +241,25 @@ class GroceryList extends Component {
         let quantity = parsed['qtys'][0]['qty'][0] || default_qty;
         let unit = parsed['qtys'][0]['unit'][0] || default_unit;
 
-        groceryList.push({"ingredient": name,
+        groceryList.push({
+            "ingredient": name,
             "quantity": quantity,
             "unit": unit});
 
-        this.setState({groceryList: groceryList, currentQuery: "",});
+        // Send data to Google Tag Manager
+        let tagManagerArgs = {
+            dataLayer: {
+                event: "parsingComplete",
+                query: this.state.currentQuery,
+                ingredient: name,
+                quantity: quantity,
+                unit: unit
+            }
+        };
+        TagManager.dataLayer(tagManagerArgs);
+
+        // Set React state
+        this.setState({groceryList: groceryList, currentQuery: ""});
     }
 
     updateFood = (index, field, newValue) => {
@@ -242,6 +271,8 @@ class GroceryList extends Component {
          * @param   {T}       newValue  New value of the field
          */
         let groceryList = this.state.groceryList;
+
+        // Update item in grocery list
         groceryList[index][field] = newValue;
 
         this.setState({groceryList: groceryList});
@@ -253,10 +284,19 @@ class GroceryList extends Component {
          *
          * @param   {int}  index  Index of the food item to be removed from GroceryList
          */
-        console.log(`Removing item #${index}`);
         let groceryList = this.state.groceryList;
+
+        // Send data to Google Tag Manager
+        let tagManagerArgs = {
+            dataLayer: {
+                event: "removeItem",
+                ingredient: groceryList[index]["ingredient"],
+            }
+        };
+        TagManager.dataLayer(tagManagerArgs);
+
+        // Remove item from grocery list
         groceryList.splice(index, 1);
-        console.log(`New list: ${groceryList[0]}`);
 
         this.setState({groceryList: groceryList});
     }
@@ -264,6 +304,7 @@ class GroceryList extends Component {
     showSearchError = (message) => {
         this.setState({searchErrorMessage : message})
         this.setState({hasSearchError : true})
+
     }
 
     render() {
@@ -300,6 +341,7 @@ class GroceryList extends Component {
                     <Grid item xs={12} sm={10} className={this.props.classes.inputGrid}>
                         <TextField
                             id="searchBox"
+                            autoFocus
                             variant="outlined"
                             className={this.props.classes.textField}
                             onChange={this.updateQuery}
@@ -333,6 +375,7 @@ class GroceryList extends Component {
                 </Grid>
                 {this.state.groceryList.length > 0 &&
                 <Button className={this.props.classes.button}
+                        id="search"
                         variant="contained"
                         onClick={() => this.props.search(this.state.groceryList)}>Search</Button>}
             </Box>

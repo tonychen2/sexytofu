@@ -14,6 +14,7 @@ import meatLoverIcon from "./assets/summary_graphics/Tofu_meatlover.png";
 import avgAmericanIcon from "./assets/summary_graphics/Tofu_avgamerican.png";
 import globalAvgIcon from "./assets/summary_graphics/Tofu_globalavg.png";
 import sexyTofuIcon from "./assets/summary_graphics/Tofu_sexytofu.png";
+import TagManager from "react-gtm-module";
 
 const boxStyles = {
     /**
@@ -96,6 +97,15 @@ class Comparison extends Component {
          * @param   {ChangeEvent<Select>}  event  User's change of selection
          */
         this.setState({numPeople: event.target.value});
+
+        // Send data to Google Tag Manager
+        let tagManagerArgs = {
+            dataLayer: {
+                event: "changeNumPeople",
+                numPeople: event.target.value
+            }
+        };
+        TagManager.dataLayer(tagManagerArgs);
     }
 
     handleNumDaysChange = event => {
@@ -105,6 +115,15 @@ class Comparison extends Component {
          * @param   {ChangeEvent<Select>}  event  User's change of selection
          */
         this.setState({numDays: event.target.value});
+
+        // Send data to Google Tag Manager
+        let tagManagerArgs = {
+            dataLayer: {
+                event: "changeNumDays",
+                numDays: event.target.value
+            }
+        };
+        TagManager.dataLayer(tagManagerArgs);
     }
 
     render() {
@@ -120,14 +139,14 @@ class Comparison extends Component {
             <Select value={this.state.numPeople}
                     onChange={this.handleNumPeopleChange}
                     className={classes.dropDown}>
-                {[...Array(10).keys()].map((x) => <MenuItem value={x} key={`numPeople-${x}`}>{x}</MenuItem>)}
+                {[...Array(10).keys()].map((x) => <MenuItem value={x+1} key={`numPeople-${x+1}`}>{x+1}</MenuItem>)}
             </Select>;
         // Allows users to specify how many days the grocery list is for
         const selectNumDays =
             <Select value={this.state.numDays}
                     onChange={this.handleNumDaysChange}
                     className={classes.dropDown}>
-                {[...Array(14).keys()].map((x) => <MenuItem value={x} key={`numDays-${x}`}>{x}</MenuItem>)}
+                {[...Array(14).keys()].map((x) => <MenuItem value={x+1} key={`numDays-${x+1}`}>{x+1}</MenuItem>)}
             </Select>;
 
         return (
