@@ -34,7 +34,8 @@ class App extends Component {
         hasSearched: false,
         requestForUpdate: [],
         selectedFood: {},
-        results: {}
+        results: {},
+        grocListKey: 0,
     };
 
     updateGroceryList = (food, field, newValue) => {
@@ -209,7 +210,9 @@ class App extends Component {
     }
 
     onLogoClicked = () => {
-        this.setState({hasSearched:false});
+        // A hacky way to re-mount a new gocery list by updating an arbitrary key of grocery list, 
+        // since React mounts new instance on new key
+        this.setState({hasSearched:false, grocListKey: this.state.grocListKey + 1});
     }
 
     render(){
@@ -351,7 +354,8 @@ class App extends Component {
                     <GroceryList
                         search={this.search}
                         hasSearched={this.state.hasSearched}
-                        requestForUpdate={this.state.requestForUpdate}/>
+                        requestForUpdate={this.state.requestForUpdate}
+                        key={this.state.grocListKey}/>
                 </div>
             </div>
             </MuiThemeProvider>
