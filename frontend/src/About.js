@@ -20,6 +20,9 @@ const styles = {
         color: 'white',
         backgroundColor: 'transparent',
     },
+    dialogContent: {
+        padding: '8px 50px',
+    }
 }
 
 class About extends Component {
@@ -48,7 +51,7 @@ class About extends Component {
                     <InfoOutlinedIcon />
                 </button>
 
-                <AboutPopUp isOpen={this.state.isOpen} onClose={this.closePopUp}></AboutPopUp>
+                <AboutPopUp isOpen={this.state.isOpen} onClose={this.closePopUp} classes={this.props.classes}></AboutPopUp>
             </Grid>
         )
     }
@@ -68,20 +71,39 @@ class AboutPopUp extends Component {
 
     render() {
         return (
-            <Dialog open={this.props.isOpen} onClose={this.props.onClose} aria-labelledby="form-dialog-title">
+            <Dialog 
+                open={this.props.isOpen} 
+                onClose={this.props.onClose}
+                aria-labelledby="form-dialog-title" 
+                PaperProps={{
+                    style: {
+                        borderRadius: '20px',
+                    }
+            }}>
                 <DialogTitle id="dialogTitle" disableTypography>
                     <Typography variant="h3" style={{color: "#322737"}}> 
-                    How did we calculate this?
+                    What does the graph mean?
                     </Typography>   
                 </DialogTitle>
-                <DialogContent>
+                <DialogContent className={this.props.classes.dialogContent}>
                     <DialogContentText>
-                        <Typography component={'span'} variant="body2"> 
-                            We get our carbon emission data from the <a href="https://ghgi.org/about/" target="_blank" rel="noopener noreferrer">GHGI API.</a> {'\n\n'}
-                        </Typography>  
-                        <Typography component={'span'} variant="body2" display="block">
-                            Learn about more about our tool <a href="https://www.sexytofu.org/" target="_blank" rel="noopener noreferrer">here.</a>
+                        <Typography component={'span'} variant="body2"  display="block" align="left" style={{marginBottom: '1rem'}}> 
+                        Each bar shows the carbon footprint impact of each food.
                         </Typography>
+                        <Typography component={'span'} variant="body2" display="block" align="left" style={{marginBottom: '1rem'}}>
+                        Carbon footprint considers the average amount of CO2 equivalent 
+                        emitted from food production, processing, and transportation. 
+                        They are based on values found from the 
+                        <a href="https://science.sciencemag.org/content/360/6392/987" target="_blank" rel="noopener noreferrer"> 2018 food study </a> 
+                        conducted by Joseph Poore.
+                        </Typography>
+
+                        <Typography component={'span'} variant="body2" display="block" style={{marginBottom: '1rem'}}>
+                                Learn about more about our tool <a href="https://www.sexytofu.org/" target="_blank" rel="noopener noreferrer">here.</a>
+                        </Typography>
+                        <Typography component={'span'} variant="body2"> 
+                            We draw our data from the <a href="https://ghgi.org/about/" target="_blank" rel="noopener noreferrer">GHGI API.</a> {'\n\n'}
+                        </Typography>  
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
