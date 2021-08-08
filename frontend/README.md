@@ -25,7 +25,11 @@ To access the recommendation management portal (currently support Chrome only), 
 *Note that to use all features, the backend also needs to be running. See [../backend/README.md](../backend/README.md) for details*
 
 
-## CORS
-Sexy Tofu makes an API call to [GHGI's web API](api.ghgi.org), which requires "cross-origin resource sharing" (CORS). 
-Currently, you need to add this [Chrome plugin](https://chrome.google.com/webstore/detail/allow-cors-access-control/lhobafahddgcelffkeicbaginigeejlf?hl=en) 
-and enable Access-Control-Allow-Origin in order to test the site locally. We are still working on the long-term alternative.
+## Google Analytics setup
+We have [GA4](https://support.google.com/analytics/answer/10089681?hl=en) set up to track user engagement, and custom [events](https://support.google.com/analytics/answer/9322688?hl=en) are defined through [Google Tag Manager](https://support.google.com/tagmanager/answer/6102821?hl=en) to allow for easy management and maximum extensibility.
+
+Within the GA "Sexy Tofu" property, we have two different data streams for our two environments: Web (for prod) and Dev/QA, each with its own *Measurement ID* that is used in the "GA4 Configuration" tag in GTM to connect GTM and GA.
+
+Accordingly, there are also corresponding "environments" in GTM differing in the GA Measurement ID used, then each with its own *GTM_AUTH* and *GTM_PREVIEW* that are set as environment variables in the frontend server (via AWS Amplify), which are pick up by the code to send data to GTM.
+
+These configs all need to be checked for when new environments or new deployment schemes are created, in order for the different pieces to work together to track the right environment. 
