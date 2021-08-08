@@ -220,7 +220,7 @@ class App extends Component {
         return (
             <div id="container">
                 <div id="header">
-                    <a href="#">
+                    <a href="">
                         <img src={logo} alt="Sexy Tofu" id="logo"/>
                     </a>
                 </div>
