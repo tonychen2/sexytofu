@@ -284,7 +284,7 @@ class App extends Component {
             <div id="container">
                 <div id="background"></div>
                 <div id="header" style={{display: "flex", justifyContent: "space-between"}}>
-                    <a href="#">
+                <a href="">
                         <img src={logo} alt="Sexy Tofu" id="logo"/>
                     </a>
                     {this.state.hasSearched && <img src={tofuHero} alt="Tofu Hero" id="tofu-hero" style={{height: '61px'}}/>}
