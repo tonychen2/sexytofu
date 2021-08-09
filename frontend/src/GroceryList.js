@@ -459,7 +459,7 @@ class GroceryList extends Component {
                             }}
                         />
 
-                        // Items in grocery list
+                        {/* Items in grocery list */}
                         <form style={{width: '100%'}}>
                             <List>
                                 {list}
