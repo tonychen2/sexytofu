@@ -44,8 +44,19 @@ export default class BarChart extends Component {
         const points = myBarChart.getElementsAtEventForMode(event, 'nearest', { intersect: true }, true);
         if (points[0]) {
             this.props.selectFood(points[0].index);
+
+            this.highlightSelectedBar(points[0].index);
         }
     }
+
+    highlightSelectedBar = (bar_index) => {
+        /**
+         * Keeps highlighted the selected bar at bar_index white and the rest of the bars another color.
+         */
+        myBarChart.data.datasets[0].backgroundColor = this.props.labels.map((food, index) => {return index == bar_index ?  '#ffffff' :  '#ffffff99'});
+        myBarChart.update();
+      }
+      
 
     buildChart = () => {
         /**
@@ -71,12 +82,15 @@ export default class BarChart extends Component {
                 datasets: [
                     {
                         data: this.props.data,
-                        backgroundColor: '#ffdbec',
+                        backgroundColor:'#ffffffaa',
+                        hoverBackgroundColor: '#ffffffee',
+                        // TODO: constant bar width
                     }
                 ]
             },
             options: {
                 indexAxis: 'y',
+                // TODO: remove extra space right and top
                 // Show the value for each bar while rendering the chart
                 animation: {
                     onProgress: (props) => drawValueLabel(myChartRef, props),
@@ -98,10 +112,14 @@ export default class BarChart extends Component {
                     legend: {
                         display: false
                     },
+                    // TODO: button style labels, look into QuickChart plugin
                 },
                 onClick: this.handleClick
             }
         });
+        
+        // By default, selects the first bar.
+        this.highlightSelectedBar(0);
     }
 
     render() {
@@ -112,7 +130,8 @@ export default class BarChart extends Component {
          */
         return (
             <div className="chartContainer" style={{width: '80%', margin: 'auto'}}>
-                <Typography variant='h5' align='left'>Rank my food's carbon footprint (unit: pound)</Typography>
+                <Typography variant='h3' align='left'>Rank my food's carbon footprint: {this.props.data.reduce((a, b) => a + b, 0).toFixed(1)} pounds</Typography>
+                <Typography variant='subtitle1' align='left' style={{marginTop: '1ch'}}>Click each food to learn about sustainable options.</Typography>
                 <canvas
                     id="myChart"
                     ref={this.chartRef}
