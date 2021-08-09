@@ -172,10 +172,6 @@ class App extends Component {
         }});
     }
 
-    onLogoClicked = () => {
-        this.setState({hasSearched:false});
-    }
-
     render(){
         /**
          * React lifecycle method
@@ -254,7 +250,7 @@ class App extends Component {
                 <div id="background"></div>
                 <div id="header" style={{display: "flex", justifyContent: "space-between"}}>
                     <a href="#">
-                        <img src={logo} alt="Sexy Tofu" id="logo" onClick={this.onLogoClicked}/>
+                        <img src={logo} alt="Sexy Tofu" id="logo"/>
                     </a>
                     {this.state.hasSearched && <img src={tofuHero} alt="Tofu Hero" id="tofu-hero" style={{height: '61px'}}/>}
                 </div>
