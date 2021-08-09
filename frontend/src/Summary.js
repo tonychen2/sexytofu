@@ -11,6 +11,8 @@ import driveEqGraphics from "./assets/summary_graphics/car_driving.png";
 import landUseGraphics from "./assets/summary_graphics/parking_spots.png";
 import waterUseGraphics from "./assets/summary_graphics/water.png";
 
+import TagManager from "react-gtm-module";
+
 
 const styles = {
     root: {
@@ -63,7 +65,7 @@ function Summary(props) {
 
     return (
         <div id="summary" className={classes.root}>
-            <div id="driveEq" className={classes.section}>
+            <div id="carbonEmission" className={classes.section}>
                 <Typography variant='subtitle1' className={classes.title}>Carbon Emissions</Typography>
                 <Typography variant='subtitle1'>
                     <span className={classes.highlight}>{props.totalImpact.toFixed(1)}</span>&nbsp;

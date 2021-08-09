@@ -11,6 +11,9 @@ import {withStyles} from '@material-ui/core';
 import { withTheme } from "@material-ui/styles";
 import { color } from "chart.js/helpers";
 
+import TagManager from 'react-gtm-module'
+
+
 const GHGI_API_ADDRESS = 'https://api.sexytofu.org/api.ghgi.org:443';
 const NATIVE_API_ADDRESS =  process.env.API_HOST || "http://localhost:8000";
 
@@ -274,8 +277,20 @@ class GroceryList extends Component {
         if (!default_grams) {
             // Set food search error message for user and stop here if couldn't find food in GHGI database.
             // TODO: use better condition than !default_grams to detect if something in search went wrong?
-            console.log("Something went wrong, default grams wasn't retrievable from GHGI.")
-            this.showSearchError(errorMessage)
+            this.showSearchError(errorMessage);
+            console.warn("Something went wrong, default grams wasn't retrievable from GHGI.");
+
+            // Send data to Google Tag Manager
+            let tagManagerArgs = {
+                dataLayer: {
+                    event: "dataNotFound",
+                    gtm: {
+                        errorMessage: errorMessage
+                    }
+                }
+            };
+            TagManager.dataLayer(tagManagerArgs);
+
             return;
         }
 
@@ -302,11 +317,25 @@ class GroceryList extends Component {
         let quantity = parsed['qtys'][0]['qty'][0] || default_qty;
         let unit = parsed['qtys'][0]['unit'][0] || default_unit;
 
-        groceryList.push({"ingredient": name,
+        groceryList.push({
+            "ingredient": name,
             "quantity": quantity,
             "unit": unit});
 
-        this.setState({groceryList: groceryList, currentQuery: "",});
+        // Send data to Google Tag Manager
+        let tagManagerArgs = {
+            dataLayer: {
+                event: "parsingComplete",
+                query: this.state.currentQuery,
+                ingredient: name,
+                quantity: quantity,
+                unit: unit
+            }
+        };
+        TagManager.dataLayer(tagManagerArgs);
+
+        // Set React state
+        this.setState({groceryList: groceryList, currentQuery: ""});
     }
 
     updateFood = (index, field, newValue) => {
@@ -318,6 +347,8 @@ class GroceryList extends Component {
          * @param   {T}       newValue  New value of the field
          */
         let groceryList = this.state.groceryList;
+
+        // Update item in grocery list
         groceryList[index][field] = newValue;
 
         this.setState({groceryList: groceryList});
@@ -329,10 +360,19 @@ class GroceryList extends Component {
          *
          * @param   {int}  index  Index of the food item to be removed from GroceryList
          */
-        console.log(`Removing item #${index}`);
         let groceryList = this.state.groceryList;
+
+        // Send data to Google Tag Manager
+        let tagManagerArgs = {
+            dataLayer: {
+                event: "removeItem",
+                ingredient: groceryList[index]["ingredient"],
+            }
+        };
+        TagManager.dataLayer(tagManagerArgs);
+
+        // Remove item from grocery list
         groceryList.splice(index, 1);
-        console.log(`New list: ${groceryList[0]}`);
 
         this.setState({groceryList: groceryList});
     }
@@ -340,6 +380,7 @@ class GroceryList extends Component {
     showSearchError = (message) => {
         this.setState({searchErrorMessage : message})
         this.setState({hasSearchError : true})
+
     }
 
     render() {
@@ -368,66 +409,76 @@ class GroceryList extends Component {
         let buttonClass = this.props.hasSearched ? this.props.classes.buttonHasSearched : this.props.classes.button;
         return (
             <Box className={this.props.hasSearched ? this.props.classes.boxHasSearchedBG : null}>
-            <Box id="groceryList" className={this.props.hasSearched ? this.props.classes.boxHasSearched : this.props.classes.box}>
-                <Grid container className={this.props.classes.root}>
-                    {this.props.hasSearched &&
-                    <Grid item xs={12} className={this.props.classes.title}>
-                        <Typography variant='h2' className={this.props.classes.groceryTitle}>Your List</Typography>
-                    </Grid>}
-                    {/* TODO: make search bar handle its own states eg updateQuery, and make more generic. */}
-                    <Grid item xs={12} sm={12}> 
-                        <SearchBar 
-                            textFieldClass={textFieldClass} 
-                            updateQuery={this.updateQuery} 
-                            handleKeyPress={this.handleKeyPress} 
-                            currentQuery={this.state.currentQuery}
-                            buttonClass={buttonClass}
-                            addFood={this.addFood}
-                            inputGrid={this.props.classes.inputGrid}
+                <Box id="groceryList" className={this.props.hasSearched ? this.props.classes.boxHasSearched : this.props.classes.box}>
+                    <Grid container className={this.props.classes.root}>
+                        {
+                            this.props.hasSearched &&
+                            <Grid item xs={12} className={this.props.classes.title}>
+                                <Typography variant='h2' className={this.props.classes.groceryTitle}>Your List</Typography>
+                            </Grid>
+                        }
+                        {/* TODO: make search bar handle its own states eg updateQuery, and make more generic. */}
+                        <Grid item xs={12} sm={12}> 
+                            <SearchBar 
+                                textFieldClass={textFieldClass} 
+                                updateQuery={this.updateQuery} 
+                                handleKeyPress={this.handleKeyPress} 
+                                currentQuery={this.state.currentQuery}
+                                buttonClass={buttonClass}
+                                addFood={this.addFood}
+                                inputGrid={this.props.classes.inputGrid}
+                            />
+                        </Grid>
+
+                        {
+                            !this.props.hasSearched && this.state.groceryList.length < 1 &&
+                            <Grid item xs={12} sm={12}> 
+                                <Typography variant='body2' align="left" style={{margin: '40px 0px'}}>
+                                    *Enter common foods with amount you would buy on in a grocery run. Estimates are fine. :)
+                                </Typography> 
+                            </Grid>
+                        }
+
+                        {
+                            !this.props.hasSearched && this.state.groceryList.length > 0 &&
+                            <Grid item xs={12} sm={12}> 
+                                <Typography variant='h3' align="center" style={{marginTop: '40px'}}>
+                                    Your List
+                                </Typography> 
+                                <ExpandMoreRoundedIcon fontSize="large"/>
+                            </Grid>
+                        }
+
+                        {/*An error message if search for food fails.*/}
+                        <SearchError 
+                            shown={this.state.hasSearchError}
+                            message={this.state.searchErrorMessage}
+                            classes={this.props.classes}
+                            onClick = { () => {
+                                this.setState({hasSearchError : false})
+                            }}
                         />
-                    </Grid>
 
-                    {!this.props.hasSearched && this.state.groceryList.length < 1 &&
-                    <Grid item xs={12} sm={12}> 
-                        <Typography variant='body2' align="left" style={{margin: '40px 0px'}}>
-                            *Enter common foods with amount you would buy on in a grocery run. Estimates are fine. :)
-                        </Typography> 
-                    </Grid>}
-
-                    {!this.props.hasSearched && this.state.groceryList.length > 0 &&
-                    <Grid item xs={12} sm={12}> 
-                        <Typography variant='h3' align="center" style={{marginTop: '40px'}}>
-                            Your List
-                        </Typography> 
-                        <ExpandMoreRoundedIcon fontSize="large"/>
-                    </Grid>}
-
-                    {/*An error message if search for food fails.*/}
-                    <SearchError 
-                        shown={this.state.hasSearchError}
-                        message={this.state.searchErrorMessage}
-                        classes={this.props.classes}
-                        onClick = { () => {
-                            this.setState({hasSearchError : false})
-                        }}
-                    />
-                    {/*</div>*/}
-                    {/*<ColumnNames />*/}
+                        // Items in grocery list
                         <form style={{width: '100%'}}>
                             <List>
                                 {list}
                             </List>
                         </form>
-                </Grid>
+                    </Grid>
 
-                {this.state.groceryList.length > 0 &&
-                <Grid container justify={"flex-end"}>
-                <Button className={buttonClass}
-                        variant="contained"
-                        align="end"
-                        onClick={() => this.props.search(this.state.groceryList)}><span style={{padding: '0px 15px'}}>Search</span></Button>
-                </Grid>}
-            </Box>
+                    {
+                      this.state.groceryList.length > 0 &&
+                      <Grid container justify={"flex-end"}>
+                          <Button className={buttonClass}
+                              id="search"
+                              variant="contained"
+                              align="end"
+                              onClick={() => this.props.search(this.state.groceryList)}><span style={{padding: '0px 15px'}}>Search</span>
+                          </Button>
+                      </Grid>
+                    }
+                </Box>
             </Box>
         );
     }
