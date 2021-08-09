@@ -189,21 +189,6 @@ class App extends Component {
         // Override global themes for Typography. TODO: place in separate imported doc. like index.css
         const theme = createMuiTheme({
             typography: {
-                subtitle1: {
-                    // Summary text + sub-headers
-                    fontFamily: ['Lato', 'sans-serif'],
-                    fontSize: '1.2rem',
-                },
-                body1: {
-                    // textField
-                    fontFamily: ['Lato', 'sans-serif'],
-                },
-                body2: {
-                    // Recos text + slider labels
-                    fontFamily: ['Lato', 'sans-serif'],
-                    fontWeight: 'normal',
-                    fontSize: '1.2rem',
-                },
                 h1: {
                     // Headline and Tell Me...
                     fontFamily: ['Lato', 'sans-serif'],
@@ -238,8 +223,23 @@ class App extends Component {
                     fontFamily: ['Lato', 'sans-serif'],
                     fontWeight: 'bold',
                     color: 'white',
+                },
+                subtitle1: {
+                    // Summary text + sub-headers
+                    fontFamily: ['Lato', 'sans-serif'],
+                    fontSize: '1.2rem',
+                },
+                body1: {
+                    // textField
+                    fontFamily: ['Lato', 'sans-serif'],
+                },
+                body2: {
+                    // Recos text + slider labels
+                    fontFamily: ['Lato', 'sans-serif'],
+                    fontWeight: 'normal',
+                    fontSize: '1.2rem',
                 }
-            },
+            }
           });
           
 
