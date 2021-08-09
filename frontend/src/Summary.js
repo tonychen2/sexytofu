@@ -17,20 +17,28 @@ import TagManager from "react-gtm-module";
 const styles = {
     root: {
         // textAlign: 'left'
+        marginBottom: '100px',
+        marginLeft: '20px',
+        marginRight: '20px',
     },
     section: {
-        marginTop: '50px'
+        '&:not(:first-child)': {
+            marginTop: '100px',
+            '@media only screen and (max-width: 600px)': {
+                marginTop: '50px'
+            },
+        }
     },
     title: {
         borderRadius: '1ch',
-        backgroundColor: '#ffdbec',
+        backgroundColor: 'white',
         width: 'fit-content',
         margin: 'auto',
         padding: '0ch 1ch',
-        color: '#fc0a7e'
+        color: '#E45FC3',
     },
     highlight: {
-        fontSize: '200%',
+        fontSize: '150%',
         fontWeight: 'bold'
     },
     image: {

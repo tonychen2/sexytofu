@@ -10,6 +10,10 @@ import BarChart from "./BarChart";
 import Comparison from "./Comparison";
 import Summary from "./Summary";
 
+import {Button} from '@material-ui/core';
+import {Box} from '@material-ui/core';
+import {Hidden} from '@material-ui/core';
+import {MuiThemeProvider, createMuiTheme} from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import Typography from "@material-ui/core/Typography";
 import TagManager from "react-gtm-module";
@@ -215,21 +219,87 @@ class App extends Component {
         const barSize = 8;
         const recoSize = 4;
 
-        let headline = (this.state.hasSearched ? "My food impact" : "Track the climate impact of my food")
+        let headline = (this.state.hasSearched ? "\u2014 My food impact \u2014" : "Track the climate impact of my food")
+
+        // Override global themes for Typography. TODO: place in separate imported doc. like index.css
+        const theme = createMuiTheme({
+            typography: {
+                h1: {
+                    // Headline and Tell Me...
+                    fontFamily: ['Lato', 'sans-serif'],
+                    fontWeight: 'bolder',
+                    fontSize: '2.8rem',
+                    color: 'white',
+                    '@media only screen and (max-width: 600px)': {
+                        fontSize: '2rem', 
+                    },
+                },
+                h2: {
+                    // Section headers
+                    fontFamily: ['Lato', 'sans-serif'],
+                    fontWeight: 'bolder',
+                    fontSize: '2rem',
+                    color: 'white',
+                },
+                h3: {
+                    fontFamily: ['Lato', 'sans-serif'],
+                    fontWeight: 'bolder',
+                    fontSize: '1.5rem',
+                    color: 'white',
+                },
+                h4: {
+                    fontFamily: ['Lato', 'sans-serif'],
+                    fontWeight: 'normal',
+                    fontSize: '1.5rem',
+                    color: '#322737',
+                },
+                h5: {
+                    // Sub-headers bar chart + recos
+                    fontFamily: ['Lato', 'sans-serif'],
+                    fontWeight: 'bold',
+                    color: 'white',
+                },
+                subtitle1: {
+                    // Summary text + sub-headers
+                    fontFamily: ['Lato', 'sans-serif'],
+                    fontSize: '1.2rem',
+                },
+                body1: {
+                    // textField
+                    fontFamily: ['Lato', 'sans-serif'],
+                },
+                body2: {
+                    // Recos text + slider labels
+                    fontFamily: ['Lato', 'sans-serif'],
+                    fontWeight: 'normal',
+                    fontSize: '1.2rem',
+                }
+            }
+          });
+          
 
         return (
+
+            <MuiThemeProvider theme={theme}>
             <div id="container">
-                <div id="header">
-                    <a href="">
+                <div id="background"></div>
+                <div id="header" style={{display: "flex", justifyContent: "space-between"}}>
+                <a href="">
                         <img src={logo} alt="Sexy Tofu" id="logo"/>
                     </a>
+                    {this.state.hasSearched && <img src={tofuHero} alt="Tofu Hero" id="tofu-hero" style={{height: '61px'}}/>}
                 </div>
-                <img src={tofuHero} alt="Tofu Hero" id="tofu-hero"/>
-                <h2>{headline}</h2>
+                {/* TODO: make Share feedback floating button. */}
+                {/* <div id="sticky">
+                    <Button variant="contained"> Share your feedback! </Button>
+                </div> */}
+                <div id="content">
+                {/* TODO: scroll to recommendation card after bar chart clicked new item. */}
+                {/* https://stackoverflow.com/questions/24739126/scroll-to-a-specific-element-using-html */}
+                {!this.state.hasSearched && <img src={tofuHero} alt="Tofu Hero" id="tofu-hero"/>}
+                <Typography variant='h1' style={{marginBottom: '60px', padding: '0px 20px'}}>{headline}</Typography>
                 {this.state.hasSearched &&
-                <Grid container justify={"center"} style={{rowGap: '12px',}}>
-                    {/* TODO: standarize grid items so rowGap is placed appropriately between rows, 
-                    and define grid item rows accordingly/consistently (ie. pull header text into or out of child components; standarize). */}
+                <Grid container justify={"center"}>
                     <Grid item xs={12} sm={summarySize}>
                         <Summary
                             totalImpact={this.state.results.totalImpact}
@@ -242,21 +312,34 @@ class App extends Component {
                     <Grid item xs={12} sm={12}>
                         <Comparison totalImpact={this.state.results.totalImpact} />
                     </Grid>
-                    <Grid item xs={12} sm={12}>
-                        <h2 style={{marginBottom: '40px'}}>Tell me how I can do better</h2>
-                    </Grid>
-                    <Grid item xs={12} sm={barSize}>
-                        <BarChart
-                            data={this.state.results.impacts}
-                            labels={this.state.results.contributors}
-                            selectFood={this.selectFood}
-                        />
-                    </Grid>
-                    <Grid item xs={12} sm={recoSize}>
-                        <Recommendations
-                            food={this.state.selectedFood}
-                            updateGroceryList={this.updateGroceryList}
-                        />
+                    <Grid item xs={12} sm={12} style={{backgroundImage: 'linear-gradient(180deg, #CF7DE9, #E97DD1)'}}>
+                        <Box paddingY='100px'> 
+                        {/* TODO: better way of formatting than box? */}
+                            <Typography variant='h1' style={{marginBottom: '40px', padding: '0px 20px'}}>Tell me how I can do better</Typography>
+                            <Grid container>
+                                <Grid item xs={12} md={barSize}>
+                                    <BarChart
+                                        data={this.state.results.impacts}
+                                        labels={this.state.results.contributors}
+                                        selectFood={this.selectFood}
+                                    />
+                                </Grid>
+                                <Grid item xs={12} md={recoSize}>
+                                    {/* TODO: better way of aligning recommendation to chart than this empty box that disappears on small screen? */}
+                                    <Hidden smDown>
+                                        <Box width="100%" height="60px" />
+                                    </Hidden>
+                                    {/* TODO: better way of adding padding than box to auto align with chart? */}
+                                    <Box paddingX="20px" align='center'>
+                                        <div id="reco" /> 
+                                        <Recommendations
+                                            food={this.state.selectedFood}
+                                            updateGroceryList={this.updateGroceryList}
+                                        />
+                                    </Box>
+                                </Grid>
+                            </Grid>
+                        </Box>
                     </Grid>
                 </Grid>
                 }
@@ -264,7 +347,9 @@ class App extends Component {
                         search={this.search}
                         hasSearched={this.state.hasSearched}
                         requestForUpdate={this.state.requestForUpdate}/>
+                </div>
             </div>
+            </MuiThemeProvider>
         );
     }
 }

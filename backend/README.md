@@ -8,11 +8,18 @@ Python 3.9 or later is required. It is highly recommended to create a virtual en
 pip install -r requirements.txt
 ```
 
-To run the server, `cd` into the `src` directory, and execute
+To run the server, `cd` into the `backend` directory, and execute
 ```
-uvicorn --reload main:app
+uvicorn --reload src.main:app
 ```
-
+Also, `cd` into the `cors-anywhere` directory. Do the following in command line to make sure your dependencies are up to date:
+```
+npm ci
+```
+and then run the node.js server:
+```
+node server.js
+```
 
 ## Greenhouse Gas Index Database (GHGI)
 Sexy Tofu is built upon the open-source project [GHGI](https://github.com/ghgindex/ghgi). Its source code is included, but the backend only relies on a modified version of `./src/ghgi/ghgi/parser.py` for query parsing. A backlog task is to explore what the best way of integration might be.

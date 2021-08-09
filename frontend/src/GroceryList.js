@@ -5,8 +5,11 @@ import { Collapse } from '@material-ui/core';
 import {Grid, Box, Typography} from '@material-ui/core';
 import {TextField, Button, IconButton} from '@material-ui/core';
 import DeleteIcon from '@material-ui/icons/Delete';
+import ExpandMoreRoundedIcon from '@material-ui/icons/ExpandMoreRounded';
 import {List, ListItem} from '@material-ui/core';
 import {withStyles} from '@material-ui/core';
+import { withTheme } from "@material-ui/styles";
+import { color } from "chart.js/helpers";
 
 import TagManager from 'react-gtm-module'
 
@@ -20,48 +23,121 @@ const styles = {
         alignItems: 'center'
     },
     box: {
-        padding: '10px',
-        margin: '50px auto',
-        maxWidth: '70ch'
+        padding: '20px',
+        paddingBottom: '50px',
+        // margin: '50px auto 0px',
+        margin: '0px auto 0px',
+        // TODO: better way of aligning size of box to headline than maxWidth, and be responsive
+        maxWidth: '60ch',
+    },
+    boxHasSearched: {
+        padding: '20px',
+        paddingBottom: '50px',
+        // margin: '50px auto 0px',
+        margin: '0px auto 0px',
+        maxWidth: '70ch',
+    },
+    boxHasSearchedBG: {
+        backgroundColor: '#ffffff',
+        width: '100%'
     },
     title: {
         marginBottom: '20px'
     },
+    groceryTitle: {
+        color: '#322737',
+        paddingTop: '30px',
+        textAlign: 'left',
+        '@media only screen and (max-width: 600px)': {
+            textAlign: 'center',
+        },
+    },
     row: {
-        // paddingTop: '2px',
-        // paddingBottom: '2px'
-        padding: '2px 0px'
+        padding: '2px 0px',
+        flexGrow: 1,
     },
     inputGrid: {
         display: "flex"
     },
     textField: {
         width: '100%',
-        borderRadius: '4px',
-        backgroundColor: '#ffdbec',
+        borderRadius: '10px',
+        backgroundColor: '#F2F2F2',
         margin: '2px',
         '&:hover': {
             borderColor: '#fc0a7e',
         },
         '& .MuiOutlinedInput-root': {
+            '& fieldset': { /* default border style */
+                borderColor: 'transparent',
+            },
             '&:hover fieldset': {
                 borderColor: 'transparent',
             },
             '&.Mui-focused fieldset': {
-                borderColor: 'transparent'
+                borderColor: 'transparent',
+                borderRadius: '10px',
             },
-        }
+        },
+        '& .MuiOutlinedInput-input:-webkit-autofill': {
+            // Autofill style
+            backgroundColor: '#F2F2F2 !important',
+            borderRadius: '10px',
+        },
+    },
+    textFieldHasSearched: {
+        /* TODO: How to extend textField class? And some better method than this? */
+        width: '100%',
+        borderRadius: '10px',
+        margin: '2px',
+        backgroundColor: '#F2F2F2',
+        borderColor: '#F4E6F2',
+        '& .MuiOutlinedInput-root': {
+            '& fieldset': { /* default border style */
+                borderColor: '#DFAAF1',
+                borderRadius: '10px',
+            },
+            '&:hover fieldset': {
+                borderColor: '#E8A9DE',
+            },
+            '&.Mui-focused fieldset': {
+                borderColor: '#E8A9DE',
+                borderRadius: '10px',
+            },
+        },
+        '& .MuiOutlinedInput-input:-webkit-autofill': {
+            // Autofill style
+            backgroundColor: '#F2F2F2 !important',
+            borderRadius: '10px',
+        },
     },
     button: {
         border: '0',
+        borderRadius: '10px',
         right: '0',
         margin: '5px',
-        backgroundColor: '#ffdbec',
-        color: '#fc0a7e',
+        backgroundColor: '#F2F2F2',
+        color: '#B155D3',
+        fontFamily: ['Lato', 'sans-serif'],
+        fontWeight: 'bold',
         '&:hover': {
             backgroundColor: '#fc0a7e',
             color: '#ffdbec'
         },
+    },
+    buttonHasSearched : {
+    /* TODO: How to extend button class? */
+        border: '0',
+        borderRadius: '10px',
+        right: '0',
+        margin: '5px',
+        backgroundColor: '#FEF1FC',
+        color: '#B155D3',
+        fontWeight: 'bold',
+        '&:hover': {
+            backgroundColor: '#E9D5E5',
+            color: '#B155D3',
+        }
     },
     errorPopup: {
         border: '0',
@@ -324,63 +400,133 @@ class GroceryList extends Component {
                 remove={() => this.removeFood(index)}
                 search={() => this.props.search(this.state.groceryList)}
                 classes={this.props.classes}
+                hasSearched = {this.props.hasSearched}
             />);
 
-        // Determine look of the list (before search vs after search)
-        let showBorder = null;
-        if (this.props.hasSearched) showBorder = '1px solid #ffdbec';
-
-        // TODO: Move in-line styling out
+        // TODO: better method than just switching class names?
+        // Change style after search
+        let textFieldClass = this.props.hasSearched ? this.props.classes.textFieldHasSearched : this.props.classes.textField;
+        let buttonClass = this.props.hasSearched ? this.props.classes.buttonHasSearched : this.props.classes.button;
         return (
-            <Box id="groceryList" border={showBorder} className={this.props.classes.box}>
-                <Grid container className={this.props.classes.root}>
-                    {this.props.hasSearched &&
-                    <Grid item xs={12} className={this.props.classes.title}>
-                        <h2>Your List</h2>
-                    </Grid>}
-                    <Grid item xs={12} sm={10} className={this.props.classes.inputGrid}>
-                        <TextField
-                            id="searchBox"
-                            autoFocus
-                            variant="outlined"
-                            className={this.props.classes.textField}
-                            onChange={this.updateQuery}
-                            onKeyPress={this.handleKeyPress}
-                            value={this.state.currentQuery}
-                            size='small'
-                            placeholder='Try "Tofu" or "2 lbs of chicken breast"'
+            <Box className={this.props.hasSearched ? this.props.classes.boxHasSearchedBG : null}>
+                <Box id="groceryList" className={this.props.hasSearched ? this.props.classes.boxHasSearched : this.props.classes.box}>
+                    <Grid container className={this.props.classes.root}>
+                        {
+                            this.props.hasSearched &&
+                            <Grid item xs={12} className={this.props.classes.title}>
+                                <Typography variant='h2' className={this.props.classes.groceryTitle}>Your List</Typography>
+                            </Grid>
+                        }
+                        {/* TODO: make search bar handle its own states eg updateQuery, and make more generic. */}
+                        <Grid item xs={12} sm={12}> 
+                            <SearchBar 
+                                textFieldClass={textFieldClass} 
+                                updateQuery={this.updateQuery} 
+                                handleKeyPress={this.handleKeyPress} 
+                                currentQuery={this.state.currentQuery}
+                                buttonClass={buttonClass}
+                                addFood={this.addFood}
+                                inputGrid={this.props.classes.inputGrid}
+                            />
+                        </Grid>
+
+                        {
+                            !this.props.hasSearched && this.state.groceryList.length < 1 &&
+                            <Grid item xs={12} sm={12}> 
+                                <Typography variant='body2' align="left" style={{margin: '40px 0px'}}>
+                                    *Enter common foods with amount you would buy on in a grocery run. Estimates are fine. :)
+                                </Typography> 
+                            </Grid>
+                        }
+
+                        {
+                            !this.props.hasSearched && this.state.groceryList.length > 0 &&
+                            <Grid item xs={12} sm={12}> 
+                                <Typography variant='h3' align="center" style={{marginTop: '40px'}}>
+                                    Your List
+                                </Typography> 
+                                <ExpandMoreRoundedIcon fontSize="large"/>
+                            </Grid>
+                        }
+
+                        {/*An error message if search for food fails.*/}
+                        <SearchError 
+                            shown={this.state.hasSearchError}
+                            message={this.state.searchErrorMessage}
+                            classes={this.props.classes}
+                            onClick = { () => {
+                                this.setState({hasSearchError : false})
+                            }}
                         />
+
+                        {/* Items in grocery list */}
+                        <form style={{width: '100%'}}>
+                            <List>
+                                {list}
+                            </List>
+                        </form>
                     </Grid>
-                    <Grid item xs={12} sm={2}>
-                        <Button className={this.props.classes.button}
-                                variant="contained"
-                                onClick={() => {this.setState({hasSearchError : false}); this.addFood()}}>Add</Button>
-                    </Grid>
-                {/*An error message if search for food fails.*/}
-                <SearchError 
-                    shown={this.state.hasSearchError}
-                    message={this.state.searchErrorMessage}
-                    classes={this.props.classes}
-                    onClick = { () => {
-                        this.setState({hasSearchError : false})
-                    }}
-                />
-                {/*</div>*/}
-                {/*<ColumnNames />*/}
-                    <form style={{width: '100%'}}>
-                        <List>
-                            {list}
-                        </List>
-                    </form>
-                </Grid>
-                {this.state.groceryList.length > 0 &&
-                <Button className={this.props.classes.button}
-                        id="search"
-                        variant="contained"
-                        onClick={() => this.props.search(this.state.groceryList)}>Search</Button>}
+
+                    {
+                      this.state.groceryList.length > 0 &&
+                      <Grid container justify={"flex-end"}>
+                          <Button className={buttonClass}
+                              id="search"
+                              variant="contained"
+                              align="end"
+                              onClick={() => this.props.search(this.state.groceryList)}><span style={{padding: '0px 15px'}}>Search</span>
+                          </Button>
+                      </Grid>
+                    }
+                </Box>
             </Box>
         );
     }
+}
+
+function SearchBar(props){
+    /**
+     * Search bar with Add food button for the GroceryList
+     * 
+     * @param   {Object}    props.textFieldClass    Style of component's textField
+     * @param   {function}  props.updateQuery       Callback function to update the current query
+     * @param   {function}  props.handleKeyPress    Callback function to handle a key press
+     * @param   {String}    props.currentQuery      The current query
+     * @param   {Object}    props.buttonClass       Style of component's Add button
+     * @param   {function}  props.addFood           Callback function to add food (handle when Add pressed)
+     * @param   {Object}    props.inputGrid         Style of component's Grid
+     *
+     * @return  {HTMLSpanElement}  HTML element for the component
+     */
+    const input = React.useRef(); 
+
+    const setFocus = () => {
+        input.current.focus();
+    };
+
+    return (
+    <Grid container>
+        <Grid item xs={12} sm={10} className={props.inputGrid}>
+            <TextField
+                id="searchBox"
+                inputRef={input}
+                autoFocus={true}
+                variant="outlined"
+                className={props.textFieldClass}
+                onChange={props.updateQuery}
+                onKeyPress={props.handleKeyPress}
+                value={props.currentQuery}
+                size='small'
+                placeholder='Try "Tofu" or "2 lbs of chicken breast"'
+            />
+        </Grid>
+        <Grid item xs={12} sm={2} container justify="flex-end">
+            <Button className={props.buttonClass}
+                    variant="contained"
+                    onClick={() => {props.addFood(); setFocus();}}><span style={{padding: '0px 30px'}}>Add</span></Button>
+        </Grid>
+    </Grid>
+    )
 }
 
 class SearchError extends Component {
@@ -422,6 +568,7 @@ class GroceryListItem extends Component{
      * @param   {function}  props.update      Callback function to update the food item, of signature (String, T) => ()
      * @param   {function}  props.remove      Callback function to remove the food item from the grocery list, of signature () => ()
      * @param   {function}  props.search      Callback function to make API calls for getting climate impact of the grocery list, of signature () => ()
+     * @param   {boolean}   props.hasSearched       Flag indicating whether a search has happened
      */
     handleChange = event => {
         /**
@@ -459,12 +606,13 @@ class GroceryListItem extends Component{
          *
          * @return   {ListItem}  HTML element for the GroceryListItem component
          */
+        let textFieldClass = this.props.hasSearched ? this.props.classes.textFieldHasSearched : this.props.classes.textField;
         return (
             <ListItem className={this.props.classes.row}>
-                <Grid item xs={12} sm={5} className={this.props.classes.inputGrid}>
+                <Grid item xs sm className={this.props.classes.inputGrid}>
                     <TextField
                         variant="outlined"
-                        className={this.props.classes.textField}
+                        className={textFieldClass}
                         id={`${this.props.ingredient}_ingredient`}
                         onChange={this.handleChange}
                         onKeyPress={this.handleKeyPress}
@@ -476,7 +624,7 @@ class GroceryListItem extends Component{
                 <Grid item xs={4} sm={2} className={this.props.classes.inputGrid}>
                     <TextField
                         variant="outlined"
-                        className={this.props.classes.textField}
+                        className={textFieldClass}
                         id={`${this.props.ingredient}_quantity`}
                         type={'number'}
                         onChange={this.handleChange}
@@ -486,10 +634,10 @@ class GroceryListItem extends Component{
                         // style={{float: "left", clear: 'both'}}
                     />
                 </Grid>
-                <Grid item xs={6} sm={3} className={this.props.classes.inputGrid}>
+                <Grid item xs sm className={this.props.classes.inputGrid}>
                     <TextField
                         variant="outlined"
-                        className={this.props.classes.textField}
+                        className={textFieldClass}
                         id={`${this.props.ingredient}_unit`}
                         onChange={this.handleChange}
                         onKeyPress={this.handleKeyPress}
@@ -498,14 +646,16 @@ class GroceryListItem extends Component{
                         // style={{float: "left", clear: 'both'}}
                     />
                 </Grid>
-                <Grid item xs={2} sm={2}>
-                    <IconButton
-                        style={{width: '100%'}}
-                        aria-label="delete"
-                        size="small"
-                        onClick={this.props.remove}>
-                        <DeleteIcon />
-                    </IconButton>
+                <Grid item xs={1} sm={1}>
+                    <Grid container justify={"center"}>
+                        <IconButton
+                            // style={{width: '100%'}}
+                            aria-label="delete"
+                            size="small"
+                            onClick={this.props.remove}>
+                            <DeleteIcon />
+                        </IconButton>
+                    </Grid>
                 </Grid>
             </ListItem>
         );
