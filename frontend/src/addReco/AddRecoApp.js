@@ -147,13 +147,14 @@ class AddRecoApp extends Component {
                                 1. Please search for and choose a standard food name from the dropdown menu
                             </p>
                             <p>
-                                2. For "replace" recommendations, don't include the "equivalence" part
-                                (e.g., "you can offset as much CO2 as 233 trees in a year.) It will be
-                                automatically added when shown to users.
+                                2. To add a recipe link, use the following html format:
+                                &lt;a href="[link url]"&gt;link text&lt;/a&gt;
                             </p>
                             <p>
-                                3. To add a recipe link, use the following html format:
-                                &lt;a href="[link url]"&gt;link text&lt;/a&gt;
+                                3. If the "automatically calculate annual impact" option is selected, the system will
+                                add a drive equivalence or tree equivalence of the carbon emission at the end of the
+                                recommendation (e.g., "you can offset as much CO2 as 233 trees in a year.") when showing,
+                                so make sure it's not redundant with what's already in text_long.
                             </p>
                     </form>
                 </Grid>
