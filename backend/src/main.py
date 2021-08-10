@@ -78,11 +78,6 @@ async def add_recommendation(reco: schemas.RecoCreate, db: Session = Depends(get
     return all_recos
 
 
-@app.get("/reco-types/", response_model=List[schemas.RecoType])
-async def get_all_reco_types(db: Session = Depends(get_db)) -> List[schemas.RecoType]:
-    return crud.get_all_reco_types(db)
-
-
 @app.get("/food-aliases/", response_model=List[schemas.FoodNameWithAlias])
 async def get_all_food_aliases(db: Session = Depends(get_db)) -> List[schemas.FoodNameWithAlias]:
     food = {}
