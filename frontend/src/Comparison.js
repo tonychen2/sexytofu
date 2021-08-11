@@ -100,7 +100,7 @@ const scaleStyles = makeStyles((theme) => ({
           },
         // Change position of label accordingly when vertical slider
         '@media only screen and (max-width: 600px)': {
-            top: '-4px',
+            top: '6px',
             marginRight: '200px',
         },
     },
@@ -129,7 +129,12 @@ const scaleStyles = makeStyles((theme) => ({
     },
     vertical: {
         '& $rail': {
-            width: "5px",
+            color: 'black',
+            opacity: '1',
+            width: "3px",
+        },
+        '& $mark': {
+            opacity: '0',
         },
       }
 }));
