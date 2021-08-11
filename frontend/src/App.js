@@ -22,6 +22,7 @@ import TagManager from "react-gtm-module";
 
 const GHGI_API_ADDRESS = 'https://api.sexytofu.org/api.ghgi.org:443';
 const NATIVE_API_ADDRESS =  process.env.API_HOST || "http://localhost:8000";
+const FEEDBACK_FORM = 'https://forms.gle/x8NdnQNo3YSkoLN96';
 
 
 class App extends Component {
@@ -297,9 +298,8 @@ class App extends Component {
                     </a>
                     {this.state.hasSearched && <img src={tofuHero} alt="Tofu Hero" id="tofu-hero" style={{height: '61px'}}/>}
                 </div>
-                {/* TODO: make Share feedback floating button. */}
                 <div id="bottomFloat">
-                    <Feedback></Feedback>
+                    <Feedback link={FEEDBACK_FORM}/>
                 </div>
                 <div id="content">
                 {/* TODO: scroll to recommendation card after bar chart clicked new item. */}
