@@ -3,7 +3,7 @@ import  "regenerator-runtime";
 
 import { makeStyles } from '@material-ui/core/styles';
 import {Accordion, AccordionSummary, AccordionDetails} from "@material-ui/core";
-import {Container} from "@material-ui/core";
+import {Container, Grid} from "@material-ui/core";
 import {Typography} from "@material-ui/core";
 import {Select, MenuItem} from "@material-ui/core";
 import {Slider} from "@material-ui/core";
@@ -12,6 +12,7 @@ import useMediaQuery from '@material-ui/core/useMediaQuery';
 
 import {pluralize} from "./utils.js"
 
+import RoomIcon from '@material-ui/icons/Room';
 import meatLoverIcon from "./assets/summary_graphics/Tofu_meatlover.png";
 import avgAmericanIcon from "./assets/summary_graphics/Tofu_avgamerican.png";
 import globalAvgIcon from "./assets/summary_graphics/Tofu_globalavg.png";
@@ -83,9 +84,11 @@ const scaleStyles = makeStyles((theme) => ({
     // User's impact shown on the scale
     thumb: {
         color: '#F251AF',
-        // Fix tick marks being slightly off center, to be on center, depending on if horizontal or vertical slider
+        // Fix thumb mark being slightly off center, to be on center, depending on if horizontal or vertical slider
         '@media only screen and (max-width: 600px)': {
             left: '12px',
+            // Use marker icon instead of circle for value when vertical.
+            color: 'transparent',
         },
         '@media only screen and (min-width: 600px)': {
             top: '12px', 
@@ -102,7 +105,7 @@ const scaleStyles = makeStyles((theme) => ({
         // Change position of label accordingly when vertical slider
         '@media only screen and (max-width: 600px)': {
             top: '0px',
-            right: '8ch',
+            right: '5.8rem',
         },
     },
     // Each persona's mark on the scale
@@ -273,7 +276,10 @@ function ComparisonScale(props) {
             step={1}
             min={17}
             max={224}
-            valueLabelFormat={(value) => <ValueLabel numPeople={props.numPeople} weeklyImpact={value} realImpact={normalizedImpact}/>}
+            valueLabelFormat={(value) => <ValueLabel numPeople={props.numPeople} 
+                                                        weeklyImpact={value} 
+                                                        realImpact={normalizedImpact} 
+                                                        orientation={scaleOrientation}/>}
             valueLabelDisplay='on'
             track={false} />
     )
@@ -286,6 +292,7 @@ function ValueLabel(props) {
      * @param   {int}   props.numPeople       Number of people this value is for
      * @param   {int}     props.weeklyImpact    Weekly carbon emission of each person, measured by pounds, as clamped by Mui slider
      * @param   {int}     props.realImpact      Weekly carbon emission of each person, measured by pounds, not clamped by Mui slider
+     * @param   {String}    props.orientation    Whether slider is vertical or horizontal (adds marker icon if vertical)
      *
      * @return  {HTMLSpanElement}  HTML element for the component
      */
@@ -295,10 +302,18 @@ function ValueLabel(props) {
     if (props.realImpact > props.weeklyImpact) { overflowSign = '>'};
     if (props.realImpact < props.weeklyImpact) { overflowSign = '<'};
     return (
-        <Typography variant='body2' style={{color: '#322737', minWidth: '15ch'}}>
-            <span style={{display: 'block', fontWeight: 'bold'}}>{label}</span>
-            <span style={{display: 'block'}}>{overflowSign}{Math.round(props.weeklyImpact)} lbs/week</span>
-        </Typography>)
+        <Grid container direction="row" id="yourImpact">
+            <Grid item xs={10} sm={10}>
+                <Typography variant='body2' style={{color: '#322737', minWidth: '15ch'}}>
+                    <span style={{display: 'block', fontWeight: 'bold'}}>{label}</span>
+                    <span style={{display: 'block'}}>{overflowSign}{Math.round(props.weeklyImpact)} lbs/week</span>
+                </Typography>
+            </Grid>
+            {(props.orientation == 'vertical') && 
+            <Grid item xs={2} sm={2}> 
+                <RoomIcon style={{ fill: '#F251AF', fontSize: "3rem", transform: 'rotate(-90deg)' }}/>
+            </Grid>}
+        </Grid >)
 }
 
 function PersonaLabel(props) {
