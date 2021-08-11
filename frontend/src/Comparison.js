@@ -47,12 +47,6 @@ const boxStyles = {
     },
     scaleContainer: {
         width: '100%',
-        // TODO: center vertical slider
-        // display: 'flex',
-        // flexDirection: 'row',
-        // flexWrap: 'wrap',
-        // justifyContent: 'center',
-        // alignItems: 'center',
     }
 };
 
@@ -75,6 +69,9 @@ const scaleStyles = makeStyles((theme) => ({
         "& .MuiSlider-thumb": {
             height: '14px',
             width: '14px',
+            // Recenter thumb mark on slider
+            marginLeft: '4px',
+            marginTop: '-6px',
           }
     },
     rail: {
@@ -84,15 +81,14 @@ const scaleStyles = makeStyles((theme) => ({
     // User's impact shown on the scale
     thumb: {
         color: '#F251AF',
-        // Fix thumb mark being slightly off center, to be on center, depending on if horizontal or vertical slider
+        // Use marker icon instead of circle for value when vertical (hide default circle mark when vertical).
         '@media only screen and (max-width: 600px)': {
-            left: '12px',
-            // Use marker icon instead of circle for value when vertical.
+            // marginLeft: '-10px',
             color: 'transparent',
         },
-        '@media only screen and (min-width: 600px)': {
-            top: '12px', 
-        },
+        // '@media only screen and (min-width: 600px)': {
+        //     // marginTop: '-10px',
+        // },
     },
     valueLabel: {
         left: 'auto',
@@ -104,8 +100,8 @@ const scaleStyles = makeStyles((theme) => ({
           },
         // Change position of label accordingly when vertical slider
         '@media only screen and (max-width: 600px)': {
-            top: '0px',
-            right: '5.8rem',
+            top: '-4px',
+            marginRight: '200px',
         },
     },
     // Each persona's mark on the scale
@@ -119,10 +115,10 @@ const scaleStyles = makeStyles((theme) => ({
         opacity: '1',
         // Fix tick marks being slightly off center, to be on center, depending on if horizontal or vertical slider
         '@media only screen and (max-width: 600px)': {
-            left: '4px',
+            marginLeft: '-10px',
         },
         '@media only screen and (min-width: 600px)': {
-            top: '4px', 
+            marginTop: '-10px',
         },
     },
     markLabel: {
