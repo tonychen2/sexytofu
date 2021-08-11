@@ -300,7 +300,7 @@ class App extends Component {
                 <Typography variant='h1' style={{marginBottom: '60px', padding: '0px 20px'}}>{headline}</Typography>
                 {this.state.hasSearched &&
                 <Grid container justify={"center"}>
-                    <Grid item xs={12} sm={summarySize}>
+                    <Grid item xs={12} md={summarySize}>
                         <Summary
                             totalImpact={this.state.results.totalImpact}
                             driveEq={this.state.results.driveEq}
