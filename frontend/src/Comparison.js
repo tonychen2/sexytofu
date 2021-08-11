@@ -268,11 +268,11 @@ function ComparisonScale(props) {
             orientation={scaleOrientation}
             value={normalizedImpact}
             marks={[
-                {value: 17, label: <PersonaLabel name="Sexy Tofu" weeklyImpact='<17' icon={sexyTofuIcon} classes={classes} />},
-                {value: 76, label: <PersonaLabel name="Global Average" weeklyImpact='76' icon={globalAvgIcon} classes={classes} />},
+                {value: 17, label: <PersonaLabel name="Sexy Tofu" weeklyImpact='<17' icon={sexyTofuIcon} classes={classes} orientation={scaleOrientation}/>},
+                {value: 76, label: <PersonaLabel name="Global Average" weeklyImpact='76' icon={globalAvgIcon} classes={classes} orientation={scaleOrientation}/>},
                 // TODO: scale value is inaccurate for better spacing at sacrifice of accuracy -- try alternating position of labels
-                {value: 170, label: <PersonaLabel name="Average American" weeklyImpact='189' icon={avgAmericanIcon} classes={classes} />},
-                {value: 224, label: <PersonaLabel name="Meat Lover" weeklyImpact='>224' icon={meatLoverIcon} classes={classes} />}]}
+                {value: 170, label: <PersonaLabel name="Average American" weeklyImpact='189' icon={avgAmericanIcon} classes={classes} orientation={scaleOrientation}/>},
+                {value: 224, label: <PersonaLabel name="High Impact" weeklyImpact='>224' icon={meatLoverIcon} classes={classes} orientation={scaleOrientation}/>}]}
             step={1}
             min={17}
             max={224}
@@ -323,15 +323,26 @@ function PersonaLabel(props) {
      * @param   {float}   props.name          Name of the persona
      * @param   {int}     props.weeklyImpact  Weekly carbon emission of the persona, measured by pounds
      * @param   {String}  props.icon          URL to the persona's icon
+     * @param   {String}  props.orientation    Whether slider is vertical or horizontal (change image icon position depending)
      *
      * @return  {HTMLSpanElement}  HTML element for the component
      */
+    // let img_style = (props.orientation == 'vertical') ? {width: '7vw', minWidth: '5ch'}: {width: '7vw', minWidth: '10ch'}
     return (
-        <Typography variant='body2' style={{color: '#322737'}}>
-            <span style={{display: 'block', fontWeight: 'bold'}}>{props.name}</span>
-            <span style={{display: 'block'}}>{props.weeklyImpact} lbs/week</span>
-            <img src={props.icon} alt={props.name} style={{width: '7vw', minWidth: '8ch'}} />
-        </Typography>)
+        <div id="personaLabel">
+            {(props.orientation == 'horizontal') && 
+            <Typography variant='body2' style={{color: '#322737'}}>
+                <span style={{display: 'block', fontWeight: 'bold'}}>{props.name}</span>
+                <span style={{display: 'block'}}>{props.weeklyImpact} lbs/week</span>
+                <img src={props.icon} alt={props.name} style={{width: '7vw', minWidth: '10ch'}} />
+            </Typography>}
+            {(props.orientation == 'vertical') && 
+            <Typography variant='body2' style={{color: '#322737'}}>
+                <img src={props.icon} alt={props.name} style={{width: '7vw', minWidth: '5ch', display: 'block', textAlign: 'left'}} />
+                <span style={{display: 'block', fontWeight: 'bold'}}>{props.name}</span>
+                <span style={{display: 'block'}}>{props.weeklyImpact} lbs/week</span>            
+            </Typography>}
+        </div>)
 }
 
 export default withStyles(boxStyles)(Comparison);
