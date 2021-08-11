@@ -72,7 +72,7 @@ const scaleStyles = makeStyles((theme) => ({
             // Recenter thumb mark on slider
             marginLeft: '4px',
             marginTop: '-6px',
-          }
+          },
     },
     rail: {
         color: '#828282',
@@ -122,7 +122,16 @@ const scaleStyles = makeStyles((theme) => ({
         },
     },
     markLabel: {
-        color: '#C4C4C4'
+        color: '#C4C4C4',
+        // Recenter mark labels
+        '@media only screen and (max-width: 600px)': {
+            // vertical
+            marginTop: '-6px',
+        },
+        '@media only screen and (min-width: 600px)': {
+            // horizontal
+            marginLeft: '6x',
+        },
     },
     markLabelActive: {
         color: '#C4C4C4',
@@ -339,7 +348,7 @@ function PersonaLabel(props) {
             </Typography>}
             {(props.orientation == 'vertical') && 
             <Typography variant='body2' style={{color: '#322737'}}>
-                <img src={props.icon} alt={props.name} style={{width: '7vw', minWidth: '5ch', display: 'block', textAlign: 'left'}} />
+                <img src={props.icon} alt={props.name} style={{width: '7vw', minWidth: '5ch', display: 'block', textAlign: 'left', marginBottom: '-10px'}} />
                 <span style={{display: 'block', fontWeight: 'bold'}}>{props.name}</span>
                 <span style={{display: 'block'}}>{props.weeklyImpact} lbs/week</span>            
             </Typography>}
