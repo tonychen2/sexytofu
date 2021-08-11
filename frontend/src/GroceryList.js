@@ -410,67 +410,76 @@ class GroceryList extends Component {
         let buttonClass = this.props.hasSearched ? this.props.classes.buttonHasSearched : this.props.classes.button;
         return (
             <Box className={this.props.hasSearched ? this.props.classes.boxHasSearchedBG : null}>
-            <Box id="groceryList" className={this.props.hasSearched ? this.props.classes.boxHasSearched : this.props.classes.box}>
-                <Grid container className={this.props.classes.root}>
-                    {this.props.hasSearched &&
-                    <Grid item xs={12} className={this.props.classes.title}>
-                        <Typography variant='h2' className={this.props.classes.groceryTitle}>Your List</Typography>
-                    </Grid>}
-                    {/* TODO: make search bar handle its own states eg updateQuery, and make more generic. */}
-                    <Grid item xs={12} sm={12}> 
-                        <SearchBar 
-                            textFieldClass={textFieldClass} 
-                            updateQuery={this.updateQuery} 
-                            handleKeyPress={this.handleKeyPress} 
-                            currentQuery={this.state.currentQuery}
-                            buttonClass={buttonClass}
-                            addFood={this.addFood}
-                            inputGrid={this.props.classes.inputGrid}
+                <Box id="groceryList" className={this.props.hasSearched ? this.props.classes.boxHasSearched : this.props.classes.box}>
+                    <Grid container className={this.props.classes.root}>
+                        {
+                            this.props.hasSearched &&
+                            <Grid item xs={12} className={this.props.classes.title}>
+                                <Typography variant='h2' className={this.props.classes.groceryTitle}>Your List</Typography>
+                            </Grid>
+                        }
+                        {/* TODO: make search bar handle its own states eg updateQuery, and make more generic. */}
+                        <Grid item xs={12} sm={12}> 
+                            <SearchBar 
+                                textFieldClass={textFieldClass} 
+                                updateQuery={this.updateQuery} 
+                                handleKeyPress={this.handleKeyPress} 
+                                currentQuery={this.state.currentQuery}
+                                buttonClass={buttonClass}
+                                addFood={this.addFood}
+                                inputGrid={this.props.classes.inputGrid}
+                            />
+                        </Grid>
+
+                        {
+                            !this.props.hasSearched && this.state.groceryList.length < 1 &&
+                            <Grid item xs={12} sm={12}> 
+                                <Typography variant='body2' align="left" style={{margin: '40px 0px'}}>
+                                    *Enter common foods with amount you would buy on in a grocery run. Estimates are fine. :)
+                                </Typography> 
+                            </Grid>
+                        }
+
+                        {
+                            !this.props.hasSearched && this.state.groceryList.length > 0 &&
+                            <Grid item xs={12} sm={12}> 
+                                <Typography variant='h3' align="center" style={{marginTop: '40px'}}>
+                                    Your List
+                                </Typography> 
+                                <ExpandMoreRoundedIcon fontSize="large"/>
+                            </Grid>
+                        }
+
+                        {/*An error message if search for food fails.*/}
+                        <SearchError 
+                            shown={this.state.hasSearchError}
+                            message={this.state.searchErrorMessage}
+                            classes={this.props.classes}
+                            onClick = { () => {
+                                this.setState({hasSearchError : false})
+                            }}
                         />
-                    </Grid>
 
-                    {!this.props.hasSearched && this.state.groceryList.length < 1 &&
-                    <Grid item xs={12} sm={12}> 
-                        <Typography variant='body2' align="left" style={{margin: '40px 0px'}}>
-                            *Enter common foods with amount you would buy on in a grocery run. Estimates are fine. :)
-                        </Typography> 
-                    </Grid>}
-
-                    {!this.props.hasSearched && this.state.groceryList.length > 0 &&
-                    <Grid item xs={12} sm={12}> 
-                        <Typography variant='h3' align="center" style={{marginTop: '40px'}}>
-                            Your List
-                        </Typography> 
-                        <ExpandMoreRoundedIcon fontSize="large"/>
-                    </Grid>}
-
-                    {/*An error message if search for food fails.*/}
-                    <SearchError 
-                        shown={this.state.hasSearchError}
-                        message={this.state.searchErrorMessage}
-                        classes={this.props.classes}
-                        onClick = { () => {
-                            this.setState({hasSearchError : false})
-                        }}
-                    />
-                    {/*</div>*/}
-                    {/*<ColumnNames />*/}
+                        {/* Items in grocery list */}
                         <form style={{width: '100%'}}>
                             <List>
                                 {list}
                             </List>
                         </form>
-                </Grid>
+                    </Grid>
 
-                {this.state.groceryList.length > 0 &&
-                <Grid container justify={"flex-end"}>
-                <Button className={this.props.classes.button}
-                        id="search"
-                        variant="contained"
-                        align="end"
-                        onClick={() => this.props.search(this.state.groceryList)}><span style={{padding: '0px 15px'}}>Search</span></Button>
-                </Grid>}
-            </Box>
+                    {
+                      this.state.groceryList.length > 0 &&
+                      <Grid container justify={"flex-end"}>
+                          <Button className={buttonClass}
+                              id="search"
+                              variant="contained"
+                              align="end"
+                              onClick={() => this.props.search(this.state.groceryList)}><span style={{padding: '0px 15px'}}>Search</span>
+                          </Button>
+                      </Grid>
+                    }
+                </Box>
             </Box>
         );
     }

@@ -112,13 +112,13 @@ class Recommendations extends Component {
             let reco = this.state.recos[this.state.indexOnDisplay];
             reco_text = reco.text_long;
 
-            // For replacement-type recommendations, we add an "equivalent to" section, which is random among two versions for a/b testing
+            // For replacement-type recommendations, we can add an "equivalent to" section, which is random among two versions for a/b testing
             // TODO: Error handling!!!!
             // TODO: Record clicks of "apply to grocery list", and compare between the two versions of "equivalent to"
-            if (reco.type_id === 1) {
-                let random_group = Math.floor(Math.random() * 2);
+            let random_group = null;
+            if ((reco.calculate_impact === true) && (reco.impact_once > 0)) {
+                random_group = Math.floor(Math.random() * 2);
                 let annual_impact = (this.props.food.grams / 1000) * reco.impact_once * 52;
-                console.log(this.props.food.grams);
                 if (random_group === 1) {
                     let n_trees = Math.round(annual_impact / ANNUAL_IMPACT_PER_TREE);
                     reco_text = joinText(reco_text, `you can offset as much CO2 as ${n_trees} trees in a year!`);
@@ -127,16 +127,29 @@ class Recommendations extends Component {
                     reco_text = joinText(reco_text, `you'll be saving the equivalent of ${n_miles} miles driven in a car!`);
                 }
             }
+
+            // Send data to Google Tag Manager
+            let tagManagerArgs = {
+                dataLayer: {
+                    event: "showReco",
+                    ingredient: this.props.food.alias,
+                    recommendation: reco.text_short,
+                    has_recipe: reco.has_recipe,
+                    replacement: reco['replacement_food_name'],
+                    impact_variant: random_group
+                }
+            };
+            TagManager.dataLayer(tagManagerArgs);
         }
 
         return {__html: reco_text};
     }
 
-    isMore = () => {
+    hasMoreReco = () => {
         /**
-         * Determines if the recommendation on display is already the only one; if so, we won't render the "show me more" button
+         * Determines if there are multiple recommendations for the selected food; if so, we render the "show me more" button
          */
-        return (this.state.recos.length > 0);
+        return (this.state.recos.length > 1);
     }
 
     isApplicable = () => {
@@ -146,7 +159,7 @@ class Recommendations extends Component {
         if (this.state.recos.length > 0) {
             let reco = this.state.recos[this.state.indexOnDisplay]
             // Currently "apply" feature only supports "replace" type recommendations
-            return (reco['type_id'] === 1);
+            return (reco['replacement_food_id'] !== null);
         } else {
             return false;
         }
@@ -155,11 +168,11 @@ class Recommendations extends Component {
     componentDidMount() {
         /**
          * React lifecycle method.
-         * Makes API call to get recommendations for the highest-impact food.
+         * Makes API call to get recommendations for the highest-impact food, and save them in a randomized order
          */
         fetch(`${NATIVE_API_ADDRESS}/recommendations/${this.props.food.alias}/`)
             .then(response => response.json())
-            .then(recos => this.setState({recos: recos}));
+            .then(recos => this.setState({recos: recos.sort(() => Math.random() - 0.5)}));
     }
 
     componentDidUpdate(prevProps) {
@@ -173,7 +186,7 @@ class Recommendations extends Component {
         if (prevProps !== this.props) {
             fetch(`${NATIVE_API_ADDRESS}/recommendations/${this.props.food.alias}/`)
                 .then(response => response.json())
-                .then(recos => this.setState({recos: recos, indexOnDisplay: 0}));
+                .then(recos => this.setState({recos: recos.sort(() => Math.random() - 0.5), indexOnDisplay: 0}));
         }
     }
 
@@ -182,14 +195,14 @@ class Recommendations extends Component {
          * Handles clicks on the "apply to grocery list" button
          */
         let reco = this.state.recos[this.state.indexOnDisplay];
-        this.props.updateGroceryList(this.props.food.alias, 'ingredient', reco['replacement']['name']);
+        this.props.updateGroceryList(this.props.food.alias, 'ingredient', reco['replacement_food_name']);
 
         // Send data to Google Tag Manager
         let tagManagerArgs = {
             dataLayer: {
                 event: "applyReco",
                 ingredient: this.props.food.alias,
-                replacement: reco['replacement']['name']
+                replacement: reco['replacement_food_name']
             }
         };
         TagManager.dataLayer(tagManagerArgs);
@@ -198,7 +211,7 @@ class Recommendations extends Component {
     nextReco = () => {
         /**
          * Handles clicks on the "show me more" button
-         * This function assumes what's on display is not the only recommendation
+         * This function assumes there is recommendation for the selected food
          */
         let newIndex = (this.state.indexOnDisplay + 1) % this.state.recos.length;
         this.setState({indexOnDisplay: newIndex});
@@ -247,7 +260,7 @@ class Recommendations extends Component {
                     {/* TODO: Added hard-coded minimum height to keep overall space constant regardless if Show More visible; change to something less hacky.*/}
                     <div style={{display: 'flex', justifyContent: 'space-between', minHeight: "26px", width: "100%"}}>
                         {/* NOTE: wrap each button in div if you want to align "Apply to list" to right */}
-                        {this.isMore() && <button className={'Button'} onClick={this.nextReco}>Show me more</button>}
+                        {this.hasMoreReco() && <button className={'Button'} onClick={this.nextReco}>Show me more</button>}
                         {this.isApplicable() && <button className={'Button'} onClick={this.applyReco}>Apply to grocery list</button>}
                     </div>
                 </CardActions>
