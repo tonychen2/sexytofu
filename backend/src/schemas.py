@@ -4,17 +4,17 @@ from pydantic import BaseModel
 
 class RecoBase(BaseModel):
     food_id: Optional[int]
-    type_id: int
-    impact_once: Optional[float]
-    freq_weekly: Optional[int]
     text_short: str
     text_long: str
+    has_recipe: bool
+    impact_once: Optional[float]
     replacement_food_id: Optional[int]
+    replacement_food_name: Optional[str]
+    calculate_impact: Optional[bool]
 
 
 class RecoCreate(RecoBase):
     food_name: str
-    replacement_food_name: Optional[str]
     pass
 
 
