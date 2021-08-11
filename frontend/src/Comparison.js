@@ -12,7 +12,7 @@ import useMediaQuery from '@material-ui/core/useMediaQuery';
 
 import {pluralize} from "./utils.js"
 
-import RoomIcon from '@material-ui/icons/Room';
+import markerIcon from "./assets/summary_graphics/marker.svg";
 import meatLoverIcon from "./assets/summary_graphics/Tofu_meatlover.png";
 import avgAmericanIcon from "./assets/summary_graphics/Tofu_avgamerican.png";
 import globalAvgIcon from "./assets/summary_graphics/Tofu_globalavg.png";
@@ -101,7 +101,7 @@ const scaleStyles = makeStyles((theme) => ({
         // Change position of label accordingly when vertical slider
         '@media only screen and (max-width: 600px)': {
             top: '6px',
-            marginRight: '200px',
+            marginRight: '230px',
         },
     },
     // Each persona's mark on the scale
@@ -312,7 +312,7 @@ function ValueLabel(props) {
     if (props.realImpact > props.weeklyImpact) { overflowSign = '>'};
     if (props.realImpact < props.weeklyImpact) { overflowSign = '<'};
     return (
-        <Grid container direction="row" id="yourImpact">
+        <Grid container direction="row" alignItems="center" justify={"center"} id="yourImpact">
             <Grid item xs={10} sm={10}>
                 <Typography variant='body2' style={{color: '#322737', minWidth: '15ch'}}>
                     <span style={{display: 'block', fontWeight: 'bold'}}>{label}</span>
@@ -321,7 +321,7 @@ function ValueLabel(props) {
             </Grid>
             {(props.orientation == 'vertical') && 
             <Grid item xs={2} sm={2}> 
-                <RoomIcon style={{ fill: '#F251AF', fontSize: "3rem", transform: 'rotate(-90deg)' }}/>
+                    <img src={markerIcon} style={{marginLeft: '2ch'}}/>
             </Grid>}
         </Grid >)
 }
