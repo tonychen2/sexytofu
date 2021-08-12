@@ -69,8 +69,9 @@ export default class BarChart extends Component {
         if (typeof myBarChart !== "undefined") myBarChart.destroy();
 
         // Set global styling configs for the chart
+        Chart.defaults.font.family = 'Lato';
         Chart.defaults.font.size = 16;
-        Chart.defaults.color = '#ffdbec';
+        Chart.defaults.color = 'white';
         Chart.defaults.borderColor = 'transparent';
 
         // Create the chart
@@ -85,10 +86,15 @@ export default class BarChart extends Component {
                         backgroundColor:'#ffffffaa',
                         hoverBackgroundColor: '#ffffffee',
                         // TODO: constant bar width
+                        barThickness: 100,
+                        maxBarThickness: 100,
+                        barPercentage: 0.9,
                     }
                 ]
             },
             options: {
+                maintainAspectRatio: false,
+                responsive: false,
                 indexAxis: 'y',
                 // TODO: remove extra space right and top
                 // Show the value for each bar while rendering the chart
@@ -105,7 +111,7 @@ export default class BarChart extends Component {
                     y: {
                         ticks: {
                             textStrokeColor: '#ffdbec'
-                        }
+                        },
                     }
                 },
                 plugins: {
@@ -122,12 +128,21 @@ export default class BarChart extends Component {
         this.highlightSelectedBar(0);
     }
 
+    calcHeight = () => {
+        // Caclulate height of bar chart based on bar width 
+        // Not responsive
+        let height_needed = this.props.data.length * 120
+        return height_needed.toString() + "px"
+    }
+
     render() {
         /**
          * React lifecycle method
          *
          * @return   {HTMLDivElement}  HTML element for the BarChart component
          */
+        let height = this.calcHeight();
+        console.log(height);
         return (
             <div className="chartContainer" style={{width: '80%', margin: 'auto'}}>
                 <Typography variant='h3' align='left'>Rank my food's carbon footprint: {this.props.data.reduce((a, b) => a + b, 0).toFixed(1)} pounds</Typography>
@@ -135,7 +150,17 @@ export default class BarChart extends Component {
                 <canvas
                     id="myChart"
                     ref={this.chartRef}
-                    style={{maxHeight: 300}}
+                    // https://stackoverflow.com/questions/41953158/set-height-of-chart-in-chart-js
+                    // NOTE: Setting width and height sets aspect ratio, NOT pixel amount (!)
+                    // TODO: Need to calculate a more responsive width
+                    width='800'
+                    height={this.calcHeight()}
+
+                    // https://stackoverflow.com/questions/38512001/charts-js-graph-not-scaling-to-canvas-size
+                    // https://www.chartjs.org/docs/latest/configuration/responsive.html
+                    // TODO: Need manually change with on resize
+
+                    // TODO: need to resize bar chart or re-render when add to grocery list.
                 />
             </div>
         )
