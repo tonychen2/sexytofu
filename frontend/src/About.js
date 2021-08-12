@@ -5,23 +5,45 @@ import {Button} from '@material-ui/core';
 import {Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle} from '@material-ui/core';
 import {Grid, Typography} from '@material-ui/core';
 import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
+import CloseRoundedIcon from '@material-ui/icons/CloseRounded';
 
 
 const styles = {
     root: {
         marginLeft: '1ch',
-        '& .MuiButton-contained:hover': {
-            // Button hover style
-            color: 'white',
-            backgroundColor: 'transparent',
+    },
+    infoButton: {
+        color: 'white',
+        padding: '0px',
+        backgroundColor: 'transparent',
+        borderRadius: '50%',
+
+        // Center icon in button
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+
+        '& :hover': {
+            opacity: '0.9',
         }
     },
-    button: {
-        color: 'white',
-        backgroundColor: 'transparent',
-    },
     dialogContent: {
-        padding: '8px 50px',
+        padding: '28px 32px',
+    },
+    dialogTitle: {
+        padding: '0px 24px',
+        paddingTop: '0px',
+    },
+    dialogAction: {
+        paddingBottom: '0px',
+    },
+    closeButton: {
+        color: '#322737',
+        padding: '0px',
+        margin: '6px',
+        '& :hover': {
+            color: 'black',
+        }
     }
 }
 
@@ -47,7 +69,7 @@ class About extends Component {
     render() {
         return (
             <Grid container justify={"flex-end"} className={this.props.classes.root}>
-                <button variant="contained" className={this.props.classes.button} onClick={this.openPopUp}> 
+                <button variant="contained" className={this.props.classes.infoButton} onClick={this.openPopUp}> 
                     <InfoOutlinedIcon />
                 </button>
 
@@ -79,8 +101,13 @@ class AboutPopUp extends Component {
                     style: {
                         borderRadius: '20px',
                     }
-            }}>
-                <DialogTitle id="dialogTitle" disableTypography>
+                }}>
+                <DialogActions className={this.props.classes.dialogAction}>
+                    <Button className={this.props.classes.closeButton} onClick={this.props.onClose}>
+                        <CloseRoundedIcon />
+                    </Button>
+                </DialogActions>
+                <DialogTitle id="dialogTitle" className={this.props.classes.dialogTitle} disableTypography>
                     <Typography variant="h3" style={{color: "#322737"}}> 
                     What does the graph mean?
                     </Typography>   
@@ -106,11 +133,6 @@ class AboutPopUp extends Component {
                         </Typography>  
                     </DialogContentText>
                 </DialogContent>
-                <DialogActions>
-                    <Button onClick={this.props.onClose}>
-                        OK
-                    </Button>
-                </DialogActions>
           </Dialog>
         )
     }
