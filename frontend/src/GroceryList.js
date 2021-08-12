@@ -20,13 +20,12 @@ const GHGI_API_ADDRESS = 'https://api.sexytofu.org/api.ghgi.org:443';
 const NATIVE_API_ADDRESS =  process.env.API_HOST || "http://localhost:8000";
 // Matches all GHGI units from https://github.com/ghgindex/ghgi/blob/main/ghgi/parser.py
 // All units we support
-const ALL_UNITS = ['milliliter', 'liter', 'gram', 'kilogram', 'cup', 
+const ALL_UNITS = ['milliliter', 'ml', 'liter', 'l', 'gram', 'g', 'kilogram', 'kg', 'cup', 
                     'tablespoon', 'teaspoon', 'ounce', 'pound', 'quart', 
                     'pint', 'dash', 'pinch', 'handful', 'fistful', 'smidgen', 'ea'];
 // Limited selection of units visible for sake of dropdown menu
-const VISIBLE_UNITS = ['milliliter', 'gram', 'cup', 
-                    'tablespoon', 'teaspoon', 'ounce', 'pound', 'quart', 
-                    'pint', 'pinch', 'ea'];
+const VISIBLE_UNITS = ['tablespoon', 'teaspoon', 'ounce', 'cup', 'pint', 'quart', 'milliliter', 'gram',
+                    'pound', 'pinch', 'ea'];
 
 const styles = {
     root: {
