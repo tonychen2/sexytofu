@@ -19,11 +19,12 @@ import { ContactSupport } from "@material-ui/icons";
 const GHGI_API_ADDRESS = 'https://api.sexytofu.org/api.ghgi.org:443';
 const NATIVE_API_ADDRESS =  process.env.API_HOST || "http://localhost:8000";
 // Matches all GHGI units from https://github.com/ghgindex/ghgi/blob/main/ghgi/parser.py
-// const ALL_UNITS = ['milliliter', 'liter', 'gram', 'kilogram', 'cup', 
-//                     'tablespoon', 'teaspoon', 'ounce', 'pound', 'quart', 
-//                     'pint', 'dash', 'pinch', 'handful', 'fistful', 'smidgen', 'ea'];
-// Limited selection of units for sake of dropdown menu
-const ALL_UNITS = ['milliliter', 'gram', 'cup', 
+// All units we support
+const ALL_UNITS = ['milliliter', 'liter', 'gram', 'kilogram', 'cup', 
+                    'tablespoon', 'teaspoon', 'ounce', 'pound', 'quart', 
+                    'pint', 'dash', 'pinch', 'handful', 'fistful', 'smidgen', 'ea'];
+// Limited selection of units visible for sake of dropdown menu
+const VISIBLE_UNITS = ['milliliter', 'gram', 'cup', 
                     'tablespoon', 'teaspoon', 'ounce', 'pound', 'quart', 
                     'pint', 'pinch', 'ea'];
 
@@ -686,7 +687,15 @@ class GroceryListItem extends Component{
                             variant="outlined"
                             className={textFieldClass + ' ' + this.props.classes.select}
                             >
-                        {ALL_UNITS.map((unit) => <MenuItem value={unit} key={unit} id={`${this.props.ingredient}_unit`}>{unit}</MenuItem>)}
+                        {ALL_UNITS.map((unit) => <MenuItem value={unit} 
+                                                            key={unit} 
+                                                            id={`${this.props.ingredient}_unit`}
+                                                            style={{
+                                                                // Allow units in ALL_UNITS, but only those in VISIBLE_UNITS are visible in selection menu
+                                                                display: (VISIBLE_UNITS.includes(unit)) ? 'block' : 'none'
+                                                                }}>
+                                                                    {unit}
+                                                                </MenuItem>)}
                     </Select>
                 </Grid>
                 <Grid item xs={1} sm={1}>
