@@ -8,15 +8,24 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import ExpandMoreRoundedIcon from '@material-ui/icons/ExpandMoreRounded';
 import {List, ListItem} from '@material-ui/core';
 import {withStyles} from '@material-ui/core';
+import {Select, MenuItem} from "@material-ui/core";
 import { withTheme } from "@material-ui/styles";
 import { color } from "chart.js/helpers";
 
 import TagManager from 'react-gtm-module'
+import { ContactSupport } from "@material-ui/icons";
 
 
 const GHGI_API_ADDRESS = 'https://api.sexytofu.org/api.ghgi.org:443';
 const NATIVE_API_ADDRESS =  process.env.API_HOST || "http://localhost:8000";
-
+// Matches all GHGI units from https://github.com/ghgindex/ghgi/blob/main/ghgi/parser.py
+// const ALL_UNITS = ['milliliter', 'liter', 'gram', 'kilogram', 'cup', 
+//                     'tablespoon', 'teaspoon', 'ounce', 'pound', 'quart', 
+//                     'pint', 'dash', 'pinch', 'handful', 'fistful', 'smidgen', 'ea'];
+// Limited selection of units for sake of dropdown menu
+const ALL_UNITS = ['milliliter', 'gram', 'cup', 
+                    'tablespoon', 'teaspoon', 'ounce', 'pound', 'quart', 
+                    'pint', 'pinch', 'ea'];
 
 const styles = {
     root: {
@@ -64,6 +73,7 @@ const styles = {
         borderRadius: '10px',
         backgroundColor: '#F2F2F2',
         margin: '2px',
+        // textField border styles
         '&:hover': {
             borderColor: '#fc0a7e',
         },
@@ -149,7 +159,26 @@ const styles = {
             backgroundColor: '#b00035',
             color: '#ffbdd9'
         },
-    }
+    },
+    select: {
+        // Select dropdown element styles
+        '& .MuiSelect-outlined.MuiSelect-outlined': {
+            padding: '10px',
+            borderColor: 'red !important',
+            // maxHeight: '40px',
+        },
+        "& .MuiSelect-select:focus": {
+            // Select dropdown focus style
+            // TODO: remove default border styles with focus and hover.; not sure why borderColor isn't working?
+            backgroundColor: 'WhiteSmoke',
+            borderRadius: '10px',
+        },
+        "& .MuiSelect-select:hover": {
+            // Select dropdown hover style
+            backgroundColor: 'lightGrey',
+            borderRadius: '10px',
+        },
+    },
 }
 
 class GroceryList extends Component {
@@ -581,12 +610,26 @@ class GroceryListItem extends Component{
             this.props.update("ingredient", event.target.value);
         }
         else if (event.target.id.includes("_quantity")) {
-            this.setState({quantity: event.target.value});
-            this.props.update("quantity", event.target.value);
+            let value = event.target.value;
+            if ((value >= 0 || (!value && event.nativeEvent.inputType == "deleteContentBackward")) 
+                && !(!value && event.nativeEvent.inputType == "insertText")) {
+                // Only allow value (textField input) change if 
+                // number is non-negative, or if delete to blank space (so value is NaN but still valid),
+                // And ensure value is a number (not NaN) if inserting character
+                this.setState({quantity: value});
+                this.props.update("quantity", value);
+
+                // TODO: disallow single leading hyphens (without number) inputs, or blank or '.' or '-' when submitting
+                // Ideally, do not allow '-' at all as a character input.
+            }
         } else {
             this.setState({unit: event.target.value});
             this.props.update("unit", event.target.value);
         }
+    }
+    handleUnitChange = event => {
+        this.setState({unit: event.target.value});
+        this.props.update("unit", event.target.value);
     }
 
     handleKeyPress = event => {
@@ -627,6 +670,8 @@ class GroceryListItem extends Component{
                         className={textFieldClass}
                         id={`${this.props.ingredient}_quantity`}
                         type={'number'}
+                        // Set a minimum value number range can be set to by picker; NOTE: this does NOT restrict what the user can type
+                        InputProps={{ inputProps: { min: 0} }}
                         onChange={this.handleChange}
                         onKeyPress={this.handleKeyPress}
                         value={this.props.quantity}
@@ -635,16 +680,14 @@ class GroceryListItem extends Component{
                     />
                 </Grid>
                 <Grid item xs sm className={this.props.classes.inputGrid}>
-                    <TextField
-                        variant="outlined"
-                        className={textFieldClass}
-                        id={`${this.props.ingredient}_unit`}
-                        onChange={this.handleChange}
-                        onKeyPress={this.handleKeyPress}
-                        value={this.props.unit}
-                        size='small'
-                        // style={{float: "left", clear: 'both'}}
-                    />
+                    <Select value={this.props.unit}
+                            id={`${this.props.ingredient}_unit`}
+                            onChange={this.handleUnitChange}
+                            variant="outlined"
+                            className={textFieldClass + ' ' + this.props.classes.select}
+                            >
+                        {ALL_UNITS.map((unit) => <MenuItem value={unit} key={unit} id={`${this.props.ingredient}_unit`}>{unit}</MenuItem>)}
+                    </Select>
                 </Grid>
                 <Grid item xs={1} sm={1}>
                     <Grid container justify={"center"}>
