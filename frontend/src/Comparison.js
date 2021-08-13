@@ -3,7 +3,7 @@ import  "regenerator-runtime";
 
 import { makeStyles } from '@material-ui/core/styles';
 import {Accordion, AccordionSummary, AccordionDetails} from "@material-ui/core";
-import {Container} from "@material-ui/core";
+import {Container, Grid} from "@material-ui/core";
 import {Typography} from "@material-ui/core";
 import {Select, MenuItem} from "@material-ui/core";
 import {Slider} from "@material-ui/core";
@@ -12,6 +12,7 @@ import useMediaQuery from '@material-ui/core/useMediaQuery';
 
 import {pluralize} from "./utils.js"
 
+import markerIcon from "./assets/summary_graphics/marker.svg";
 import meatLoverIcon from "./assets/summary_graphics/Tofu_meatlover.png";
 import avgAmericanIcon from "./assets/summary_graphics/Tofu_avgamerican.png";
 import globalAvgIcon from "./assets/summary_graphics/Tofu_globalavg.png";
@@ -46,12 +47,6 @@ const boxStyles = {
     },
     scaleContainer: {
         width: '100%',
-        // TODO: center vertical slider
-        // display: 'flex',
-        // flexDirection: 'row',
-        // flexWrap: 'wrap',
-        // justifyContent: 'center',
-        // alignItems: 'center',
     }
 };
 
@@ -74,7 +69,10 @@ const scaleStyles = makeStyles((theme) => ({
         "& .MuiSlider-thumb": {
             height: '14px',
             width: '14px',
-          }
+            // Recenter thumb mark on slider
+            marginLeft: '4px',
+            marginTop: '-6px',
+          },
     },
     rail: {
         color: '#828282',
@@ -83,13 +81,14 @@ const scaleStyles = makeStyles((theme) => ({
     // User's impact shown on the scale
     thumb: {
         color: '#F251AF',
-        // Fix tick marks being slightly off center, to be on center, depending on if horizontal or vertical slider
+        // Use marker icon instead of circle for value when vertical (hide default circle mark when vertical).
         '@media only screen and (max-width: 600px)': {
-            left: '12px',
+            // marginLeft: '-10px',
+            color: 'transparent',
         },
-        '@media only screen and (min-width: 600px)': {
-            top: '12px', 
-        },
+        // '@media only screen and (min-width: 600px)': {
+        //     // marginTop: '-10px',
+        // },
     },
     valueLabel: {
         left: 'auto',
@@ -101,8 +100,8 @@ const scaleStyles = makeStyles((theme) => ({
           },
         // Change position of label accordingly when vertical slider
         '@media only screen and (max-width: 600px)': {
-            top: '0px',
-            right: '8ch',
+            top: '6px',
+            marginRight: '230px',
         },
     },
     // Each persona's mark on the scale
@@ -116,21 +115,35 @@ const scaleStyles = makeStyles((theme) => ({
         opacity: '1',
         // Fix tick marks being slightly off center, to be on center, depending on if horizontal or vertical slider
         '@media only screen and (max-width: 600px)': {
-            left: '4px',
+            marginLeft: '-10px',
         },
         '@media only screen and (min-width: 600px)': {
-            top: '4px', 
+            marginTop: '-10px',
         },
     },
     markLabel: {
-        color: '#C4C4C4'
+        color: '#C4C4C4',
+        // Recenter mark labels
+        '@media only screen and (max-width: 600px)': {
+            // vertical
+            marginTop: '-6px',
+        },
+        '@media only screen and (min-width: 600px)': {
+            // horizontal
+            marginLeft: '6x',
+        },
     },
     markLabelActive: {
         color: '#C4C4C4',
     },
     vertical: {
         '& $rail': {
-            width: "5px",
+            color: 'black',
+            opacity: '1',
+            width: "3px",
+        },
+        '& $mark': {
+            opacity: '0',
         },
       }
 }));
@@ -268,15 +281,18 @@ function ComparisonScale(props) {
             orientation={scaleOrientation}
             value={normalizedImpact}
             marks={[
-                {value: 17, label: <PersonaLabel name="Sexy Tofu" weeklyImpact='<17' icon={sexyTofuIcon} classes={classes} />},
-                {value: 76, label: <PersonaLabel name="Global Average" weeklyImpact='76' icon={globalAvgIcon} classes={classes} />},
+                {value: 17, label: <PersonaLabel name="Sexy Tofu" weeklyImpact='<17' icon={sexyTofuIcon} classes={classes} orientation={scaleOrientation}/>},
+                {value: 76, label: <PersonaLabel name="Global Average" weeklyImpact='76' icon={globalAvgIcon} classes={classes} orientation={scaleOrientation}/>},
                 // TODO: scale value is inaccurate for better spacing at sacrifice of accuracy -- try alternating position of labels
-                {value: 170, label: <PersonaLabel name="American Average" weeklyImpact='189' icon={avgAmericanIcon} classes={classes} />},
-                {value: 224, label: <PersonaLabel name="Meat Lover" weeklyImpact='>224' icon={meatLoverIcon} classes={classes} />}]}
+                {value: 170, label: <PersonaLabel name="American Average" weeklyImpact='189' icon={avgAmericanIcon} classes={classes} orientation={scaleOrientation}/>},
+                {value: 224, label: <PersonaLabel name="High Impact" weeklyImpact='>224' icon={meatLoverIcon} classes={classes} orientation={scaleOrientation}/>}]}
             step={1}
             min={17}
             max={224}
-            valueLabelFormat={(value) => <ValueLabel numPeople={props.numPeople} weeklyImpact={value} realImpact={normalizedImpact}/>}
+            valueLabelFormat={(value) => <ValueLabel numPeople={props.numPeople} 
+                                                        weeklyImpact={value} 
+                                                        realImpact={normalizedImpact} 
+                                                        orientation={scaleOrientation}/>}
             valueLabelDisplay='on'
             track={false} />
     )
@@ -289,6 +305,7 @@ function ValueLabel(props) {
      * @param   {int}   props.numPeople       Number of people this value is for
      * @param   {int}     props.weeklyImpact    Weekly carbon emission of each person, measured by pounds, as clamped by Mui slider
      * @param   {int}     props.realImpact      Weekly carbon emission of each person, measured by pounds, not clamped by Mui slider
+     * @param   {String}    props.orientation    Whether slider is vertical or horizontal (adds marker icon if vertical)
      *
      * @return  {HTMLSpanElement}  HTML element for the component
      */
@@ -298,10 +315,18 @@ function ValueLabel(props) {
     if (props.realImpact > props.weeklyImpact) { overflowSign = '>'};
     if (props.realImpact < props.weeklyImpact) { overflowSign = '<'};
     return (
-        <Typography variant='body2' style={{color: '#322737', minWidth: '15ch'}}>
-            <span style={{display: 'block', fontWeight: 'bold'}}>{label}</span>
-            <span style={{display: 'block'}}>{overflowSign}{Math.round(props.weeklyImpact)} lbs/week</span>
-        </Typography>)
+        <Grid container direction="row" alignItems="center" justify={"center"} id="yourImpact">
+            <Grid item xs={10} sm={10}>
+                <Typography variant='body2' style={{color: '#322737', minWidth: '15ch'}}>
+                    <span style={{display: 'block', fontWeight: 'bold'}}>{label}</span>
+                    <span style={{display: 'block'}}>{overflowSign}{Math.round(props.weeklyImpact)} lbs/wk CO<sub>2</sub></span>
+                </Typography>
+            </Grid>
+            {(props.orientation == 'vertical') && 
+            <Grid item xs={2} sm={2}> 
+                    <img src={markerIcon} style={{marginLeft: '2ch'}}/>
+            </Grid>}
+        </Grid >)
 }
 
 function PersonaLabel(props) {
@@ -311,15 +336,26 @@ function PersonaLabel(props) {
      * @param   {float}   props.name          Name of the persona
      * @param   {int}     props.weeklyImpact  Weekly carbon emission of the persona, measured by pounds
      * @param   {String}  props.icon          URL to the persona's icon
+     * @param   {String}  props.orientation    Whether slider is vertical or horizontal (change image icon position depending)
      *
      * @return  {HTMLSpanElement}  HTML element for the component
      */
+    // let img_style = (props.orientation == 'vertical') ? {width: '7vw', minWidth: '5ch'}: {width: '7vw', minWidth: '10ch'}
     return (
-        <Typography variant='body2' style={{color: '#322737'}}>
-            <span style={{display: 'block', fontWeight: 'bold'}}>{props.name}</span>
-            <span style={{display: 'block'}}>{props.weeklyImpact} lbs/week</span>
-            <img src={props.icon} alt={props.name} style={{width: '7vw', minWidth: '8ch'}} />
-        </Typography>)
+        <div id="personaLabel">
+            {(props.orientation == 'horizontal') && 
+            <Typography variant='body2' style={{color: '#322737'}}>
+                <span style={{display: 'block', fontWeight: 'bold'}}>{props.name}</span>
+                <span style={{display: 'block'}}>{props.weeklyImpact} lbs/wk CO<sub>2</sub></span>
+                <img src={props.icon} alt={props.name} style={{width: '7vw', minWidth: '10ch'}} />
+            </Typography>}
+            {(props.orientation == 'vertical') && 
+            <Typography variant='body2' style={{color: '#322737'}}>
+                <img src={props.icon} alt={props.name} style={{width: '7vw', minWidth: '5ch', display: 'block', textAlign: 'left', marginBottom: '-10px'}} />
+                <span style={{display: 'block', fontWeight: 'bold'}}>{props.name}</span>
+                <span style={{display: 'block'}}>{props.weeklyImpact} lbs/wk CO<sub>2</sub></span>            
+            </Typography>}
+        </div>)
 }
 
 export default withStyles(boxStyles)(Comparison);
