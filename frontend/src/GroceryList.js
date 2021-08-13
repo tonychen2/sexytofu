@@ -23,8 +23,8 @@ const NATIVE_API_ADDRESS =  process.env.API_HOST || "http://localhost:8000";
 const ALL_UNITS = ['milliliter', 'ml', 'liter', 'l', 'gram', 'g', 'kilogram', 'kg', 'cup', 
                     'tablespoon', 'teaspoon', 'ounce', 'pound', 'quart', 
                     'pint', 'dash', 'pinch', 'handful', 'fistful', 'smidgen', 'ea'];
-// Limited selection of units visible for sake of dropdown menu
-const VISIBLE_UNITS = ['tablespoon', 'teaspoon', 'ounce', 'cup', 'pint', 'quart', 'milliliter', 'gram',
+// Limited selection of units selectable for sake of dropdown menu, in order
+const SELECTABLE_UNITS = ['tablespoon', 'teaspoon', 'ounce', 'cup', 'pint', 'quart', 'milliliter', 'gram',
                     'pound', 'pinch', 'ea'];
 
 const styles = {
@@ -680,6 +680,18 @@ class GroceryListItem extends Component{
                     />
                 </Grid>
                 <Grid item xs sm className={this.props.classes.inputGrid}>
+                    {/* TODO: autocomplete */}
+                    {/* https://material-ui.com/components/autocomplete/ Use filter options to autocomplete */}
+                    {/* <Autocomplete
+                            id="food_name"
+                            required
+                            options={this.state._FOOD_ALIASES}
+                            getOptionLabel={(option) => option.name}
+                            filterOptions={createFilterOptions({stringify: option => option.aliases})}
+                            renderInput={(params) => <TextField {...params} label="food" required />}
+                            autoHighlight
+                            onChange={this.handleChange}
+                        /> */}
                     <Select value={this.props.unit}
                             id={`${this.props.ingredient}_unit`}
                             onChange={this.handleUnitChange}
@@ -690,8 +702,8 @@ class GroceryListItem extends Component{
                                                             key={unit} 
                                                             id={`${this.props.ingredient}_unit`}
                                                             style={{
-                                                                // Allow units in ALL_UNITS, but only those in VISIBLE_UNITS are visible in selection menu
-                                                                display: (VISIBLE_UNITS.includes(unit)) ? 'block' : 'none'
+                                                                // Allow units in ALL_UNITS, but only those in SELECTABLE_UNITS are visible and selectable in selection menu
+                                                                display: (SELECTABLE_UNITS.includes(unit)) ? 'block' : 'none'
                                                                 }}>
                                                                     {unit}
                                                                 </MenuItem>)}
