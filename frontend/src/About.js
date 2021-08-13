@@ -109,27 +109,33 @@ class AboutPopUp extends Component {
                 </DialogActions>
                 <DialogTitle id="dialogTitle" className={this.props.classes.dialogTitle} disableTypography>
                     <Typography variant="h3" style={{color: "#322737"}}> 
-                    What does the graph mean?
+                    {/* What does the graph mean? */}
+                    How did we get these numbers?
                     </Typography>   
                 </DialogTitle>
                 <DialogContent className={this.props.classes.dialogContent}>
                     <DialogContentText>
-                        <Typography component={'span'} variant="body2"  display="block" align="left" style={{marginBottom: '1rem'}}> 
+                        {/* <Typography component={'span'} variant="body2"  display="block" align="left" style={{marginBottom: '1rem'}}> 
                         Each bar shows the carbon footprint impact of each food.
-                        </Typography>
+                        </Typography> */}
                         <Typography component={'span'} variant="body2" display="block" align="left" style={{marginBottom: '1rem'}}>
-                        Carbon footprint considers the average amount of CO2 equivalent 
+                        {/* Carbon footprint considers the average amount of CO2 equivalent 
                         emitted from food production, processing, and transportation. 
                         They are based on values found from the 
                         <a href="https://science.sciencemag.org/content/360/6392/987" target="_blank" rel="noopener noreferrer"> 2018 food study </a> 
-                        conducted by Joseph Poore.
-                        </Typography>
+                        conducted by Joseph Poore. */}
 
-                        <Typography component={'span'} variant="body2" display="block" style={{marginBottom: '1rem'}}>
-                                Learn about more about our tool <a href="https://www.sexytofu.org/" target="_blank" rel="noopener noreferrer">here.</a>
+                        The numbers that you see are based on <b>Life Cycle Assessments</b> that calculate the environmental impacts associated with all the stages of the life cycle of food. 
+                        If you’re interested in learning more about the methodology, check out
+                        <a href="https://science.sciencemag.org/content/360/6392/987" target="_blank" rel="noopener noreferrer"> Joseph Poore’s paper</a>. 
+                
                         </Typography>
+                        {/* <Typography component={'span'} variant="body2" display="block" style={{marginBottom: '1rem'}}>
+                                Learn about more about our tool <a href="https://www.sexytofu.org/" target="_blank" rel="noopener noreferrer">here.</a>
+                        </Typography> */}
                         <Typography component={'span'} variant="body2"> 
-                            We draw our data from the <a href="https://ghgi.org/about/" target="_blank" rel="noopener noreferrer">GHGI API.</a> {'\n\n'}
+                            {/* We draw our data from the <a href="https://ghgi.org/about/" target="_blank" rel="noopener noreferrer">GHGI API.</a> {'\n\n'} */}
+                            Source: <a href="https://ghgi.org/about/" target="_blank" rel="noopener noreferrer">GHGI API</a>
                         </Typography>  
                     </DialogContentText>
                 </DialogContent>
