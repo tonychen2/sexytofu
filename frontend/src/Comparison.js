@@ -215,7 +215,10 @@ class Comparison extends Component {
                     <AccordionDetails className={classes.details}>
                         {/* Container is to left align text with scale - note maxWidth must match that of scale. */}
                         <Container style={{maxWidth:'1000px', padding: '0px 50px'}}> 
-                            <Typography variant='h2' className={classes.summary} align="left">How do I compare to others? </Typography>
+                            <Typography variant='h2' className={classes.summary} style={{paddingBottom: '0.5em'}} align="left">How do I compare to others? </Typography>
+                            <Typography variant='subtitle1' className={classes.summary} align="left">
+                                This is how you stack up against national and international averages.
+                            </Typography>
                             <div id="config" className={classes.config}>
                                 <Typography variant='h4' style={{color: '#322737'}} >
                                     This list is for&nbsp;
@@ -268,7 +271,7 @@ function ComparisonScale(props) {
                 {value: 17, label: <PersonaLabel name="Sexy Tofu" weeklyImpact='<17' icon={sexyTofuIcon} classes={classes} />},
                 {value: 76, label: <PersonaLabel name="Global Average" weeklyImpact='76' icon={globalAvgIcon} classes={classes} />},
                 // TODO: scale value is inaccurate for better spacing at sacrifice of accuracy -- try alternating position of labels
-                {value: 170, label: <PersonaLabel name="Average American" weeklyImpact='189' icon={avgAmericanIcon} classes={classes} />},
+                {value: 170, label: <PersonaLabel name="American Average" weeklyImpact='189' icon={avgAmericanIcon} classes={classes} />},
                 {value: 224, label: <PersonaLabel name="Meat Lover" weeklyImpact='>224' icon={meatLoverIcon} classes={classes} />}]}
             step={1}
             min={17}
