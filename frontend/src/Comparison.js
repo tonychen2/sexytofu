@@ -319,7 +319,7 @@ function ValueLabel(props) {
             <Grid item xs={10} sm={10}>
                 <Typography variant='body2' style={{color: '#322737', minWidth: '15ch'}}>
                     <span style={{display: 'block', fontWeight: 'bold'}}>{label}</span>
-                    <span style={{display: 'block'}}>{overflowSign}{Math.round(props.weeklyImpact)} lbs/wk CO<sub>2</sub></span>
+                    <span style={{display: 'block'}}>{overflowSign}{Math.round(props.weeklyImpact)} lbs of CO<sub>2</sub>/wk</span>
                 </Typography>
             </Grid>
             {(props.orientation == 'vertical') && 
@@ -346,14 +346,14 @@ function PersonaLabel(props) {
             {(props.orientation == 'horizontal') && 
             <Typography variant='body2' style={{color: '#322737'}}>
                 <span style={{display: 'block', fontWeight: 'bold'}}>{props.name}</span>
-                <span style={{display: 'block'}}>{props.weeklyImpact} lbs/wk CO<sub>2</sub></span>
+                <span style={{display: 'block'}}>{props.weeklyImpact} lbs of CO<sub>2</sub>/wk</span>
                 <img src={props.icon} alt={props.name} style={{width: '7vw', minWidth: '10ch'}} />
             </Typography>}
             {(props.orientation == 'vertical') && 
             <Typography variant='body2' style={{color: '#322737'}}>
                 <img src={props.icon} alt={props.name} style={{width: '7vw', minWidth: '5ch', display: 'block', textAlign: 'left', marginBottom: '-10px'}} />
                 <span style={{display: 'block', fontWeight: 'bold'}}>{props.name}</span>
-                <span style={{display: 'block'}}>{props.weeklyImpact} lbs/wk CO<sub>2</sub></span>            
+                <span style={{display: 'block'}}>{props.weeklyImpact} lbs of CO<sub>2</sub>/wk</span>            
             </Typography>}
         </div>)
 }

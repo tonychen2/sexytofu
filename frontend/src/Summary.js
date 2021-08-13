@@ -71,7 +71,7 @@ function Summary(props) {
                     <span className={classes.highlight}>{props.totalImpact.toFixed(1)}</span>&nbsp;
                     {pluralize('pound', 'pounds', props.totalImpact)} of CO2 or&nbsp;
                     <span className={classes.highlight}>{props.driveEq}</span>&nbsp;
-                    {pluralize('mile', 'miles', props.driveEq)} driven in a Toyota Camry
+                    {pluralize('mile', 'miles', props.driveEq)} driven in a Toyota Prius
                 </Typography>
                 <img src={driveEqGraphics} alt='car_driving' className={classes.image}/>
             </div>
@@ -82,15 +82,17 @@ function Summary(props) {
                     <span className={classes.highlight}>{props.totalLandUse.toFixed(1)}</span> sq.ft. or&nbsp;
                     <span className={classes.highlight}>{props.parkingEq.toFixed(1)}</span> parking&nbsp;
                     {pluralize('spot', 'spots', props.parkingEq)} of land used
+                    {/* TODO: XX sqft or XX trees cut down in a Californian forest */}
                 </Typography>
                 <img src={landUseGraphics} alt='Central Park' className={classes.image}/>
             </div>}
             {props.totalWaterUse > 0 &&
             <div id="waterUse" className={classes.section}>
-                <Typography variant='subtitle1' className={classes.title}>Water Consumption</Typography>
+                <Typography variant='subtitle1' className={classes.title}>Water Use</Typography>
                 <Typography variant='subtitle1'>
                     <span className={classes.highlight}>{props.totalWaterUse.toFixed(1)}</span>&nbsp;
                     {pluralize('cup', 'cups', props.totalWaterUse)} of water consumed
+                    {/* TODO: XX liters of water or XX 8-minute showers taken */}
                 </Typography>
                 <img src={waterUseGraphics} alt='Water' className={classes.image}/>
             </div>}
