@@ -119,6 +119,7 @@ export default class BarChart extends Component {
                         display: false
                     },
                     // TODO: button style labels, look into QuickChart plugin
+                    // OR render button list separately, and don't display labels on graph
                 },
                 onClick: this.handleClick
             }
@@ -152,15 +153,15 @@ export default class BarChart extends Component {
                     ref={this.chartRef}
                     // https://stackoverflow.com/questions/41953158/set-height-of-chart-in-chart-js
                     // NOTE: Setting width and height sets aspect ratio, NOT pixel amount (!)
-                    // TODO: Need to calculate a more responsive width
+                    // TODO: Get width in pixels of rendered space (what is 80% widht in pixels?) for accurate aspect ratio
                     width='800'
                     height={this.calcHeight()}
 
                     // https://stackoverflow.com/questions/38512001/charts-js-graph-not-scaling-to-canvas-size
                     // https://www.chartjs.org/docs/latest/configuration/responsive.html
-                    // TODO: Need manually change with on resize
+                    // TODO: Need to calculate a more responsive width w/ onResize() [just set width and height of chart, but whenever size changes]
 
-                    // TODO: need to resize bar chart or re-render when add to grocery list.
+                    // TODO: need to resize bar chart or re-render when add to grocery list (new list)
                 />
             </div>
         )
