@@ -114,12 +114,13 @@ class AboutPopUp extends Component {
                 <DialogContent className={this.props.classes.dialogContent}>
                     <DialogContentText>
                         <Typography component={'span'} variant="body2" display="block" align="left" style={{marginBottom: '1rem'}}>
-                        The numbers that you see are based on <b>Life Cycle Assessments</b> that calculate the environmental impacts associated with all the stages of the life cycle of food. 
-                        If you’re interested in learning more about the methodology,
+                        The numbers that you see are based on <b>Life Cycle Assessments</b>, which calculate the environmental impacts associated&nbsp;
+                         with all the stages of the life cycle of food (including transportation, production, processing, etc.).&nbsp;
+                         We use the median number of CO2 equivalent emitted based on a multitude of studies. If you’re interested in learning more about the methodology,
                          check out <a href="https://www.researchgate.net/publication/325532198_Reducing_food%27s_environmental_impacts_through_producers_and_consumers" target="_blank" rel="noopener noreferrer">Joseph Poore’s paper</a>. 
                         </Typography>
                         <Typography component={'span'} variant="body2"> 
-                            Source: <a href="https://ghgi.org/about/" target="_blank" rel="noopener noreferrer">GHGI API</a>
+                            Data Source: <a href="https://ghgi.org/about/" target="_blank" rel="noopener noreferrer">GHGI API</a>
                         </Typography>  
                     </DialogContentText>
                 </DialogContent>
