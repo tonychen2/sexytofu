@@ -56,8 +56,10 @@ function Summary(props) {
      * @param   {float}   props.totalImpact    Total carbon emission of the grocery list, measured by pounds
      * @param   {float}   props.driveEq        Total carbon emission of the grocery list, measured by equivalent miles driven in a Toyota Camry
      * @param   {float}   totalLandUse         Total land use of the grocery list, measured by sq.ft.
-     * @param   {float}   props.parkingEq      Total land use of the grocery list, measured by # of average parking spots
+     * @param   {float}   totalTreeUse         Total tree use of the grocery list, measured by 1 Californian tree / 256 sq.ft.
+     * {float}   props.parkingEq      Total land use of the grocery list, measured by # of average parking spots
      * @param   {float}   props.totalWaterUse  Total water consumption of the grocery list, measured by cups
+     * @param   {float}   props.totalShowerUse  Total water consumption of the grocery list, measured by 8-min showers taken
      *
      * @return  {HTMLDivElement}               HTML element for the component
      */
@@ -80,9 +82,8 @@ function Summary(props) {
                 <Typography variant='subtitle1' className={classes.title}>Land Use</Typography>
                 <Typography variant='subtitle1'>
                     <span className={classes.highlight}>{props.totalLandUse.toFixed(1)}</span> sq.ft. or&nbsp;
-                    <span className={classes.highlight}>{props.parkingEq.toFixed(1)}</span> parking&nbsp;
-                    {pluralize('spot', 'spots', props.parkingEq)} of land used
-                    {/* TODO: XX sqft or XX trees cut down in a Californian forest */}
+                    <span className={classes.highlight}>{props.totalTreeUse.toFixed(1)}</span> &nbsp;
+                    {pluralize('tree', 'trees', props.parkingEq)} cut down in a Californian forest
                 </Typography>
                 <img src={landUseGraphics} alt='Central Park' className={classes.image}/>
             </div>}
@@ -91,8 +92,8 @@ function Summary(props) {
                 <Typography variant='subtitle1' className={classes.title}>Water Use</Typography>
                 <Typography variant='subtitle1'>
                     <span className={classes.highlight}>{props.totalWaterUse.toFixed(1)}</span>&nbsp;
-                    {pluralize('cup', 'cups', props.totalWaterUse)} of water consumed
-                    {/* TODO: XX liters of water or XX 8-minute showers taken */}
+                    {pluralize('cup', 'cups', props.totalWaterUse)} of water or&nbsp;
+                    <span className={classes.highlight}>{props.totalShowerUse.toFixed(1)}</span>&nbsp; 8-minute showers taken
                 </Typography>
                 <img src={waterUseGraphics} alt='Water' className={classes.image}/>
             </div>}

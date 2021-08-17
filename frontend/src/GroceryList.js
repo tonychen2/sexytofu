@@ -435,7 +435,7 @@ class GroceryList extends Component {
                             !this.props.hasSearched && this.state.groceryList.length < 1 &&
                             <Grid item xs={12} sm={12}> 
                                 <Typography variant='body1' align="left" style={{margin: '20px 0px'}}>
-                                *You can enter your grocery list here, or just foods you’re curious to learn more about!
+                                You can enter your grocery list here, or just foods you’re curious to learn more about!
                                 </Typography>
                                 <Typography variant='body1' align="left" style={{margin: '0px 0px'}}>
                                 You can input quantities in whichever unit you like (lbs, kgs, ounces, etc.). Estimates are fine :)
