@@ -8,11 +8,10 @@ export function pluralize(singular, plural, count) {
      *
      * @return  {String}            Proper form of the word
      **/
-    if (count > 1) {
-        return plural
-    } else {
+    if (count == 1) {
         return singular
     }
+    return plural
 }
 
 export function joinText(t1, t2) {
