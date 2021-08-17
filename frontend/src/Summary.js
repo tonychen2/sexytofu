@@ -83,7 +83,7 @@ function Summary(props) {
                 <Typography variant='subtitle1'>
                     <span className={classes.highlight}>{props.totalLandUse.toFixed(1)}</span> sq.ft. or&nbsp;
                     <span className={classes.highlight}>{props.totalTreeUse.toFixed(1)}</span> &nbsp;
-                    {pluralize('tree', 'trees', props.parkingEq)} cut down in a Californian forest
+                    {pluralize('tree', 'trees', props.totalTreeUse)} cut down in a Californian forest
                 </Typography>
                 <img src={landUseGraphics} alt='Central Park' className={classes.image}/>
             </div>}
@@ -93,7 +93,8 @@ function Summary(props) {
                 <Typography variant='subtitle1'>
                     <span className={classes.highlight}>{props.totalWaterUse.toFixed(1)}</span>&nbsp;
                     {pluralize('cup', 'cups', props.totalWaterUse)} of water or&nbsp;
-                    <span className={classes.highlight}>{props.totalShowerUse.toFixed(1)}</span>&nbsp; 8-minute showers taken
+                    <span className={classes.highlight}>{props.totalShowerUse.toFixed(1)}</span>&nbsp; 8-minute&nbsp;
+                    {pluralize('shower', 'showers', props.totalShowerUse)} taken
                 </Typography>
                 <img src={waterUseGraphics} alt='Water' className={classes.image}/>
             </div>}

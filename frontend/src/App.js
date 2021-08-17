@@ -184,7 +184,7 @@ class App extends Component {
                 totalLandUse: totalLandUse,
                 // parkingEq: totalLandUse / 14, // Convert from sq meters to # parking spots
                 totalTreeUse: totalLandUse / 256, // 256sqft/tree Convert from land use to Californian tree use
-                totalWaterUse: totalWaterUse * 4.2.toExponential(), // Water use in cups
+                totalWaterUse: totalWaterUse * 4.2, // Water use in cups
                 // totalWaterUse: totalWaterUse, // Water in liters
                 totalShowerUse: totalWaterUse / 65.1 // Converts water use to shower use (65.1 liters per shower)
         };
@@ -319,7 +319,6 @@ class App extends Component {
                             totalImpact={this.state.results.totalImpact}
                             driveEq={this.state.results.driveEq}
                             totalLandUse={this.state.results.totalLandUse}
-                            // parkingEq={this.state.results.parkingEq}
                             totalTreeUse={this.state.results.totalTreeUse}
                             totalWaterUse={this.state.results.totalWaterUse}
                             totalShowerUse={this.state.results.totalShowerUse}
