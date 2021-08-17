@@ -8,7 +8,7 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import ExpandMoreRoundedIcon from '@material-ui/icons/ExpandMoreRounded';
 import {List, ListItem} from '@material-ui/core';
 import {withStyles} from '@material-ui/core';
-import {Select, MenuItem} from "@material-ui/core";
+import { Autocomplete } from "@material-ui/lab";
 import { withTheme } from "@material-ui/styles";
 import { color } from "chart.js/helpers";
 
@@ -18,14 +18,11 @@ import { ContactSupport } from "@material-ui/icons";
 
 const GHGI_API_ADDRESS = 'https://api.sexytofu.org/api.ghgi.org:443';
 const NATIVE_API_ADDRESS =  process.env.API_HOST || "http://localhost:8000";
-// Matches all GHGI units from https://github.com/ghgindex/ghgi/blob/main/ghgi/parser.py
-// All units we support
-const ALL_UNITS = ['milliliter', 'ml', 'liter', 'l', 'gram', 'g', 'kilogram', 'kg', 'cup', 
-                    'tablespoon', 'teaspoon', 'ounce', 'pound', 'quart', 
+// Matches all GHGI units' key values from https://github.com/ghgindex/ghgi/blob/main/ghgi/parser.py
+// All units we support, displayed in Autocomplete options
+const ALL_UNITS = ['ml', 'l', 'g', 'kg', 'cup', 'teaspoon', 
+                    'tablespoon', 'ounce', 'pound', 'quart', 
                     'pint', 'dash', 'pinch', 'handful', 'fistful', 'smidgen', 'ea'];
-// Limited selection of units selectable for sake of dropdown menu, in order
-const SELECTABLE_UNITS = ['tablespoon', 'teaspoon', 'ounce', 'cup', 'pint', 'quart', 'milliliter', 'gram',
-                    'pound', 'pinch', 'ea'];
 
 const styles = {
     root: {
@@ -161,23 +158,15 @@ const styles = {
         },
     },
     select: {
-        // Select dropdown element styles
-        '& .MuiSelect-outlined.MuiSelect-outlined': {
-            padding: '10px',
-            borderColor: 'red !important',
-            // maxHeight: '40px',
+        // Autocomplete dropdown element styles
+        maxHeight: '40px',
+        '& .MuiAutocomplete-inputRoot': {
+            padding: '0px 6px',
         },
-        "& .MuiSelect-select:focus": {
-            // Select dropdown focus style
-            // TODO: remove default border styles with focus and hover.; not sure why borderColor isn't working?
-            backgroundColor: 'WhiteSmoke',
-            borderRadius: '10px',
-        },
-        "& .MuiSelect-select:hover": {
-            // Select dropdown hover style
-            backgroundColor: 'lightGrey',
-            borderRadius: '10px',
-        },
+        '&.MuiAutocomplete-hasPopupIcon .MuiAutocomplete-inputRoot[class*="MuiOutlinedInput-root"], \
+        .MuiAutocomplete-hasClearIcon .MuiAutocomplete-inputRoot[class*="MuiOutlinedInput-root"]': {
+            paddingRight: '24px',
+        }
     },
 }
 
@@ -606,16 +595,17 @@ class GroceryListItem extends Component{
          * @param   {ChangeEvent<TextField>}  event  User's keyboard entry
          */
         if (event.target.id.includes("_ingredient")) {
+            // Handle ingredient input
             this.setState({ingredient: event.target.value});
             this.props.update("ingredient", event.target.value);
         }
         else if (event.target.id.includes("_quantity")) {
+            // Handle quantity input
             let value = event.target.value;
             if ((value >= 0 || (!value && event.nativeEvent.inputType == "deleteContentBackward")) 
                 && !(!value && event.nativeEvent.inputType == "insertText")) {
-                // Only allow value (textField input) change if 
-                // number is non-negative, or if delete to blank space (so value is NaN but still valid),
-                // And ensure value is a number (not NaN) if inserting character
+                // Only allow value change if number is non-negative, or if delete to blank space (so value is NaN but still valid),
+                // and ensure value is a number (not NaN) if inserting character
                 this.setState({quantity: value});
                 this.props.update("quantity", value);
 
@@ -623,13 +613,19 @@ class GroceryListItem extends Component{
                 // Ideally, do not allow '-' at all as a character input.
             }
         } else {
-            this.setState({unit: event.target.value});
-            this.props.update("unit", event.target.value);
+            console.warn("Whoops! handleChange did nothing for id of " + event.target.id + " and value of " + event.target.value)
         }
     }
-    handleUnitChange = event => {
-        this.setState({unit: event.target.value});
-        this.props.update("unit", event.target.value);
+
+    handleUnitChange = (event, value) => {
+        /**
+         * Update state as the user edits grocery list item unit
+         *
+         * @param   {ChangeEvent<TextField>}  event  User's keyboard entry
+         * @param   {String}                  value  User's new unit value
+         */
+        this.setState({unit: value});
+        this.props.update("unit", value);
     }
 
     handleKeyPress = event => {
@@ -661,6 +657,7 @@ class GroceryListItem extends Component{
                         onKeyPress={this.handleKeyPress}
                         value={this.props.ingredient}
                         size='small'
+                        label="food"
                         // style={{float: "left", clear: 'both'}}
                     />
                 </Grid>
@@ -676,38 +673,25 @@ class GroceryListItem extends Component{
                         onKeyPress={this.handleKeyPress}
                         value={this.props.quantity}
                         size='small'
+                        label="quantity"
                         // style={{float: "left", clear: 'both'}}
                     />
                 </Grid>
                 <Grid item xs sm className={this.props.classes.inputGrid}>
-                    {/* TODO: autocomplete */}
-                    {/* https://material-ui.com/components/autocomplete/ Use filter options to autocomplete */}
-                    {/* <Autocomplete
-                            id="food_name"
-                            required
-                            options={this.state._FOOD_ALIASES}
-                            getOptionLabel={(option) => option.name}
-                            filterOptions={createFilterOptions({stringify: option => option.aliases})}
-                            renderInput={(params) => <TextField {...params} label="food" required />}
-                            autoHighlight
-                            onChange={this.handleChange}
-                        /> */}
-                    <Select value={this.props.unit}
+                    <Autocomplete
                             id={`${this.props.ingredient}_unit`}
+                            value={this.props.unit}
+                            options={ALL_UNITS}
+                            // TODO: allow different spellings for same unit eg. kg and kilogram
+                            // filterOptions={createFilterOptions({stringify: option => option.aliases})}
+                            renderInput={(params) => <TextField {...params} label="unit" variant="outlined" />}
+                            getOptionLabel={(option) => option}
+                            autoHighlight
+                            disableClearable
+                            autoSelect
                             onChange={this.handleUnitChange}
-                            variant="outlined"
                             className={textFieldClass + ' ' + this.props.classes.select}
-                            >
-                        {ALL_UNITS.map((unit) => <MenuItem value={unit} 
-                                                            key={unit} 
-                                                            id={`${this.props.ingredient}_unit`}
-                                                            style={{
-                                                                // Allow units in ALL_UNITS, but only those in SELECTABLE_UNITS are visible and selectable in selection menu
-                                                                display: (SELECTABLE_UNITS.includes(unit)) ? 'block' : 'none'
-                                                                }}>
-                                                                    {unit}
-                                                                </MenuItem>)}
-                    </Select>
+                        />
                 </Grid>
                 <Grid item xs={1} sm={1}>
                     <Grid container justify={"center"}>
