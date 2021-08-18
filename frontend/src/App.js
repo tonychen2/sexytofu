@@ -33,7 +33,8 @@ class App extends Component {
         hasSearched: false,
         requestForUpdate: [],
         selectedFood: {},
-        results: {}
+        results: {},
+        showPopover: false
     };
 
     updateGroceryList = (food, field, newValue) => {
@@ -85,17 +86,28 @@ class App extends Component {
             {method: 'POST',
                 body: JSON.stringify({'recipe': searchList})})
             .then(response => response.json())
-            .then(json => this.parseResponse(json));
+            .then(json => this.parseResponse(json))
+            .then(results => {
+                console.log(results);
+                return results;
+            });
 
         // Persist the response into state of the App
-        this.setState({
-            hasSearched: true,
-            selectedFood: {
-                alias: results.contributors[0],
-                grams: results.grams[0]
-            },
-            results: results
-        });
+        if (Math.abs(results.totalImpact) > 1e-5) {
+            this.setState({
+                hasSearched: true,
+                selectedFood: {
+                    alias: results.contributors[0],
+                    grams: results.grams[0]
+                },
+                results: results
+            });
+        } else {
+            // Show a popover message in grocery list, suggesting the user add more food
+            this.setState({
+                showPopover: true
+            })
+        }
 
         // Track search and results in Google Tag Manager
         let tagManagerArgs = {
@@ -117,9 +129,14 @@ class App extends Component {
          *
          * @return  {float}         Land use, measured by square meter (null if not available)
          */
-        let landUse = await fetch(`${NATIVE_API_ADDRESS}/land_use/${item.name}/`)
+        if (Math.abs(item.impact) < 1e-5) {
+            // Ignore unmatched items
+            return 0
+        } else {
+            let landUse = await fetch(`${NATIVE_API_ADDRESS}/land_use/${item.product}/`)
             .then(response => response.json());
         return (landUse === null ? null : landUse["median"] * (item.grams / 1000));
+        }
     }
 
     // TODO: Distinguish between L and KG
@@ -131,9 +148,14 @@ class App extends Component {
          *
          * @return  {float}         Water use, measured by liter (null if not available)
          */
-        let waterUse = await fetch(`${NATIVE_API_ADDRESS}/water_use/${item.name}/`)
+        if (Math.abs(item.impact) < 1e-5) {
+            // Ignore unmatched items
+            return 0
+        } else {
+            let waterUse = await fetch(`${NATIVE_API_ADDRESS}/water_use/${item.product}/`)
             .then(response => response.json());
-        return (waterUse === null ? null : waterUse["median"] * (item.grams / 1000));
+            return (waterUse === null ? null : waterUse["median"] * (item.grams / 1000));
+        }
     }
 
     // TODO: Distinguish between originally searched food and actual ingredients
@@ -149,12 +171,20 @@ class App extends Component {
         let ingredients = [];
         // Find impact of each ingredient and rank them
         for (let item of json["items"]) {
+            let impact;
+            if (item["match_conf"] >= 0.5) {
+                impact = item["impact"] / 1000 * 2.2; // Convert from grams to pounds
+            } else {
+                impact = 0;
+            }
             ingredients.push({
-                name: item["product"]["alias"],
-                impact: item["impact"] / 1000 * 2.2, // Convert from grams to pounds
+                name: item["names"][0],
+                product: item["product"]["alias"],
+                impact: impact,
                 grams: item["g"]});
         }
         ingredients.sort((a, b) => b.impact - a.impact);
+        let totalImpact = ingredients.reduce((acc, curr) => acc + curr.impact, 0);
 
         let landUses = await Promise.all(ingredients
             .map(async item => await this.getLandUse(item)));
@@ -173,14 +203,14 @@ class App extends Component {
             grams.push(item.grams);
         }
 
-        return {totalImpact: json["impact"] / 1000 * 2.2, // Convert from grams to pounds
+        return {totalImpact: totalImpact,
                 contributors: contributors,
                 impacts: impacts,
                 grams: grams,
                 driveEq: json["drive_eq"],
                 totalLandUse: totalLandUse,
                 parkingEq: totalLandUse / 14, // Convert from sq meters to # parking spots
-                totalWaterUse: totalWaterUse * 4.2
+                totalWaterUse: totalWaterUse
         };
     }
 
@@ -190,7 +220,6 @@ class App extends Component {
          *
          * @param   {int}  index  Index of the food item in sorted contributors (not grocery list) to be selected
          */
-        console.log(this.state);
         this.setState({selectedFood: {
             alias: this.state.results.contributors[index],
             grams: this.state.results.grams[index]
@@ -205,6 +234,17 @@ class App extends Component {
             }
         };
         TagManager.dataLayer(tagManagerArgs);
+    }
+
+    componentDidUpdate() {
+        /**
+         * React lifecycle method.
+         * Ensure the command of showPopover is only sent to GroceryList once
+         *
+         */
+        if (this.state.showPopover) {
+            this.setState({showPopover: false});
+        }
     }
 
     render(){
@@ -276,7 +316,6 @@ class App extends Component {
                 }
             }
           });
-          
 
         return (
 
@@ -346,7 +385,9 @@ class App extends Component {
                     <GroceryList
                         search={this.search}
                         hasSearched={this.state.hasSearched}
-                        requestForUpdate={this.state.requestForUpdate}/>
+                        requestForUpdate={this.state.requestForUpdate}
+                        showPopover={this.state.showPopover}
+                    />
                 </div>
             </div>
             </MuiThemeProvider>

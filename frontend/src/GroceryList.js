@@ -6,7 +6,7 @@ import {Grid, Box, Typography} from '@material-ui/core';
 import {TextField, Button, IconButton} from '@material-ui/core';
 import DeleteIcon from '@material-ui/icons/Delete';
 import ExpandMoreRoundedIcon from '@material-ui/icons/ExpandMoreRounded';
-import {List, ListItem} from '@material-ui/core';
+import {List, ListItem, Popover} from '@material-ui/core';
 import {withStyles} from '@material-ui/core';
 import { withTheme } from "@material-ui/styles";
 import { color } from "chart.js/helpers";
@@ -164,18 +164,23 @@ class GroceryList extends Component {
      */
     constructor(props) {
         super(props);
-        this.state = {groceryList: [], currentQuery: "", hasSearchError:false, searchErrorMessage : "defaultErrorMessage"};
+        this.state = {
+            groceryList: [], currentQuery: "",
+            hasSearchError:false, searchErrorMessage : "",
+            popoverIndex: -1, popoverMsg: "", popoverAnchor: null
+        };
     }
 
-    componentDidUpdate(prevProps) {
+    componentDidUpdate(prevProps, prevState) {
         /**
          * React lifecycle method.
          * Updates grocery list when a recommendation is applied by user.
+         * Also finds the grocery list item HTML element that a popover needs to be anchored to
          *
          * @param   {Object}  prevProps  Props from last time componentDidMount or componentDidUpdate was called
          */
+        // Update grocery list when a recommendation is applied by user
         if (this.props.requestForUpdate !== prevProps.requestForUpdate) {
-            console.log(this.state.groceryList);
             let request = this.props.requestForUpdate;
 
             // Identify the index of the food to be updated
@@ -188,6 +193,26 @@ class GroceryList extends Component {
             // Otherwise, update the grocery list and re-search to refresh the results
             this.updateFood(index, request['field'], request['newValue']);
             this.props.search(this.state.groceryList);
+        }
+
+        // Find the grocery list item HTML element that a popover needs to be anchored to
+        if (this.state.popoverIndex >= 0) {
+            let popoverAnchor = document.getElementById(`groceryListItem${this.state.popoverIndex}`);
+            if (popoverAnchor) {
+                this.setState({
+                    popoverAnchor: popoverAnchor,
+                    popoverIndex: -1
+                });
+            }
+        } else if (this.props.showPopover) {
+            let iLast = this.state.groceryList.length-1
+            let popoverAnchor = document.getElementById(`groceryListItem${iLast}`);
+            if (popoverAnchor) {
+                this.setState({
+                    popoverAnchor: popoverAnchor,
+                    popoverMsg: `We can't find "${this.state.groceryList[iLast].ingredient}", so its impact won't be counted, but we are working hard to provide data for more food!`
+                });
+            }
         }
     }
 
@@ -240,14 +265,15 @@ class GroceryList extends Component {
         }
 
         // Default error message to show if something in search goes wrong.
-        let errorMessage = "Something went wrong. Adding food was unsuccessful."
+        let errorMessage = "Something went wrong. Adding food was unsuccessful.";
 
         // Parse user query
         let parsed = await fetch(`${NATIVE_API_ADDRESS}/parse/?query=${this.state.currentQuery}`)
             .then(response => response.json());
 
-        // Find default quantity of food item in gram
-        let default_grams = await fetch(`${GHGI_API_ADDRESS}/rate`,
+        // Find food information
+        let closest_match, default_grams;
+        await fetch(`${GHGI_API_ADDRESS}/rate`,
             {method: 'POST',
                 // headers: {'Content-Type': 'test/plain', 'Origin':'localhost'},
                 body: JSON.stringify({'recipe': [this.state.currentQuery]})})
@@ -258,24 +284,42 @@ class GroceryList extends Component {
                 } else {
                     return response.json();
                 }
-            })
-            .then(json => {
+            }).then(json => {
                 if (!('items' in json)) {
                     // GHGI returned a json in unreadable format
                     throw "Oops! We have a technical issue, but rest assured that help is on the way. Please try again later - thanks for being a Sexy Tofu!";
-                } else if (json['items'][0]['match_conf'] < 0.5) {
-                    // GHGI returned an item with low matching confidence
-                    throw `We did our best but weren't able to find "${parsed['names'][0]}" in our database. Perhaps check your spelling or try a different name? Sexy Tofu is working hard to provide data for more food!`;
+                } else if (json['items'][0]["product"] === null) {
+                    // GHGI couldn't find any remotely confident match (e.g. when query is corrupted or contains non-Latin characters)
+                    this.setState({currentQuery: ""});
+                    throw "Sexy Tofu is struggling to understand your input. Let's try again?"
                 } else {
-                    return json['items'][0]['g'];
+                    closest_match = json['items'][0]["product"]["alias"];
+                    default_grams = json['items'][0]['g'];
+                    // Show popover if GHGI returned an item with low matching confidence
+                    if (json['items'][0]['match_conf'] < 0.5) {
+                        this.setState({
+                            popoverIndex: this.state.groceryList.length,
+                            popoverMsg: `We can't find "${parsed['names'][0]}", so its impact won't be counted, but we are working hard to provide data for more food!`
+                        });
+
+                        // Send data to Google Tag Manager
+                        let tagManagerArgs = {
+                            dataLayer: {
+                                event: "dataNotFound",
+                                gtm: {
+                                    errorMessage: this.state.popoverMsg
+                                }
+                            }
+                        };
+                        TagManager.dataLayer(tagManagerArgs);
+                    }
                 }
-            })
-            .catch(err => {
+            }).catch(err => {
                 errorMessage = err;
             });
 
+        // Set food search error message for user and stop here if couldn't find food in GHGI database.
         if (!default_grams) {
-            // Set food search error message for user and stop here if couldn't find food in GHGI database.
             // TODO: use better condition than !default_grams to detect if something in search went wrong?
             this.showSearchError(errorMessage);
             console.warn("Something went wrong, default grams wasn't retrievable from GHGI.");
@@ -313,12 +357,13 @@ class GroceryList extends Component {
 
         // Add food name, quantity, and unit to the grocery list
         let groceryList = this.state.groceryList;
-        let name = parsed['names'][0];
+        let ingredient = parsed['names'][0];
+
         let quantity = parsed['qtys'][0]['qty'][0] || default_qty;
         let unit = parsed['qtys'][0]['unit'][0] || default_unit;
 
         groceryList.push({
-            "ingredient": name,
+            "ingredient": ingredient,
             "quantity": quantity,
             "unit": unit});
 
@@ -327,7 +372,7 @@ class GroceryList extends Component {
             dataLayer: {
                 event: "parsingComplete",
                 query: this.state.currentQuery,
-                ingredient: name,
+                ingredient: ingredient,
                 quantity: quantity,
                 unit: unit
             }
@@ -380,7 +425,14 @@ class GroceryList extends Component {
     showSearchError = (message) => {
         this.setState({searchErrorMessage : message})
         this.setState({hasSearchError : true})
+    }
 
+    closePopover = () => {
+        this.setState({
+            popoverIndex: -1,
+            popoverMsg: "",
+            popoverAnchor: null
+        });
     }
 
     render() {
@@ -392,6 +444,7 @@ class GroceryList extends Component {
         // Create a list of grocery items
         let list = this.state.groceryList.map((food, index) =>
             <GroceryListItem
+                id={`groceryListItem${index}`}
                 key={index}
                 ingredient={food["ingredient"]}
                 quantity={food["quantity"]}
@@ -465,6 +518,23 @@ class GroceryList extends Component {
                                 {list}
                             </List>
                         </form>
+                        <Popover
+                            id="popover"
+                            open={Boolean(this.state.popoverAnchor)}
+                            onClose={this.closePopover}
+                            anchorEl={this.state.popoverAnchor}
+                            anchorOrigin={{
+                                vertical: 'bottom',
+                                horizontal: 'left',
+                            }}
+                            transformOrigin={{
+                                vertical: 'top',
+                                horizontal: 'left',
+                            }}
+                            marginThreshold={1}
+                        >
+                            <Typography variant='body1'>{this.state.popoverMsg}</Typography>
+                        </Popover>
                     </Grid>
 
                     {
@@ -608,7 +678,7 @@ class GroceryListItem extends Component{
          */
         let textFieldClass = this.props.hasSearched ? this.props.classes.textFieldHasSearched : this.props.classes.textField;
         return (
-            <ListItem className={this.props.classes.row}>
+            <ListItem className={this.props.classes.row} id={this.props.id}>
                 <Grid item xs sm className={this.props.classes.inputGrid}>
                     <TextField
                         variant="outlined"
