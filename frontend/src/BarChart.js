@@ -137,7 +137,7 @@ export default class BarChart extends Component {
                 <Grid container justify={"flex-start"}>
                 <Grid item style={{maxWidth: "80%"}}> 
                     <Typography variant='h3' align='left'>
-                    Rank my food's carbon footprint: {this.props.data.reduce((a, b) => a + b, 0).toFixed(1)} pounds
+                    Your food’s estimated carbon footprint: {this.props.data.reduce((a, b) => a + b, 0).toFixed(1)} pounds of CO<sub>2</sub> equivalent
                     </Typography>
                 </Grid>
                 <Grid item xs={2} sm={2}> 
@@ -145,7 +145,7 @@ export default class BarChart extends Component {
                 </Grid>
                 </Grid>
                 
-                <Typography variant='subtitle1' align='left' style={{marginTop: '1ch'}}>Click each food to learn about sustainable options.</Typography>
+                <Typography variant='subtitle1' align='left' style={{marginTop: '1ch'}}>Click on any bar in the chart for recommendations and fun facts.</Typography>
                 <canvas
                     id="myChart"
                     ref={this.chartRef}
