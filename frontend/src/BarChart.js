@@ -71,7 +71,7 @@ export default class BarChart extends Component {
         // Set global styling configs for the chart
         Chart.defaults.font.family = 'Lato';
         Chart.defaults.font.size = 16;
-        Chart.defaults.color = 'white';
+        Chart.defaults.color = 'transparent'; // we keep the label texts through ChartJS as placeholders, but instead uses drawLabels() to display them
         Chart.defaults.borderColor = 'transparent';
 
         // Create the chart
@@ -99,8 +99,8 @@ export default class BarChart extends Component {
                 // TODO: remove extra space right and top
                 // Show the value for each bar while rendering the chart
                 animation: {
-                    onProgress: (props) => drawValueLabel(myChartRef, props),
-                    onComplete: (props) => drawValueLabel(myChartRef, props)
+                    onProgress: (props) => drawLabels(myChartRef, props),
+                    onComplete: (props) => drawLabels(myChartRef, props)
                 },
                 // Further customize styling configs for the chart
                 scales: {
@@ -168,9 +168,9 @@ export default class BarChart extends Component {
     }
 }
 
-function drawValueLabel(chartRef, props) {
+function drawLabels(chartRef, props) {
     /**
-     * Draws the value for each bar as a label directly next to it in the canvas.
+     * Draws the ingredient and impact for each bar as a label directly next to it in the canvas.
      * This is achieved by directly accessing the canvas' rendering context, rather than through the Chart.js package API.
      * The Chart.js bar chart object calls this function as an animation during rendering.
      *
@@ -182,7 +182,7 @@ function drawValueLabel(chartRef, props) {
         Chart.defaults.font.size,
         Chart.defaults.font.style,
         Chart.defaults.font.family);
-    chartRef.fillStyle = Chart.defaults.color;
+    chartRef.fillStyle = "white";
     chartRef.textAlign = 'left';
     chartRef.textBaseline = 'middle';
 
@@ -190,7 +190,12 @@ function drawValueLabel(chartRef, props) {
     let meta = chartInstance.getDatasetMeta(0);
     // Write the value for each bar into a label
     meta.data.forEach((bar, index) => {
-        let value = chartInstance.data.datasets[0].data[index].toFixed(1);
-        chartRef.fillText(value, bar.x+5, bar.y);
+        let impact = chartInstance.data.datasets[0].data[index].toFixed(1);
+        chartRef.fillText(impact, bar.x+5, bar.y);
+    });
+
+    meta.data.forEach((bar, index) => {
+        let ingredient = chartInstance.data.labels[index];
+        chartRef.fillText(ingredient, 0, bar.y);
     });
 }
