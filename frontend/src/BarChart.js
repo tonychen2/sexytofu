@@ -85,8 +85,6 @@ export default class BarChart extends Component {
                         data: this.props.data,
                         backgroundColor:'#ffffffaa',
                         hoverBackgroundColor: '#ffffffee',
-                        // TODO: constant bar width
-                        barThickness: 100,
                         maxBarThickness: 100,
                         barPercentage: 0.9,
                     }
@@ -94,7 +92,7 @@ export default class BarChart extends Component {
             },
             options: {
                 maintainAspectRatio: false,
-                responsive: false,
+                responsive: true,
                 indexAxis: 'y',
                 // TODO: remove extra space right and top
                 // Show the value for each bar while rendering the chart
@@ -130,10 +128,9 @@ export default class BarChart extends Component {
     }
 
     calcHeight = () => {
-        // Caclulate height of bar chart based on bar width 
-        // Not responsive
-        let height_needed = this.props.data.length * 120
-        return height_needed.toString() + "px"
+        // Caclulate height of bar chart based on bar width
+        let height_needed = Math.max(this.props.data.length * 60, 200);
+        return height_needed.toString() + "px";
     }
 
     render() {
@@ -142,8 +139,6 @@ export default class BarChart extends Component {
          *
          * @return   {HTMLDivElement}  HTML element for the BarChart component
          */
-        let height = this.calcHeight();
-        console.log(height);
         return (
             <div className="chartContainer" style={{width: '80%', margin: 'auto'}}>
                 <Typography variant='h3' align='left'>Rank my food's carbon footprint: {this.props.data.reduce((a, b) => a + b, 0).toFixed(1)} pounds</Typography>
@@ -152,16 +147,7 @@ export default class BarChart extends Component {
                     id="myChart"
                     ref={this.chartRef}
                     // https://stackoverflow.com/questions/41953158/set-height-of-chart-in-chart-js
-                    // NOTE: Setting width and height sets aspect ratio, NOT pixel amount (!)
-                    // TODO: Get width in pixels of rendered space (what is 80% widht in pixels?) for accurate aspect ratio
-                    width='800'
-                    height={this.calcHeight()}
-
-                    // https://stackoverflow.com/questions/38512001/charts-js-graph-not-scaling-to-canvas-size
-                    // https://www.chartjs.org/docs/latest/configuration/responsive.html
-                    // TODO: Need to calculate a more responsive width w/ onResize() [just set width and height of chart, but whenever size changes]
-
-                    // TODO: need to resize bar chart or re-render when add to grocery list (new list)
+                    style={{maxHeight: this.calcHeight()}}
                 />
             </div>
         )
