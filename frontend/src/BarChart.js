@@ -131,7 +131,7 @@ export default class BarChart extends Component {
         return (
             <div className="chartContainer" style={{width: '80%', margin: 'auto'}}>
                 <Typography variant='h3' align='left'>Your food’s estimated carbon footprint: {this.props.data.reduce((a, b) => a + b, 0).toFixed(1)} pounds of CO<sub>2</sub> equivalent</Typography>
-                <Typography variant='subtitle1' align='left' style={{marginTop: '1ch'}}>Click on any food item in the bar chart for recommendations and fun facts.</Typography>
+                <Typography variant='subtitle1' align='left' style={{marginTop: '1ch'}}>Click on any bar in the chart for recommendations and fun facts.</Typography>
                 <canvas
                     id="myChart"
                     ref={this.chartRef}
