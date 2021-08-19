@@ -657,7 +657,7 @@ class GroceryListItem extends Component{
                         onKeyPress={this.handleKeyPress}
                         value={this.props.ingredient}
                         size='small'
-                        label="food"
+                        placeholder="food"
                         // style={{float: "left", clear: 'both'}}
                     />
                 </Grid>
@@ -673,7 +673,7 @@ class GroceryListItem extends Component{
                         onKeyPress={this.handleKeyPress}
                         value={this.props.quantity}
                         size='small'
-                        label="quantity"
+                        placeholder="quantity"
                         // style={{float: "left", clear: 'both'}}
                     />
                 </Grid>
@@ -684,7 +684,7 @@ class GroceryListItem extends Component{
                             options={ALL_UNITS}
                             // TODO: allow different spellings for same unit eg. kg and kilogram
                             // filterOptions={createFilterOptions({stringify: option => option.aliases})}
-                            renderInput={(params) => <TextField {...params} label="unit" variant="outlined" />}
+                            renderInput={(params) => <TextField {...params} placeholder="unit" variant="outlined" />}
                             getOptionLabel={(option) => option}
                             autoHighlight
                             disableClearable
