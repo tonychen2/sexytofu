@@ -9,6 +9,7 @@ import Recommendations from "./Recommendations";
 import BarChart from "./BarChart";
 import Comparison from "./Comparison";
 import Summary from "./Summary";
+import Feedback from './Feedback';
 
 import {Button} from '@material-ui/core';
 import {Box} from '@material-ui/core';
@@ -21,6 +22,7 @@ import TagManager from "react-gtm-module";
 
 const GHGI_API_ADDRESS = 'https://api.sexytofu.org/api.ghgi.org:443';
 const NATIVE_API_ADDRESS =  process.env.API_HOST || "http://localhost:8000";
+const FEEDBACK_FORM = 'https://forms.gle/x8NdnQNo3YSkoLN96';
 
 
 class App extends Component {
@@ -33,7 +35,8 @@ class App extends Component {
         hasSearched: false,
         requestForUpdate: [],
         selectedFood: {},
-        results: {}
+        results: {},
+        grocListKey: 0,
     };
 
     updateGroceryList = (food, field, newValue) => {
@@ -179,8 +182,11 @@ class App extends Component {
                 grams: grams,
                 driveEq: json["drive_eq"],
                 totalLandUse: totalLandUse,
-                parkingEq: totalLandUse / 14, // Convert from sq meters to # parking spots
-                totalWaterUse: totalWaterUse * 4.2
+                // parkingEq: totalLandUse / 14, // Convert from sq meters to # parking spots
+                totalTreeUse: totalLandUse / 256, // 256sqft/tree Convert from land use to Californian tree use
+                totalWaterUse: totalWaterUse * 4.2, // Water use in cups
+                // totalWaterUse: totalWaterUse, // Water in liters
+                totalShowerUse: totalWaterUse / 65.1 // Converts water use to shower use (65.1 liters per shower)
         };
     }
 
@@ -207,6 +213,12 @@ class App extends Component {
         TagManager.dataLayer(tagManagerArgs);
     }
 
+    onLogoClicked = () => {
+        // A hacky way to re-mount a new gocery list by updating an arbitrary key of grocery list, 
+        // since React mounts new instance on new key
+        this.setState({hasSearched:false, grocListKey: this.state.grocListKey + 1});
+    }
+
     render(){
         /**
          * React lifecycle method
@@ -219,7 +231,7 @@ class App extends Component {
         const barSize = 8;
         const recoSize = 4;
 
-        let headline = (this.state.hasSearched ? "\u2014 My food impact \u2014" : "Track the climate impact of my food")
+        let headline = (this.state.hasSearched ? "What's my food's impact?" : "Track the climate impact of your food")
 
         // Override global themes for Typography. TODO: place in separate imported doc. like index.css
         const theme = createMuiTheme({
@@ -284,20 +296,22 @@ class App extends Component {
             <div id="container">
                 <div id="background"></div>
                 <div id="header" style={{display: "flex", justifyContent: "space-between"}}>
-                <a href="">
-                        <img src={logo} alt="Sexy Tofu" id="logo"/>
+                    <a href="#">
+                        <img src={logo} alt="Sexy Tofu" id="logo" onClick={this.onLogoClicked}/>
                     </a>
                     {this.state.hasSearched && <img src={tofuHero} alt="Tofu Hero" id="tofu-hero" style={{height: '61px'}}/>}
                 </div>
-                {/* TODO: make Share feedback floating button. */}
-                {/* <div id="sticky">
-                    <Button variant="contained"> Share your feedback! </Button>
-                </div> */}
+                <div id="bottomFloat">
+                    <Feedback link={FEEDBACK_FORM}/>
+                </div>
                 <div id="content">
                 {/* TODO: scroll to recommendation card after bar chart clicked new item. */}
                 {/* https://stackoverflow.com/questions/24739126/scroll-to-a-specific-element-using-html */}
                 {!this.state.hasSearched && <img src={tofuHero} alt="Tofu Hero" id="tofu-hero"/>}
-                <Typography variant='h1' style={{marginBottom: '60px', padding: '0px 20px'}}>{headline}</Typography>
+                <Typography variant='h1' style={{marginBottom: '20px', padding: '0px 20px'}}>{headline}</Typography>
+                {this.state.hasSearched && <Typography variant='subtitle1' style={{marginBottom: '60px', padding: '0px 20px'}}> 
+                    This is what it takes for food to get to your table.
+                </Typography>}
                 {this.state.hasSearched &&
                 <Grid container justify={"center"}>
                     <Grid item xs={12} md={summarySize}>
@@ -305,8 +319,9 @@ class App extends Component {
                             totalImpact={this.state.results.totalImpact}
                             driveEq={this.state.results.driveEq}
                             totalLandUse={this.state.results.totalLandUse}
-                            parkingEq={this.state.results.parkingEq}
+                            totalTreeUse={this.state.results.totalTreeUse}
                             totalWaterUse={this.state.results.totalWaterUse}
+                            totalShowerUse={this.state.results.totalShowerUse}
                         />
                     </Grid>
                     <Grid item xs={12} sm={12}>
@@ -315,7 +330,10 @@ class App extends Component {
                     <Grid item xs={12} sm={12} style={{backgroundImage: 'linear-gradient(180deg, #CF7DE9, #E97DD1)'}}>
                         <Box paddingY='100px'> 
                         {/* TODO: better way of formatting than box? */}
-                            <Typography variant='h1' style={{marginBottom: '40px', padding: '0px 20px'}}>Tell me how I can do better</Typography>
+                            <Typography variant='h1' style={{marginBottom: '20px', padding: '0px 20px'}}>How can I do better?</Typography>
+                            <Typography variant='subtitle1' style={{marginBottom: '40px', padding: '0px 20px'}}> 
+                            Some simple ways to make small changes for the better!
+                            </Typography>
                             <Grid container>
                                 <Grid item xs={12} md={barSize}>
                                     <BarChart
@@ -346,7 +364,8 @@ class App extends Component {
                     <GroceryList
                         search={this.search}
                         hasSearched={this.state.hasSearched}
-                        requestForUpdate={this.state.requestForUpdate}/>
+                        requestForUpdate={this.state.requestForUpdate}
+                        key={this.state.grocListKey}/>
                 </div>
             </div>
             </MuiThemeProvider>

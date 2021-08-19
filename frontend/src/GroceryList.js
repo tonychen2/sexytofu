@@ -174,6 +174,7 @@ class GroceryList extends Component {
          *
          * @param   {Object}  prevProps  Props from last time componentDidMount or componentDidUpdate was called
          */
+        // Update grocery list if "Apply to Grocery List" from recommendation
         if (this.props.requestForUpdate !== prevProps.requestForUpdate) {
             console.log(this.state.groceryList);
             let request = this.props.requestForUpdate;
@@ -433,8 +434,11 @@ class GroceryList extends Component {
                         {
                             !this.props.hasSearched && this.state.groceryList.length < 1 &&
                             <Grid item xs={12} sm={12}> 
-                                <Typography variant='body2' align="left" style={{margin: '40px 0px'}}>
-                                    *Enter common foods with amount you would buy on in a grocery run. Estimates are fine. :)
+                                <Typography variant='body1' align="left" style={{margin: '20px 0px'}}>
+                                You can enter your grocery list here, or just foods you’re curious to learn more about!
+                                </Typography>
+                                <Typography variant='body1' align="left" style={{margin: '0px 0px'}}>
+                                You can input quantities in whichever unit you like (lbs, kgs, ounces, etc.). Estimates are fine :)
                                 </Typography> 
                             </Grid>
                         }

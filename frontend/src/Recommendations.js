@@ -248,7 +248,7 @@ class Recommendations extends Component {
                             >
                             {/* TODO: font scaling to fit in one line, https://stackoverflow.com/questions/16056591/font-scaling-based-on-width-of-container
                             https://stackoverflow.com/questions/13358181/resize-font-size-according-to-div-size */}
-                            {this.props.food.alias[0].toUpperCase() + this.props.food.alias.substring(1)} - Sustainable options
+                            {this.props.food.alias[0].toUpperCase() + this.props.food.alias.substring(1)} - Food for thought
                         </Typography>
                     </div>
                     {/*<Fab aria-label="like" size='small'>*/}
