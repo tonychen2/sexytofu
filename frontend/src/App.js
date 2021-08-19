@@ -214,7 +214,7 @@ class App extends Component {
          * @return   {HTMLDivElement}  HTML element for the App component
          */
         const infoSize = 12;
-        const summarySize = 6;
+        const summarySize = 9;
         const groceryListSize = 12;
         const barSize = 8;
         const recoSize = 4;
