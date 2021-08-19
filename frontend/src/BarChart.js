@@ -53,7 +53,7 @@ export default class BarChart extends Component {
         /**
          * Keeps highlighted the selected bar at bar_index white and the rest of the bars another color.
          */
-        myBarChart.data.datasets[0].backgroundColor = this.props.labels.map((food, index) => {return index == bar_index ?  '#ffffff' :  '#ffffff99'});
+        myBarChart.data.datasets[0].backgroundColor = this.props.labels.map((food, index) => {return index == bar_index ?  'white' :  '#ffffff99'});
         myBarChart.update();
       }
       
@@ -108,7 +108,7 @@ export default class BarChart extends Component {
                     },
                     y: {
                         ticks: {
-                            textStrokeColor: '#ffdbec'
+                            textStrokeColor: 'white'
                         },
                     }
                 },
@@ -129,7 +129,7 @@ export default class BarChart extends Component {
 
     calcHeight = () => {
         // Caclulate height of bar chart based on bar width
-        let height_needed = Math.max(this.props.data.length * 60, 200);
+        let height_needed = Math.max(this.props.data.length * 60, 250);
         return height_needed.toString() + "px";
     }
 
