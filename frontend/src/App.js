@@ -89,11 +89,7 @@ class App extends Component {
             {method: 'POST',
                 body: JSON.stringify({'recipe': searchList})})
             .then(response => response.json())
-            .then(json => this.parseResponse(json))
-            .then(results => {
-                console.log(results);
-                return results;
-            });
+            .then(json => this.parseResponse(json));
 
         // Persist the response into state of the App
         if (Math.abs(results.totalImpact) > 1e-5) {
