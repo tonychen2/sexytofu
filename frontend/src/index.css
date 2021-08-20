@@ -38,6 +38,19 @@ label {
     color: #ffdbec;
 }
 
+a:link {
+    color: #F251B1;
+}
+
+a:visited {
+    color: #BD86FF;
+}
+
+a:hover {
+    background-color: #F251B1;
+    color: #ffdbec;
+}
+
 .profile{
     width: 200px;
     height: 200px;
@@ -122,7 +135,7 @@ Button {
 }
 
 Button:hover {
-  background-color: #fc0a7e;
+  background-color: #F251B1;
   color: white;
 }
 
