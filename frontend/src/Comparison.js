@@ -228,7 +228,10 @@ class Comparison extends Component {
                     <AccordionDetails className={classes.details}>
                         {/* Container is to left align text with scale - note maxWidth must match that of scale. */}
                         <Container style={{maxWidth:'1000px', padding: '0px 50px'}}> 
-                            <Typography variant='h2' className={classes.summary} align="left">How do I compare to others? </Typography>
+                            <Typography variant='h2' className={classes.summary} style={{paddingBottom: '0.5em'}} align="left">How do I compare to others? </Typography>
+                            <Typography variant='subtitle1' className={classes.summary} align="left">
+                            This is how you stack up against national and international weekly averages.
+                            </Typography>
                             <div id="config" className={classes.config}>
                                 <Typography variant='h4' style={{color: '#322737'}} >
                                     This list is for&nbsp;
@@ -281,7 +284,7 @@ function ComparisonScale(props) {
                 {value: 17, label: <PersonaLabel name="Sexy Tofu" weeklyImpact='<17' icon={sexyTofuIcon} classes={classes} orientation={scaleOrientation}/>},
                 {value: 76, label: <PersonaLabel name="Global Average" weeklyImpact='76' icon={globalAvgIcon} classes={classes} orientation={scaleOrientation}/>},
                 // TODO: scale value is inaccurate for better spacing at sacrifice of accuracy -- try alternating position of labels
-                {value: 170, label: <PersonaLabel name="Average American" weeklyImpact='189' icon={avgAmericanIcon} classes={classes} orientation={scaleOrientation}/>},
+                {value: 170, label: <PersonaLabel name="American Average" weeklyImpact='189' icon={avgAmericanIcon} classes={classes} orientation={scaleOrientation}/>},
                 {value: 224, label: <PersonaLabel name="High Impact" weeklyImpact='>224' icon={meatLoverIcon} classes={classes} orientation={scaleOrientation}/>}]}
             step={1}
             min={17}
@@ -316,7 +319,7 @@ function ValueLabel(props) {
             <Grid item xs={10} sm={10}>
                 <Typography variant='body2' style={{color: '#322737', minWidth: '15ch'}}>
                     <span style={{display: 'block', fontWeight: 'bold'}}>{label}</span>
-                    <span style={{display: 'block'}}>{overflowSign}{Math.round(props.weeklyImpact)} lbs/wk CO<sub>2</sub></span>
+                    <span style={{display: 'block'}}>{overflowSign}{Math.round(props.weeklyImpact)} lbs of CO<sub>2</sub></span>
                 </Typography>
             </Grid>
             {(props.orientation == 'vertical') && 
@@ -343,14 +346,14 @@ function PersonaLabel(props) {
             {(props.orientation == 'horizontal') && 
             <Typography variant='body2' style={{color: '#322737'}}>
                 <span style={{display: 'block', fontWeight: 'bold'}}>{props.name}</span>
-                <span style={{display: 'block'}}>{props.weeklyImpact} lbs/wk CO<sub>2</sub></span>
+                <span style={{display: 'block'}}>{props.weeklyImpact} lbs of CO<sub>2</sub></span>
                 <img src={props.icon} alt={props.name} style={{width: '7vw', minWidth: '10ch'}} />
             </Typography>}
             {(props.orientation == 'vertical') && 
             <Typography variant='body2' style={{color: '#322737'}}>
                 <img src={props.icon} alt={props.name} style={{width: '7vw', minWidth: '5ch', display: 'block', textAlign: 'left', marginBottom: '-10px'}} />
                 <span style={{display: 'block', fontWeight: 'bold'}}>{props.name}</span>
-                <span style={{display: 'block'}}>{props.weeklyImpact} lbs/wk CO<sub>2</sub></span>            
+                <span style={{display: 'block'}}>{props.weeklyImpact} lbs of CO<sub>2</sub></span>            
             </Typography>}
         </div>)
 }

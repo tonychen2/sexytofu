@@ -212,8 +212,11 @@ class App extends Component {
                 grams: grams,
                 driveEq: json["drive_eq"],
                 totalLandUse: totalLandUse,
-                parkingEq: totalLandUse / 14, // Convert from sq meters to # parking spots
-                totalWaterUse: totalWaterUse
+                // parkingEq: totalLandUse / 14, // Convert from sq meters to # parking spots
+                totalTreeUse: totalLandUse / 256, // 256sqft/tree Convert from land use to Californian tree use
+                totalWaterUse: totalWaterUse, // Water use in cups
+                // totalWaterUse: totalWaterUse, // Water in liters
+                totalShowerUse: totalWaterUse / 65.1 // Converts water use to shower use (65.1 liters per shower)
         };
     }
 
@@ -262,11 +265,11 @@ class App extends Component {
          *
          * @return   {HTMLDivElement}  HTML element for the App component
          */
-        const summarySize = 6;
+        const summarySize = 9;
         const barSize = 8;
         const recoSize = 4;
 
-        let headline = (this.state.hasSearched ? "\u2014 My food impact \u2014" : "Track the climate impact of my food")
+        let headline = (this.state.hasSearched ? "What's my food's impact?" : "Track the climate impact of your food")
 
         // Override global themes for Typography. TODO: place in separate imported doc. like index.css
         const theme = createMuiTheme({
@@ -342,25 +345,32 @@ class App extends Component {
                     {/* TODO: scroll to recommendation card after bar chart clicked new item. */}
                     {/* https://stackoverflow.com/questions/24739126/scroll-to-a-specific-element-using-html */}
                     {!this.state.hasSearched && <img src={tofuHero} alt="Tofu Hero" id="tofu-hero"/>}
-                    <Typography variant='h1' style={{marginBottom: '60px', padding: '0px 20px'}}>{headline}</Typography>
+                    <Typography variant='h1' style={{marginBottom: '20px', padding: '0px 20px'}}>{headline}</Typography>
+                    {this.state.hasSearched && <Typography variant='subtitle1' style={{marginBottom: '60px', padding: '0px 20px'}}>
+                        This is what it takes for food to get to your table.
+                    </Typography>}
                     {this.state.hasSearched &&
                     <Grid container justify={"center"}>
-                        <Grid item xs={12} sm={summarySize}>
+                        <Grid item xs={12} md={summarySize}>
                             <Summary
                                 totalImpact={this.state.results.totalImpact}
                                 driveEq={this.state.results.driveEq}
                                 totalLandUse={this.state.results.totalLandUse}
-                                parkingEq={this.state.results.parkingEq}
+                                totalTreeUse={this.state.results.totalTreeUse}
                                 totalWaterUse={this.state.results.totalWaterUse}
+                                totalShowerUse={this.state.results.totalShowerUse}
                             />
                         </Grid>
                         <Grid item xs={12} sm={12}>
                             <Comparison totalImpact={this.state.results.totalImpact} />
                         </Grid>
                         <Grid item xs={12} sm={12} style={{backgroundImage: 'linear-gradient(180deg, #CF7DE9, #E97DD1)'}}>
-                            <Box paddingY='100px'> 
+                            <Box paddingY='100px'>
                             {/* TODO: better way of formatting than box? */}
-                                <Typography variant='h1' style={{marginBottom: '40px', padding: '0px 20px'}}>Tell me how I can do better</Typography>
+                                <Typography variant='h1' style={{marginBottom: '20px', padding: '0px 20px'}}>How can I do better?</Typography>
+                                <Typography variant='subtitle1' style={{marginBottom: '40px', padding: '0px 20px'}}>
+                                Some simple ways to make small changes for the better!
+                                </Typography>
                                 <Grid container>
                                     <Grid item xs={12} md={barSize}>
                                         <BarChart
@@ -376,7 +386,7 @@ class App extends Component {
                                         </Hidden>
                                         {/* TODO: better way of adding padding than box to auto align with chart? */}
                                         <Box paddingX="20px" align='center'>
-                                            <div id="reco" /> 
+                                            <div id="reco" />
                                             <Recommendations
                                                 food={this.state.selectedFood}
                                                 updateGroceryList={this.updateGroceryList}

@@ -8,11 +8,12 @@ export function pluralize(singular, plural, count) {
      *
      * @return  {String}            Proper form of the word
      **/
-    if (count > 1) {
-        return plural
-    } else {
+    var tolerance = 0.01;
+    if (Math.abs(Math.round(count * 10) / 10 - 1) <= tolerance) {
+        // If count (rounded to the first decimal place) approximately equals to 1
         return singular
     }
+    return plural
 }
 
 export function joinText(t1, t2) {

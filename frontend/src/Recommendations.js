@@ -50,6 +50,8 @@ const styles = {
             // Set default appearance to none, then added custom scroll style, to show up on MacOS
             // https://stackoverflow.com/questions/7855590/preventing-scroll-bars-from-being-hidden-for-macos-trackpad-users-in-webkit-blin
             '& -webkit-appearance' : 'none',
+            // [TODO: test effectiveness] Make scrollbar show on IOS Safari mobile: https://stackoverflow.com/questions/22907777/make-scrollbar-visible-in-mobile-browsers
+            '& -webkit-overflow-scrolling': 'auto',
             width: '24px',
         },
         '& ::-webkit-scrollbar-track': {
@@ -246,7 +248,7 @@ class Recommendations extends Component {
                             >
                             {/* TODO: font scaling to fit in one line, https://stackoverflow.com/questions/16056591/font-scaling-based-on-width-of-container
                             https://stackoverflow.com/questions/13358181/resize-font-size-according-to-div-size */}
-                            {this.props.food.alias[0].toUpperCase() + this.props.food.alias.substring(1)} - Sustainable options
+                            {this.props.food.alias[0].toUpperCase() + this.props.food.alias.substring(1)} - Food for thought
                         </Typography>
                     </div>
                     {/*<Fab aria-label="like" size='small'>*/}

@@ -8,15 +8,21 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import ExpandMoreRoundedIcon from '@material-ui/icons/ExpandMoreRounded';
 import {List, ListItem, ClickAwayListener, Popper, Paper} from '@material-ui/core';
 import {withStyles} from '@material-ui/core';
+import { Autocomplete } from "@material-ui/lab";
 import { withTheme } from "@material-ui/styles";
 import { color } from "chart.js/helpers";
 
 import TagManager from 'react-gtm-module'
+import { ContactSupport } from "@material-ui/icons";
 
 
 const GHGI_API_ADDRESS = 'https://api.sexytofu.org/api.ghgi.org:443';
 const NATIVE_API_ADDRESS =  process.env.API_HOST || "http://localhost:8000";
-
+// Matches all GHGI units' key values from https://github.com/ghgindex/ghgi/blob/main/ghgi/parser.py
+// All units we support, displayed in Autocomplete options
+const ALL_UNITS = ['ml', 'l', 'g', 'kg', 'cup', 'teaspoon', 
+                    'tablespoon', 'ounce', 'pound', 'quart', 
+                    'pint', 'dash', 'pinch', 'handful', 'fistful', 'smidgen', 'ea'];
 
 const styles = {
     root: {
@@ -64,6 +70,7 @@ const styles = {
         borderRadius: '10px',
         backgroundColor: '#F2F2F2',
         margin: '2px',
+        // textField border styles
         '&:hover': {
             borderColor: '#fc0a7e',
         },
@@ -164,6 +171,17 @@ const styles = {
         left: '32px',
         top: '0px',
         transform: 'translate(50%, -50%) rotate(45deg)'
+    },
+    select: {
+        // Autocomplete dropdown element styles
+        maxHeight: '40px',
+        '& .MuiAutocomplete-inputRoot': {
+            padding: '0px 6px',
+        },
+        '&.MuiAutocomplete-hasPopupIcon .MuiAutocomplete-inputRoot[class*="MuiOutlinedInput-root"], \
+        .MuiAutocomplete-hasClearIcon .MuiAutocomplete-inputRoot[class*="MuiOutlinedInput-root"]': {
+            paddingRight: '24px',
+        }
     }
 };
 
@@ -497,8 +515,11 @@ class GroceryList extends Component {
                         {
                             !this.props.hasSearched && this.state.groceryList.length < 1 &&
                             <Grid item xs={12} sm={12}> 
-                                <Typography variant='body2' align="left" style={{margin: '40px 0px'}}>
-                                    *Enter common foods with amount you would buy on in a grocery run. Estimates are fine. :)
+                                <Typography variant='body1' align="left" style={{margin: '20px 0px'}}>
+                                You can enter your grocery list here, or just foods you’re curious to learn more about!
+                                </Typography>
+                                <Typography variant='body1' align="left" style={{margin: '0px 0px'}}>
+                                You can input quantities in whichever unit you like (lbs, kgs, ounces, etc.). Estimates are fine :)
                                 </Typography> 
                             </Grid>
                         }
@@ -660,16 +681,37 @@ class GroceryListItem extends Component{
          * @param   {ChangeEvent<TextField>}  event  User's keyboard entry
          */
         if (event.target.id.includes("_ingredient")) {
+            // Handle ingredient input
             this.setState({ingredient: event.target.value});
             this.props.update("ingredient", event.target.value);
         }
         else if (event.target.id.includes("_quantity")) {
-            this.setState({quantity: event.target.value});
-            this.props.update("quantity", event.target.value);
+            // Handle quantity input
+            let value = event.target.value;
+            if ((value >= 0 || (!value && event.nativeEvent.inputType == "deleteContentBackward")) 
+                && !(!value && event.nativeEvent.inputType == "insertText")) {
+                // Only allow value change if number is non-negative, or if delete to blank space (so value is NaN but still valid),
+                // and ensure value is a number (not NaN) if inserting character
+                this.setState({quantity: value});
+                this.props.update("quantity", value);
+
+                // TODO: disallow single leading hyphens (without number) inputs, or blank or '.' or '-' when submitting
+                // Ideally, do not allow '-' at all as a character input.
+            }
         } else {
-            this.setState({unit: event.target.value});
-            this.props.update("unit", event.target.value);
+            console.warn("Whoops! handleChange did nothing for id of " + event.target.id + " and value of " + event.target.value)
         }
+    }
+
+    handleUnitChange = (event, value) => {
+        /**
+         * Update state as the user edits grocery list item unit
+         *
+         * @param   {ChangeEvent<TextField>}  event  User's keyboard entry
+         * @param   {String}                  value  User's new unit value
+         */
+        this.setState({unit: value});
+        this.props.update("unit", value);
     }
 
     handleKeyPress = event => {
@@ -701,6 +743,7 @@ class GroceryListItem extends Component{
                         onKeyPress={this.handleKeyPress}
                         value={this.props.ingredient}
                         size='small'
+                        placeholder="food"
                         // style={{float: "left", clear: 'both'}}
                     />
                 </Grid>
@@ -710,24 +753,31 @@ class GroceryListItem extends Component{
                         className={textFieldClass}
                         id={`${this.props.ingredient}_quantity`}
                         type={'number'}
+                        // Set a minimum value number range can be set to by picker; NOTE: this does NOT restrict what the user can type
+                        InputProps={{ inputProps: { min: 0} }}
                         onChange={this.handleChange}
                         onKeyPress={this.handleKeyPress}
                         value={this.props.quantity}
                         size='small'
+                        placeholder="quantity"
                         // style={{float: "left", clear: 'both'}}
                     />
                 </Grid>
                 <Grid item xs sm className={this.props.classes.inputGrid}>
-                    <TextField
-                        variant="outlined"
-                        className={textFieldClass}
-                        id={`${this.props.ingredient}_unit`}
-                        onChange={this.handleChange}
-                        onKeyPress={this.handleKeyPress}
-                        value={this.props.unit}
-                        size='small'
-                        // style={{float: "left", clear: 'both'}}
-                    />
+                    <Autocomplete
+                            id={`${this.props.ingredient}_unit`}
+                            value={this.props.unit}
+                            options={ALL_UNITS}
+                            // TODO: allow different spellings for same unit eg. kg and kilogram
+                            // filterOptions={createFilterOptions({stringify: option => option.aliases})}
+                            renderInput={(params) => <TextField {...params} placeholder="unit" variant="outlined" />}
+                            getOptionLabel={(option) => option}
+                            autoHighlight
+                            disableClearable
+                            autoSelect
+                            onChange={this.handleUnitChange}
+                            className={textFieldClass + ' ' + this.props.classes.select}
+                        />
                 </Grid>
                 <Grid item xs={1} sm={1}>
                     <Grid container justify={"center"}>
