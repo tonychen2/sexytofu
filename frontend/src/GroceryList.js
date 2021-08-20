@@ -6,7 +6,7 @@ import {Grid, Box, Typography} from '@material-ui/core';
 import {TextField, Button, IconButton} from '@material-ui/core';
 import DeleteIcon from '@material-ui/icons/Delete';
 import ExpandMoreRoundedIcon from '@material-ui/icons/ExpandMoreRounded';
-import {List, ListItem, Popover} from '@material-ui/core';
+import {List, ListItem, ClickAwayListener, Popper, Paper} from '@material-ui/core';
 import {withStyles} from '@material-ui/core';
 import { withTheme } from "@material-ui/styles";
 import { color } from "chart.js/helpers";
@@ -121,7 +121,7 @@ const styles = {
         fontFamily: ['Lato', 'sans-serif'],
         fontWeight: 'bold',
         '&:hover': {
-            backgroundColor: '#fc0a7e',
+            backgroundColor: '#F251B1',
             color: '#ffdbec'
         },
     },
@@ -149,8 +149,23 @@ const styles = {
             backgroundColor: '#b00035',
             color: '#ffbdd9'
         },
+    },
+    popper: {
+        maxWidth: '300px',
+        padding: '15px',
+        color: '#B155D3',
+        textAlign: 'start',
+    },
+    arrow: {
+        height: '16px',
+        width: '16px',
+        backgroundColor: 'white',
+        position: 'absolute',
+        left: '32px',
+        top: '0px',
+        transform: 'translate(50%, -50%) rotate(45deg)'
     }
-}
+};
 
 class GroceryList extends Component {
     /**
@@ -210,7 +225,7 @@ class GroceryList extends Component {
             if (popoverAnchor) {
                 this.setState({
                     popoverAnchor: popoverAnchor,
-                    popoverMsg: `We can't find "${this.state.groceryList[iLast].ingredient}", so its impact won't be counted, but we are working hard to provide data for more food!`
+                    popoverMsg: `We can't find "${this.state.groceryList[iLast].ingredient}", but we will still add it to your list without its carbon footprint. We are working hard to provide data for more food!`
                 });
             }
         }
@@ -288,18 +303,14 @@ class GroceryList extends Component {
                 if (!('items' in json)) {
                     // GHGI returned a json in unreadable format
                     throw "Oops! We have a technical issue, but rest assured that help is on the way. Please try again later - thanks for being a Sexy Tofu!";
-                } else if (json['items'][0]["product"] === null) {
-                    // GHGI couldn't find any remotely confident match (e.g. when query is corrupted or contains non-Latin characters)
-                    this.setState({currentQuery: ""});
-                    throw "Sexy Tofu is struggling to understand your input. Let's try again?"
                 } else {
-                    closest_match = json['items'][0]["product"]["alias"];
-                    default_grams = json['items'][0]['g'];
+                    // closest_match = json['items'][0]["product"]["alias"];
+                    default_grams = (json['items'][0]["product"] ? json['items'][0]['g'] : 100);
                     // Show popover if GHGI returned an item with low matching confidence
                     if (json['items'][0]['match_conf'] < 0.5) {
                         this.setState({
                             popoverIndex: this.state.groceryList.length,
-                            popoverMsg: `We can't find "${parsed['names'][0]}", so its impact won't be counted, but we are working hard to provide data for more food!`
+                            popoverMsg: `We can't find "${parsed['names'][0]}", but we will still add it to your list without its carbon footprint. We are working hard to provide data for more food!`
                         });
 
                         // Send data to Google Tag Manager
@@ -467,7 +478,7 @@ class GroceryList extends Component {
                         {
                             this.props.hasSearched &&
                             <Grid item xs={12} className={this.props.classes.title}>
-                                <Typography variant='h2' className={this.props.classes.groceryTitle}>Your List</Typography>
+                                <Typography variant='h2' className={this.props.classes.groceryTitle}>My List</Typography>
                             </Grid>
                         }
                         {/* TODO: make search bar handle its own states eg updateQuery, and make more generic. */}
@@ -496,7 +507,7 @@ class GroceryList extends Component {
                             !this.props.hasSearched && this.state.groceryList.length > 0 &&
                             <Grid item xs={12} sm={12}> 
                                 <Typography variant='h3' align="center" style={{marginTop: '40px'}}>
-                                    Your List
+                                    My list
                                 </Typography> 
                                 <ExpandMoreRoundedIcon fontSize="large"/>
                             </Grid>
@@ -518,23 +529,25 @@ class GroceryList extends Component {
                                 {list}
                             </List>
                         </form>
-                        <Popover
-                            id="popover"
-                            open={Boolean(this.state.popoverAnchor)}
-                            onClose={this.closePopover}
-                            anchorEl={this.state.popoverAnchor}
-                            anchorOrigin={{
-                                vertical: 'bottom',
-                                horizontal: 'left',
-                            }}
-                            transformOrigin={{
-                                vertical: 'top',
-                                horizontal: 'left',
-                            }}
-                            marginThreshold={1}
-                        >
-                            <Typography variant='body1'>{this.state.popoverMsg}</Typography>
-                        </Popover>
+                        <ClickAwayListener onClickAway={this.closePopover}>
+                            <Popper
+                                id="popover"
+                                open={Boolean(this.state.popoverAnchor)}
+                                anchorEl={this.state.popoverAnchor}
+                                modifiers={{
+                                    flip: {
+                                        enabled: false,
+                                    },
+                                }}
+                                placement="bottom-start"
+                                style={{zIndex: 999}}
+                            >
+                                <Paper className={this.props.classes.popper}>
+                                    <div className={this.props.classes.arrow}></div>
+                                    <Typography variant='body1'>{this.state.popoverMsg}</Typography>
+                                </Paper>
+                            </Popper>
+                        </ClickAwayListener>
                     </Grid>
 
                     {
