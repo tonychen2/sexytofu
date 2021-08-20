@@ -1,7 +1,11 @@
 import React, { Component } from 'react'
 import {Chart, CategoryScale, LinearScale, BarController, BarElement} from 'chart.js';
 import { fontString } from 'chart.js/helpers'
+
+import {Grid} from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
+import About from './About'
+
 let myBarChart;
 Chart.register(CategoryScale, LinearScale, BarController, BarElement)
 
@@ -130,7 +134,17 @@ export default class BarChart extends Component {
          */
         return (
             <div className="chartContainer" style={{width: '80%', margin: 'auto'}}>
-                <Typography variant='h3' align='left'>Rank my food's carbon footprint: {this.props.data.reduce((a, b) => a + b, 0).toFixed(1)} pounds</Typography>
+                <Grid container justify={"flex-start"}>
+                <Grid item style={{maxWidth: "80%"}}> 
+                    <Typography variant='h3' align='left'>
+                    Rank my food's carbon footprint: {this.props.data.reduce((a, b) => a + b, 0).toFixed(1)} pounds
+                    </Typography>
+                </Grid>
+                <Grid item xs={2} sm={2}> 
+                    <About />
+                </Grid>
+                </Grid>
+                
                 <Typography variant='subtitle1' align='left' style={{marginTop: '1ch'}}>Click each food to learn about sustainable options.</Typography>
                 <canvas
                     id="myChart"

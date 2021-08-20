@@ -9,6 +9,7 @@ import Recommendations from "./Recommendations";
 import BarChart from "./BarChart";
 import Comparison from "./Comparison";
 import Summary from "./Summary";
+import Feedback from './Feedback';
 
 import {Button} from '@material-ui/core';
 import {Box} from '@material-ui/core';
@@ -21,6 +22,7 @@ import TagManager from "react-gtm-module";
 
 const GHGI_API_ADDRESS = 'https://api.sexytofu.org/api.ghgi.org:443';
 const NATIVE_API_ADDRESS =  process.env.API_HOST || "http://localhost:8000";
+const FEEDBACK_FORM = 'https://forms.gle/x8NdnQNo3YSkoLN96';
 
 
 class App extends Component {
@@ -34,7 +36,8 @@ class App extends Component {
         requestForUpdate: [],
         selectedFood: {},
         results: {},
-        showPopover: false
+        showPopper: false,
+        grocListKey: 0
     };
 
     updateGroceryList = (food, field, newValue) => {
@@ -103,9 +106,9 @@ class App extends Component {
                 results: results
             });
         } else {
-            // Show a popover message in grocery list, suggesting the user add more food
+            // Show a popper message in grocery list, suggesting the user add more food
             this.setState({
-                showPopover: true
+                showPopper: true
             })
         }
 
@@ -235,16 +238,22 @@ class App extends Component {
         };
         TagManager.dataLayer(tagManagerArgs);
     }
-
+    
     componentDidUpdate() {
         /**
          * React lifecycle method.
-         * Ensure the command of showPopover is only sent to GroceryList once
+         * Ensure the command of showPopper is only sent to GroceryList once
          *
          */
-        if (this.state.showPopover) {
-            this.setState({showPopover: false});
+        if (this.state.showPopper) {
+            this.setState({showPopper: false});
         }
+    }
+
+    onLogoClicked = () => {
+        // A hacky way to re-mount a new gocery list by updating an arbitrary key of grocery list, 
+        // since React mounts new instance on new key
+        this.setState({hasSearched:false, grocListKey: this.state.grocListKey + 1});
     }
 
     render(){
@@ -253,9 +262,7 @@ class App extends Component {
          *
          * @return   {HTMLDivElement}  HTML element for the App component
          */
-        const infoSize = 12;
         const summarySize = 6;
-        const groceryListSize = 12;
         const barSize = 8;
         const recoSize = 4;
 
@@ -323,70 +330,70 @@ class App extends Component {
             <div id="container">
                 <div id="background"></div>
                 <div id="header" style={{display: "flex", justifyContent: "space-between"}}>
-                <a href="">
-                        <img src={logo} alt="Sexy Tofu" id="logo"/>
+                    <a href="#">
+                        <img src={logo} alt="Sexy Tofu" id="logo" onClick={this.onLogoClicked}/>
                     </a>
                     {this.state.hasSearched && <img src={tofuHero} alt="Tofu Hero" id="tofu-hero" style={{height: '61px'}}/>}
                 </div>
-                {/* TODO: make Share feedback floating button. */}
-                {/* <div id="sticky">
-                    <Button variant="contained"> Share your feedback! </Button>
-                </div> */}
+                <div id="bottomFloat">
+                    <Feedback link={FEEDBACK_FORM}/>
+                </div>
                 <div id="content">
-                {/* TODO: scroll to recommendation card after bar chart clicked new item. */}
-                {/* https://stackoverflow.com/questions/24739126/scroll-to-a-specific-element-using-html */}
-                {!this.state.hasSearched && <img src={tofuHero} alt="Tofu Hero" id="tofu-hero"/>}
-                <Typography variant='h1' style={{marginBottom: '60px', padding: '0px 20px'}}>{headline}</Typography>
-                {this.state.hasSearched &&
-                <Grid container justify={"center"}>
-                    <Grid item xs={12} sm={summarySize}>
-                        <Summary
-                            totalImpact={this.state.results.totalImpact}
-                            driveEq={this.state.results.driveEq}
-                            totalLandUse={this.state.results.totalLandUse}
-                            parkingEq={this.state.results.parkingEq}
-                            totalWaterUse={this.state.results.totalWaterUse}
-                        />
-                    </Grid>
-                    <Grid item xs={12} sm={12}>
-                        <Comparison totalImpact={this.state.results.totalImpact} />
-                    </Grid>
-                    <Grid item xs={12} sm={12} style={{backgroundImage: 'linear-gradient(180deg, #CF7DE9, #E97DD1)'}}>
-                        <Box paddingY='100px'> 
-                        {/* TODO: better way of formatting than box? */}
-                            <Typography variant='h1' style={{marginBottom: '40px', padding: '0px 20px'}}>Tell me how I can do better</Typography>
-                            <Grid container>
-                                <Grid item xs={12} md={barSize}>
-                                    <BarChart
-                                        data={this.state.results.impacts}
-                                        labels={this.state.results.contributors}
-                                        selectFood={this.selectFood}
-                                    />
-                                </Grid>
-                                <Grid item xs={12} md={recoSize}>
-                                    {/* TODO: better way of aligning recommendation to chart than this empty box that disappears on small screen? */}
-                                    <Hidden smDown>
-                                        <Box width="100%" height="60px" />
-                                    </Hidden>
-                                    {/* TODO: better way of adding padding than box to auto align with chart? */}
-                                    <Box paddingX="20px" align='center'>
-                                        <div id="reco" /> 
-                                        <Recommendations
-                                            food={this.state.selectedFood}
-                                            updateGroceryList={this.updateGroceryList}
+                    {/* TODO: scroll to recommendation card after bar chart clicked new item. */}
+                    {/* https://stackoverflow.com/questions/24739126/scroll-to-a-specific-element-using-html */}
+                    {!this.state.hasSearched && <img src={tofuHero} alt="Tofu Hero" id="tofu-hero"/>}
+                    <Typography variant='h1' style={{marginBottom: '60px', padding: '0px 20px'}}>{headline}</Typography>
+                    {this.state.hasSearched &&
+                    <Grid container justify={"center"}>
+                        <Grid item xs={12} sm={summarySize}>
+                            <Summary
+                                totalImpact={this.state.results.totalImpact}
+                                driveEq={this.state.results.driveEq}
+                                totalLandUse={this.state.results.totalLandUse}
+                                parkingEq={this.state.results.parkingEq}
+                                totalWaterUse={this.state.results.totalWaterUse}
+                            />
+                        </Grid>
+                        <Grid item xs={12} sm={12}>
+                            <Comparison totalImpact={this.state.results.totalImpact} />
+                        </Grid>
+                        <Grid item xs={12} sm={12} style={{backgroundImage: 'linear-gradient(180deg, #CF7DE9, #E97DD1)'}}>
+                            <Box paddingY='100px'> 
+                            {/* TODO: better way of formatting than box? */}
+                                <Typography variant='h1' style={{marginBottom: '40px', padding: '0px 20px'}}>Tell me how I can do better</Typography>
+                                <Grid container>
+                                    <Grid item xs={12} md={barSize}>
+                                        <BarChart
+                                            data={this.state.results.impacts}
+                                            labels={this.state.results.contributors}
+                                            selectFood={this.selectFood}
                                         />
-                                    </Box>
+                                    </Grid>
+                                    <Grid item xs={12} md={recoSize}>
+                                        {/* TODO: better way of aligning recommendation to chart than this empty box that disappears on small screen? */}
+                                        <Hidden smDown>
+                                            <Box width="100%" height="60px" />
+                                        </Hidden>
+                                        {/* TODO: better way of adding padding than box to auto align with chart? */}
+                                        <Box paddingX="20px" align='center'>
+                                            <div id="reco" /> 
+                                            <Recommendations
+                                                food={this.state.selectedFood}
+                                                updateGroceryList={this.updateGroceryList}
+                                            />
+                                        </Box>
+                                    </Grid>
                                 </Grid>
-                            </Grid>
-                        </Box>
+                            </Box>
+                        </Grid>
                     </Grid>
-                </Grid>
-                }
+                    }
                     <GroceryList
                         search={this.search}
                         hasSearched={this.state.hasSearched}
                         requestForUpdate={this.state.requestForUpdate}
-                        showPopover={this.state.showPopover}
+                        showPopper={this.state.showPopper}
+                        key={this.state.grocListKey}
                     />
                 </div>
             </div>

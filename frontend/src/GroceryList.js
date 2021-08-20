@@ -182,7 +182,7 @@ class GroceryList extends Component {
         this.state = {
             groceryList: [], currentQuery: "",
             hasSearchError:false, searchErrorMessage : "",
-            popoverIndex: -1, popoverMsg: "", popoverAnchor: null
+            popperIndex: -1, popperMsg: "", popperAnchor: null
         };
     }
 
@@ -190,7 +190,7 @@ class GroceryList extends Component {
         /**
          * React lifecycle method.
          * Updates grocery list when a recommendation is applied by user.
-         * Also finds the grocery list item HTML element that a popover needs to be anchored to
+         * Also finds the grocery list item HTML element that a popper needs to be anchored to
          *
          * @param   {Object}  prevProps  Props from last time componentDidMount or componentDidUpdate was called
          */
@@ -210,22 +210,22 @@ class GroceryList extends Component {
             this.props.search(this.state.groceryList);
         }
 
-        // Find the grocery list item HTML element that a popover needs to be anchored to
-        if (this.state.popoverIndex >= 0) {
-            let popoverAnchor = document.getElementById(`groceryListItem${this.state.popoverIndex}`);
-            if (popoverAnchor) {
+        // Find the grocery list item HTML element that a popper needs to be anchored to
+        if (this.state.popperIndex >= 0) {
+            let popperAnchor = document.getElementById(`groceryListItem${this.state.popperIndex}`);
+            if (popperAnchor) {
                 this.setState({
-                    popoverAnchor: popoverAnchor,
-                    popoverIndex: -1
+                    popperAnchor: popperAnchor,
+                    popperIndex: -1
                 });
             }
-        } else if (this.props.showPopover) {
+        } else if (this.props.showPopper) {
             let iLast = this.state.groceryList.length-1
-            let popoverAnchor = document.getElementById(`groceryListItem${iLast}`);
-            if (popoverAnchor) {
+            let popperAnchor = document.getElementById(`groceryListItem${iLast}`);
+            if (popperAnchor) {
                 this.setState({
-                    popoverAnchor: popoverAnchor,
-                    popoverMsg: `We can't find "${this.state.groceryList[iLast].ingredient}", but we will still add it to your list without its carbon footprint. We are working hard to provide data for more food!`
+                    popperAnchor: popperAnchor,
+                    popperMsg: `We can't find "${this.state.groceryList[iLast].ingredient}", but we will still add it to your list without its carbon footprint. We are working hard to provide data for more food!`
                 });
             }
         }
@@ -306,11 +306,11 @@ class GroceryList extends Component {
                 } else {
                     // closest_match = json['items'][0]["product"]["alias"];
                     default_grams = (json['items'][0]["product"] ? json['items'][0]['g'] : 100);
-                    // Show popover if GHGI returned an item with low matching confidence
+                    // Show popper if GHGI returned an item with low matching confidence
                     if (json['items'][0]['match_conf'] < 0.5) {
                         this.setState({
-                            popoverIndex: this.state.groceryList.length,
-                            popoverMsg: `We can't find "${parsed['names'][0]}", but we will still add it to your list without its carbon footprint. We are working hard to provide data for more food!`
+                            popperIndex: this.state.groceryList.length,
+                            popperMsg: `We can't find "${parsed['names'][0]}", but we will still add it to your list without its carbon footprint. We are working hard to provide data for more food!`
                         });
 
                         // Send data to Google Tag Manager
@@ -318,7 +318,7 @@ class GroceryList extends Component {
                             dataLayer: {
                                 event: "dataNotFound",
                                 gtm: {
-                                    errorMessage: this.state.popoverMsg
+                                    errorMessage: this.state.popperMsg
                                 }
                             }
                         };
@@ -438,11 +438,11 @@ class GroceryList extends Component {
         this.setState({hasSearchError : true})
     }
 
-    closePopover = () => {
+    closePopper = () => {
         this.setState({
-            popoverIndex: -1,
-            popoverMsg: "",
-            popoverAnchor: null
+            popperIndex: -1,
+            popperMsg: "",
+            popperAnchor: null
         });
     }
 
@@ -529,11 +529,11 @@ class GroceryList extends Component {
                                 {list}
                             </List>
                         </form>
-                        <ClickAwayListener onClickAway={this.closePopover}>
+                        <ClickAwayListener onClickAway={this.closePopper}>
                             <Popper
-                                id="popover"
-                                open={Boolean(this.state.popoverAnchor)}
-                                anchorEl={this.state.popoverAnchor}
+                                id="popper"
+                                open={Boolean(this.state.popperAnchor)}
+                                anchorEl={this.state.popperAnchor}
                                 modifiers={{
                                     flip: {
                                         enabled: false,
@@ -544,7 +544,7 @@ class GroceryList extends Component {
                             >
                                 <Paper className={this.props.classes.popper}>
                                     <div className={this.props.classes.arrow}></div>
-                                    <Typography variant='body1'>{this.state.popoverMsg}</Typography>
+                                    <Typography variant='body1'>{this.state.popperMsg}</Typography>
                                 </Paper>
                             </Popper>
                         </ClickAwayListener>
