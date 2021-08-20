@@ -137,7 +137,7 @@ export default class BarChart extends Component {
                 <Grid container justify={"flex-start"}>
                 <Grid item style={{maxWidth: "80%"}}> 
                     <Typography variant='h3' align='left'>
-                    Your food’s estimated carbon footprint: {this.props.data.reduce((a, b) => a + b, 0).toFixed(1)} pounds of CO<sub>2</sub> equivalent
+                    My food’s estimated carbon footprint: {this.props.data.reduce((a, b) => a + b, 0).toFixed(1)} pounds of CO<sub>2</sub> equivalent
                     </Typography>
                 </Grid>
                 <Grid item xs={2} sm={2}> 
