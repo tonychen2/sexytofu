@@ -14,7 +14,6 @@
     "@material-ui/icons": "^4.11.2",
     "@material-ui/lab": "^4.0.0-alpha.58",
     "@material-ui/styles": "^4.11.4",
-    "@popperjs/core": "^2.9.3",
     "chart.js": "^3.3.2",
     "live-server": "^1.2.1",
     "parcel-bundler": "^1.12.4",
