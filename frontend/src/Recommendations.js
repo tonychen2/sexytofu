@@ -262,7 +262,7 @@ class Recommendations extends Component {
                     {/* TODO: Added hard-coded minimum height to keep overall space constant regardless if Show More visible; change to something less hacky.*/}
                     <div style={{display: 'flex', justifyContent: 'space-between', minHeight: "26px", width: "100%"}}>
                         {/* NOTE: wrap each button in div if you want to align "Apply to list" to right */}
-                        {this.hasMoreReco() && <button className={'Button'} onClick={this.nextReco}>Show me more</button>}
+                        {this.hasMoreReco() && <button className={'Button'} onClick={this.nextReco}>What else?</button>}
                         {this.isApplicable() && <button className={'Button'} onClick={this.applyReco}>Apply to grocery list</button>}
                     </div>
                 </CardActions>
