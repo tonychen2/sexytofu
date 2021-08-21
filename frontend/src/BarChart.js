@@ -57,7 +57,7 @@ export default class BarChart extends Component {
         /**
          * Keeps highlighted the selected bar at bar_index white and the rest of the bars another color.
          */
-        myBarChart.data.datasets[0].backgroundColor = this.props.labels.map((food, index) => {return index == bar_index ?  '#ffffff' :  '#ffffff99'});
+        myBarChart.data.datasets[0].backgroundColor = this.props.labels.map((food, index) => {return index == bar_index ?  'white' :  '#ffffff99'});
         myBarChart.update();
       }
       
@@ -73,8 +73,9 @@ export default class BarChart extends Component {
         if (typeof myBarChart !== "undefined") myBarChart.destroy();
 
         // Set global styling configs for the chart
+        Chart.defaults.font.family = 'Lato';
         Chart.defaults.font.size = 16;
-        Chart.defaults.color = '#ffdbec';
+        Chart.defaults.color = 'transparent'; // we keep the label texts through ChartJS as placeholders, but instead uses drawLabels() to display them
         Chart.defaults.borderColor = 'transparent';
 
         // Create the chart
@@ -88,17 +89,20 @@ export default class BarChart extends Component {
                         data: this.props.data,
                         backgroundColor:'#ffffffaa',
                         hoverBackgroundColor: '#ffffffee',
-                        // TODO: constant bar width
+                        maxBarThickness: 100,
+                        barPercentage: 0.9,
                     }
                 ]
             },
             options: {
+                maintainAspectRatio: false,
+                responsive: true,
                 indexAxis: 'y',
                 // TODO: remove extra space right and top
                 // Show the value for each bar while rendering the chart
                 animation: {
-                    onProgress: (props) => drawValueLabel(myChartRef, props),
-                    onComplete: (props) => drawValueLabel(myChartRef, props)
+                    onProgress: (props) => drawLabels(myChartRef, props),
+                    onComplete: (props) => drawLabels(myChartRef, props)
                 },
                 // Further customize styling configs for the chart
                 scales: {
@@ -108,8 +112,8 @@ export default class BarChart extends Component {
                     },
                     y: {
                         ticks: {
-                            textStrokeColor: '#ffdbec'
-                        }
+                            textStrokeColor: 'white'
+                        },
                     }
                 },
                 plugins: {
@@ -117,6 +121,7 @@ export default class BarChart extends Component {
                         display: false
                     },
                     // TODO: button style labels, look into QuickChart plugin
+                    // OR render button list separately, and don't display labels on graph
                 },
                 onClick: this.handleClick
             }
@@ -124,6 +129,12 @@ export default class BarChart extends Component {
         
         // By default, selects the first bar.
         this.highlightSelectedBar(0);
+    }
+
+    calcHeight = () => {
+        // Caclulate height of bar chart based on bar width
+        let height_needed = Math.max(this.props.data.length * 60, 250);
+        return height_needed.toString() + "px";
     }
 
     render() {
@@ -149,16 +160,17 @@ export default class BarChart extends Component {
                 <canvas
                     id="myChart"
                     ref={this.chartRef}
-                    style={{maxHeight: 300}}
+                    // https://stackoverflow.com/questions/41953158/set-height-of-chart-in-chart-js
+                    style={{maxHeight: this.calcHeight()}}
                 />
             </div>
         )
     }
 }
 
-function drawValueLabel(chartRef, props) {
+function drawLabels(chartRef, props) {
     /**
-     * Draws the value for each bar as a label directly next to it in the canvas.
+     * Draws the ingredient and impact for each bar as a label directly next to it in the canvas.
      * This is achieved by directly accessing the canvas' rendering context, rather than through the Chart.js package API.
      * The Chart.js bar chart object calls this function as an animation during rendering.
      *
@@ -170,7 +182,7 @@ function drawValueLabel(chartRef, props) {
         Chart.defaults.font.size,
         Chart.defaults.font.style,
         Chart.defaults.font.family);
-    chartRef.fillStyle = Chart.defaults.color;
+    chartRef.fillStyle = "white";
     chartRef.textAlign = 'left';
     chartRef.textBaseline = 'middle';
 
@@ -178,7 +190,12 @@ function drawValueLabel(chartRef, props) {
     let meta = chartInstance.getDatasetMeta(0);
     // Write the value for each bar into a label
     meta.data.forEach((bar, index) => {
-        let value = chartInstance.data.datasets[0].data[index].toFixed(1);
-        chartRef.fillText(value, bar.x+5, bar.y);
+        let impact = chartInstance.data.datasets[0].data[index].toFixed(1);
+        chartRef.fillText(impact, bar.x+5, bar.y);
+    });
+
+    meta.data.forEach((bar, index) => {
+        let ingredient = chartInstance.data.labels[index];
+        chartRef.fillText(ingredient, 0, bar.y);
     });
 }
