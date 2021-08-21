@@ -46,7 +46,7 @@ a:visited {
     color: #BD86FF;
 }
 
-a:hover {
+a:link:hover {
     background-color: #F251B1;
     color: #ffdbec;
 }
