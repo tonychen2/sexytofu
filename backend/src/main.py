@@ -1,25 +1,25 @@
 from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
-from ghgi.ghgi import parser
-from typing import Any, Optional
+from .ghgi.ghgi import parser
+from typing import Any, Optional, Dict, List
 from pydantic import BaseModel
 
 from sqlalchemy.orm import Session
-import crud, models, schemas
-from database import SessionLocal, engine
+from . import crud, models, schemas
+from .database import SessionLocal, engine
 
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
-origins = [
-    "http://localhost:1234",
-]
-
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=["https://www.sexytofu.org",
+                   "https://dev.sexytofu.org",
+                   "https://qa.sexytofu.org",
+                   "http://35.162.13.216:5000",
+                   "http://localhost:1234"],
     allow_methods=["*"]
 )
 
@@ -27,7 +27,7 @@ app.add_middleware(
 Name = str
 Quantity = float
 Unit = str
-Product = dict[str, Any]
+Product = Dict[str, Any]
 
 
 class SearchInput(BaseModel):
@@ -54,16 +54,16 @@ async def parse(query: str) -> Product:
     return parsed_response
 
 
-@app.get("/recommendations/", response_model=list[schemas.Recommendation])
-async def get_all_recommendations(db: Session = Depends(get_db)) -> list[schemas.Recommendation]:
+@app.get("/recommendations/", response_model=List[schemas.Recommendation])
+async def get_all_recommendations(db: Session = Depends(get_db)) -> List[schemas.Recommendation]:
     return crud.get_all_recos(db)
 
 
-@app.get("/recommendations/{food_alias}/", response_model=list[schemas.Recommendation])
+@app.get("/recommendations/{food_alias}/", response_model=List[schemas.Recommendation])
 async def get_recommendations_by_food_alias(food_alias: str,
                                             skip: Optional[int] = 0,
                                             limit: Optional[int] = 10,
-                                            db: Session = Depends(get_db)) -> list[schemas.Recommendation]:
+                                            db: Session = Depends(get_db)) -> List[schemas.Recommendation]:
     food = crud.get_food_by_alias(db=db, alias=food_alias)
     if food is None:
         raise HTTPException(status_code=404, detail=f"{food_alias} not found")
@@ -71,35 +71,30 @@ async def get_recommendations_by_food_alias(food_alias: str,
     return recos
 
 
-@app.post("/recommendations/", response_model=list[schemas.Recommendation])
-async def add_recommendation(reco: schemas.RecoCreate, db: Session = Depends(get_db)) -> list[str]:
+@app.post("/recommendations/", response_model=List[schemas.Recommendation])
+async def add_recommendation(reco: schemas.RecoCreate, db: Session = Depends(get_db)) -> List[str]:
     new_reco = crud.create_recommendation(db, reco)
     all_recos = crud.get_all_recos(db)
     return all_recos
 
 
-@app.get("/reco-types/", response_model=list[schemas.RecoType])
-async def get_all_reco_types(db: Session = Depends(get_db)) -> list[schemas.RecoType]:
-    return crud.get_all_reco_types(db)
-
-
-@app.get("/food-aliases/", response_model=list[schemas.FoodNameWithAlias])
-async def get_all_food_aliases(db: Session = Depends(get_db)) -> list[schemas.FoodNameWithAlias]:
+@app.get("/food-aliases/", response_model=List[schemas.FoodNameWithAlias])
+async def get_all_food_aliases(db: Session = Depends(get_db)) -> List[schemas.FoodNameWithAlias]:
     food = {}
     for pair in crud.get_all_food_aliases(db):
         food[pair.name] = food.setdefault(pair.name, '') + pair.alias + ', '
     return [schemas.FoodNameWithAlias(name=k, aliases=v) for k, v in food.items()]
 
 
-@app.get("/food-name/{alias}/", response_model=list[schemas.FoodNameWithAlias])
+@app.get("/food-name/{alias}/", response_model=List[schemas.FoodNameWithAlias])
 async def get_food_name_by_alias(alias: str,
-                                 db: Session = Depends(get_db)) -> list[schemas.Food]:
+                                 db: Session = Depends(get_db)) -> List[schemas.Food]:
     return crud.get_food_by_alias(db=db, alias=alias)
 
 
-@app.delete("/recommendations/{id}/", response_model=list[schemas.Recommendation])
+@app.delete("/recommendations/{id}/", response_model=List[schemas.Recommendation])
 async def delete_recommendation(id: int,
-                                db: Session = Depends(get_db)) -> list[schemas.Recommendation]:
+                                db: Session = Depends(get_db)) -> List[schemas.Recommendation]:
     crud.delete_recommendation(db=db, reco_id=id)
     return crud.get_all_recos(db)
 

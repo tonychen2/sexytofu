@@ -1,0 +1,28 @@
+{
+  "prod": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-sexytofu-prod-171250-authRole",
+      "UnauthRoleArn": "arn:aws:iam::335263317036:role/amplify-sexytofu-prod-171250-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::335263317036:role/amplify-sexytofu-prod-171250-authRole",
+      "Region": "us-west-2",
+      "DeploymentBucketName": "amplify-sexytofu-prod-171250-deployment",
+      "UnauthRoleName": "amplify-sexytofu-prod-171250-unauthRole",
+      "StackName": "amplify-sexytofu-prod-171250",
+      "StackId": "arn:aws:cloudformation:us-west-2:335263317036:stack/amplify-sexytofu-prod-171250/382d9ec0-eda6-11eb-83e7-0a41e48208f7",
+      "AmplifyAppId": "d1w1zpyefunscw"
+    }
+  },
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-sexytofu-dev-162049-authRole",
+      "UnauthRoleArn": "arn:aws:iam::335263317036:role/amplify-sexytofu-dev-162049-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::335263317036:role/amplify-sexytofu-dev-162049-authRole",
+      "Region": "us-west-2",
+      "DeploymentBucketName": "amplify-sexytofu-dev-162049-deployment",
+      "UnauthRoleName": "amplify-sexytofu-dev-162049-unauthRole",
+      "StackName": "amplify-sexytofu-dev-162049",
+      "StackId": "arn:aws:cloudformation:us-west-2:335263317036:stack/amplify-sexytofu-dev-162049/1dfb9ad0-ee68-11eb-b9ae-06355f45545d",
+      "AmplifyAppId": "d1w1zpyefunscw"
+    }
+  }
+}

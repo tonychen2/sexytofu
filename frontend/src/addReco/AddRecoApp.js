@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import  "regenerator-runtime";
 
 import {Grid} from '@material-ui/core';
-import {TextField, Button, IconButton, List, ListItem, Typography} from '@material-ui/core';
+import {TextField, Checkbox, Button, IconButton, List, ListItem, Typography} from '@material-ui/core';
 import { FixedSizeList } from 'react-window';
 import DeleteIcon from '@material-ui/icons/Delete';
 import {Autocomplete} from '@material-ui/lab';
@@ -18,7 +18,8 @@ const styles = {
     },
 };
 
-const API_ADDRESS = 'http://127.0.0.1:8000';
+const API_ADDRESS =  process.env.API_HOST || "http://localhost:8000";
+
 let RECO_TYPES = [];
 let FOOD_ALIASES = [];
 
@@ -32,16 +33,17 @@ class AddRecoApp extends Component {
     state = {
         newReco: {
             food_name: null,
-            type_id: null,
-            impact_once: null,
-            freq_weekly: null,
             text_short: null,
             text_long: null,
+            has_recipe: false,
+            impact_once: null,
             replacement_food_name: null,
+            calculate_impact: false
         },
         allRecos: [],
         _RECO_TYPES: [],
-        _FOOD_ALIASES: []
+        _FOOD_ALIASES: [],
+        _ALIASES_ONLY: []
     };
 
     componentDidMount() {
@@ -49,8 +51,10 @@ class AddRecoApp extends Component {
          * React lifecycle method.
          * Makes API calls to get reco types, food aliases, and existing recommendations from the database
          */
-        fetch(`${API_ADDRESS}/reco-types/`).then(response => response.json()).then(json => this.setState({_RECO_TYPES: json}));
-        fetch(`${API_ADDRESS}/food-aliases/`).then(response => response.json()).then(json => this.setState({_FOOD_ALIASES: json}));
+        fetch(`${API_ADDRESS}/food-aliases/`).then(response => response.json())
+            .then(json => this.setState({
+                _FOOD_ALIASES: json,
+                _ALIASES_ONLY: json.reduce((arr, obj) => arr.concat(obj.aliases.split(", ")), [])}));
         fetch(`${API_ADDRESS}/recommendations/`).then(response => response.json()).then(json => this.setState({allRecos: json}));
     }
 
@@ -62,10 +66,10 @@ class AddRecoApp extends Component {
          */
         let fieldId = event.target.id.split("-")[0];
         let newReco = this.state.newReco;
-        if (["food_name", "replacement_food_name"].includes(fieldId)) {
+        if (["food_name"].includes(fieldId)) {
             newReco[fieldId] = newValue.name;
-        } else if (fieldId === "type_id") {
-            newReco[fieldId] = newValue.id;
+        } else if (["has_recipe", "calculate_impact"].includes(fieldId)) {
+            newReco[fieldId] = event.target.checked;
         } else {
             newReco[fieldId] = event.target.value;
         }
@@ -95,6 +99,11 @@ class AddRecoApp extends Component {
             .then(json => this.setState({allRecos: json}));
     }
 
+    inputError = () => {
+        return (this.state.newReco["replacement_food_name"] > "") &&
+            !(this.state._ALIASES_ONLY.includes(this.state.newReco["replacement_food_name"]));
+    }
+
     render () {
         /**
          * React lifecycle method
@@ -115,27 +124,19 @@ class AddRecoApp extends Component {
                             autoHighlight
                             onChange={this.handleChange}
                         />
-                        <Autocomplete
-                            id="type_id"
-                            options={this.state._RECO_TYPES}
-                            getOptionLabel={(option) => option.name}
-                            renderInput={(params) => <TextField {...params} label="type" required />}
-                            autoHighlight
-                            onChange={this.handleChange}
-                        />
-                        <div><TextField id="impact_once" label="impact_once (if type='replace' / 'reduce')" onChange={this.handleChange} /></div>
-                        <div><TextField id="freq_weekly" label="freq_weekly (if type='replace' / 'reduce')" onChange={this.handleChange} /></div>
                         <div><TextField id="text_short" label="text_short" required onChange={this.handleChange} /></div>
                         <div><TextField id="text_long" label="text_long" required multiline onChange={this.handleChange} /></div>
-                        <Autocomplete
-                            id="replacement_food_name"
-                            options={this.state._FOOD_ALIASES}
-                            getOptionLabel={(option) => option.name}
-                            filterOptions={createFilterOptions({stringify: option => option.aliases})}
-                            renderInput={(params) => <TextField {...params} label="replacement_food (if type='replace')" />}
-                            autoHighlight
-                            onChange={this.handleChange}
-                        />
+                        <div><Checkbox id="has_recipe" color="default" onChange={this.handleChange}/>Has recipe?</div>
+                        <div><TextField id="impact_once" label="impact_once (optional)" onChange={this.handleChange} /></div>
+                        <div>
+                            <TextField id="replacement_food_name"
+                                       label="replacement_food (optional)"
+                                       onChange={this.handleChange}
+                                       error={this.inputError()}
+                                       helperText={this.inputError() ? "Food not found" : ""}
+                            />
+                        </div>
+                        <div><Checkbox id="calculate_impact" color="default" onChange={this.handleChange}/>Automatically calculate annual impact based on quantity purchased, and add to the recommendation?</div>
                         <Button variant="outlined" onClick={this.handleCreate}>Submit</Button>
                         <Typography
                             align='left'
@@ -146,13 +147,14 @@ class AddRecoApp extends Component {
                                 1. Please search for and choose a standard food name from the dropdown menu
                             </p>
                             <p>
-                                2. For "replace" recommendations, don't include the "equivalence" part
-                                (e.g., "you can offset as much CO2 as 233 trees in a year.) It will be
-                                automatically added when shown to users.
+                                2. To add a recipe link, use the following html format:
+                                &lt;a href="[link url]"&gt;link text&lt;/a&gt;
                             </p>
                             <p>
-                                3. To add a recipe link, use the following html format:
-                                &lt;a href="[link url]"&gt;link text&lt;/a&gt;
+                                3. If the "automatically calculate annual impact" option is selected, the system will
+                                add a drive equivalence or tree equivalence of the carbon emission at the end of the
+                                recommendation (e.g., "you can offset as much CO2 as 233 trees in a year.") when showing,
+                                so make sure it's not redundant with what's already in text_long.
                             </p>
                     </form>
                 </Grid>

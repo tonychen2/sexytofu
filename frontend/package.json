@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "scripts": {
     "dev": "parcel src/index.html src/addReco/addReco.html",
-    "build": "parcel build src/index.html",
+    "build": "parcel build src/index.html src/addReco/addReco.html",
     "start": "npm run dev && live-server dist"
   },
   "keywords": [],
@@ -17,6 +17,7 @@
     "chart.js": "^3.3.2",
     "live-server": "^1.2.1",
     "parcel-bundler": "^1.12.4",
+    "react-gtm-module": "^2.0.11",
     "react-window": "^1.8.6",
     "regenerator-runtime": "^0.13.7"
   },

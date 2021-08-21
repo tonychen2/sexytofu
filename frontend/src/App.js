@@ -9,12 +9,20 @@ import Recommendations from "./Recommendations";
 import BarChart from "./BarChart";
 import Comparison from "./Comparison";
 import Summary from "./Summary";
+import Feedback from './Feedback';
 
+import {Button} from '@material-ui/core';
+import {Box} from '@material-ui/core';
+import {Hidden} from '@material-ui/core';
+import {MuiThemeProvider, createMuiTheme} from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import Typography from "@material-ui/core/Typography";
+import TagManager from "react-gtm-module";
 
-const GHGI_API_ADDRESS = 'http://localhost:8080/api.ghgi.org:443';
-const NATIVE_API_ADDRESS = 'http://127.0.0.1:8000';
+
+const GHGI_API_ADDRESS = 'https://api.sexytofu.org/api.ghgi.org:443';
+const NATIVE_API_ADDRESS =  process.env.API_HOST || "http://localhost:8000";
+const FEEDBACK_FORM = 'https://forms.gle/x8NdnQNo3YSkoLN96';
 
 
 class App extends Component {
@@ -27,7 +35,9 @@ class App extends Component {
         hasSearched: false,
         requestForUpdate: [],
         selectedFood: {},
-        results: {}
+        results: {},
+        showPopper: false,
+        grocListKey: 0
     };
 
     updateGroceryList = (food, field, newValue) => {
@@ -48,6 +58,19 @@ class App extends Component {
          *
          * @param   {array<Object>}  groceryList  Food items with the signature {"ingredient": String, "quantity": float, "unit": String}
          */
+        // Send data to Google Tag Manager
+        for (let i = 0; i < groceryList.length; i++) {
+            let tagManagerArgs = {
+                dataLayer: {
+                    event: "searchItem",
+                    ingredient: groceryList[i]["ingredient"],
+                    quantity: groceryList[i]["quantity"],
+                    unit: groceryList[i]["unit"]
+                }
+            };
+            TagManager.dataLayer(tagManagerArgs);
+        }
+
         // Copy out groceryList so we don't change the original array
         let searchList = [...groceryList];
 
@@ -69,14 +92,31 @@ class App extends Component {
             .then(json => this.parseResponse(json));
 
         // Persist the response into state of the App
-        this.setState({
-            hasSearched: true,
-            selectedFood: {
-                alias: results.contributors[0],
-                grams: results.grams[0]
-            },
-            results: results
-        });
+        if (results.matched) {
+            this.setState({
+                hasSearched: true,
+                selectedFood: {
+                    alias: results.contributors[0],
+                    grams: results.grams[0]
+                },
+                results: results
+            });
+        } else {
+            // Show a popper message in grocery list, suggesting the user add more food
+            this.setState({
+                showPopper: true
+            })
+        }
+
+        // Track search and results in Google Tag Manager
+        let tagManagerArgs = {
+            dataLayer: {
+                event: "search",
+                groceryListLength: groceryList.length,
+                results: results
+            }
+        };
+        TagManager.dataLayer(tagManagerArgs);
     }
 
     // TODO: Distinguish between L and KG
@@ -88,9 +128,16 @@ class App extends Component {
          *
          * @return  {float}         Land use, measured by square meter (null if not available)
          */
-        let landUse = await fetch(`${NATIVE_API_ADDRESS}/land_use/${item.name}/`)
+        if (!item.matched) {
+            // Ignore unmatched items
+            return 0
+        } else {
+            // Get land use data per kilogram (=1000g)
+            let landUse = await fetch(`${NATIVE_API_ADDRESS}/land_use/${item.product}/`)
             .then(response => response.json());
-        return (landUse === null ? null : landUse["median"] * (item.grams / 1000));
+            // Calculate land use based on quantity in grocery list
+            return (landUse === null ? null : landUse["median"] * (item.grams / 1000));
+        }
     }
 
     // TODO: Distinguish between L and KG
@@ -102,9 +149,16 @@ class App extends Component {
          *
          * @return  {float}         Water use, measured by liter (null if not available)
          */
-        let waterUse = await fetch(`${NATIVE_API_ADDRESS}/water_use/${item.name}/`)
+        if (!item.matched) {
+            // Ignore unmatched items
+            return 0
+        } else {
+            // Get land use data per kilogram (=1000g)
+            let waterUse = await fetch(`${NATIVE_API_ADDRESS}/water_use/${item.product}/`)
             .then(response => response.json());
-        return (waterUse === null ? null : waterUse["median"] * (item.grams / 1000));
+            // Calculate land use based on quantity in grocery list
+            return (waterUse === null ? null : waterUse["median"] * (item.grams / 1000));
+        }
     }
 
     // TODO: Distinguish between originally searched food and actual ingredients
@@ -120,12 +174,23 @@ class App extends Component {
         let ingredients = [];
         // Find impact of each ingredient and rank them
         for (let item of json["items"]) {
+            let impact, product;
+            if (item["match_conf"] >= 0.5) {
+                impact = item["impact"] / 1000 * 2.2; // Convert from grams to pounds
+                product = item["product"]["alias"];
+            } else {
+                impact = null;
+                product = null;
+            }
             ingredients.push({
-                name: item["product"]["alias"],
-                impact: item["impact"] / 1000 * 2.2, // Convert from grams to pounds
+                name: item["names"][0],
+                product: product,
+                matched: Boolean(item["match_conf"] >= 0.5),
+                impact: impact,
                 grams: item["g"]});
         }
         ingredients.sort((a, b) => b.impact - a.impact);
+        let totalImpact = ingredients.reduce((acc, curr) => acc + curr.impact, 0);
 
         let landUses = await Promise.all(ingredients
             .map(async item => await this.getLandUse(item)));
@@ -144,14 +209,17 @@ class App extends Component {
             grams.push(item.grams);
         }
 
-        return {totalImpact: json["impact"] / 1000 * 2.2, // Convert from grams to pounds
+        return {matched: ingredients.reduce((acc, curr) => acc || curr.matched, false),
+                totalImpact: totalImpact,
                 contributors: contributors,
                 impacts: impacts,
                 grams: grams,
                 driveEq: json["drive_eq"],
                 totalLandUse: totalLandUse,
-                parkingEq: totalLandUse / 14, // Convert from sq meters to # parking spots
-                totalWaterUse: totalWaterUse * 4.2
+                // parkingEq: totalLandUse / 14, // Convert from sq meters to # parking spots
+                totalTreeUse: totalLandUse / 256, // 256sqft/tree Convert from land use to Californian tree use
+                totalWaterUse: totalWaterUse, // Water use in cups
+                totalShowerUse: totalWaterUse / (65.1 * 4.2) // Converts water use to shower use (65.1 liters per shower)
         };
     }
 
@@ -161,11 +229,37 @@ class App extends Component {
          *
          * @param   {int}  index  Index of the food item in sorted contributors (not grocery list) to be selected
          */
-        console.log(this.state);
         this.setState({selectedFood: {
             alias: this.state.results.contributors[index],
             grams: this.state.results.grams[index]
         }});
+
+        // Send data to Google Tag Manager
+        let tagManagerArgs = {
+            dataLayer: {
+                event: "checkReco",
+                ingredient: this.state.results.contributors[index],
+                index: index
+            }
+        };
+        TagManager.dataLayer(tagManagerArgs);
+    }
+    
+    componentDidUpdate() {
+        /**
+         * React lifecycle method.
+         * Ensure the command of showPopper is only sent to GroceryList once
+         *
+         */
+        if (this.state.showPopper) {
+            this.setState({showPopper: false});
+        }
+    }
+
+    onLogoClicked = () => {
+        // A hacky way to re-mount a new gocery list by updating an arbitrary key of grocery list, 
+        // since React mounts new instance on new key
+        this.setState({hasSearched:false, grocListKey: this.state.grocListKey + 1});
     }
 
     render(){
@@ -174,60 +268,151 @@ class App extends Component {
          *
          * @return   {HTMLDivElement}  HTML element for the App component
          */
-        const infoSize = 12;
-        const summarySize = 6;
-        const groceryListSize = 12;
+        const summarySize = 8;
         const barSize = 8;
         const recoSize = 4;
 
-        let headline = (this.state.hasSearched ? "My food impact" : "Track the climate impact of my food")
+        let headline = (this.state.hasSearched ? "What's my food's impact?" : "Track the climate impact of your food")
+
+        // Override global themes for Typography. TODO: place in separate imported doc. like index.css
+        const theme = createMuiTheme({
+            typography: {
+                h1: {
+                    // Headline and Tell Me...
+                    fontFamily: ['Lato', 'sans-serif'],
+                    fontWeight: 'bolder',
+                    fontSize: '2.8rem',
+                    color: 'white',
+                    '@media only screen and (max-width: 600px)': {
+                        fontSize: '2rem', 
+                    },
+                },
+                h2: {
+                    // Section headers
+                    fontFamily: ['Lato', 'sans-serif'],
+                    fontWeight: 'bolder',
+                    fontSize: '2rem',
+                    color: 'white',
+                },
+                h3: {
+                    fontFamily: ['Lato', 'sans-serif'],
+                    fontWeight: 'bolder',
+                    fontSize: '1.5rem',
+                    color: 'white',
+                },
+                h4: {
+                    fontFamily: ['Lato', 'sans-serif'],
+                    fontWeight: 'normal',
+                    fontSize: '1.5rem',
+                    color: '#322737',
+                },
+                h5: {
+                    // Sub-headers bar chart + recos
+                    fontFamily: ['Lato', 'sans-serif'],
+                    fontWeight: 'bold',
+                    color: 'white',
+                },
+                subtitle1: {
+                    // Summary text + sub-headers
+                    fontFamily: ['Lato', 'sans-serif'],
+                    fontSize: '1.2rem',
+                },
+                body1: {
+                    // textField
+                    fontFamily: ['Lato', 'sans-serif'],
+                },
+                body2: {
+                    // Recos text + slider labels
+                    fontFamily: ['Lato', 'sans-serif'],
+                    fontWeight: 'normal',
+                    fontSize: '1.2rem',
+                }
+            }
+          });
 
         return (
+
+            <MuiThemeProvider theme={theme}>
             <div id="container">
-                <div id="header">
+                <div id="background"></div>
+                <div id="header" style={{display: "flex", justifyContent: "space-between"}}>
                     <a href="#">
-                        <img src={logo} alt="Sexy Tofu" id="logo"/>
+                        <img src={logo} alt="Sexy Tofu" id="logo" onClick={this.onLogoClicked}/>
+                    </a>
+                    <a href="https://info.sexytofu.org/" target="_blank" style={{color: "white"}}>
+                        <Typography variant="body1" style={{margin: '12px'}}>About</Typography>
                     </a>
                 </div>
-                <img src={tofuHero} alt="Tofu Hero" id="tofu-hero"/>
-                <h2>{headline}</h2>
-                {this.state.hasSearched &&
-                <Grid container spacing={3} justify={"center"}>
-                    <Grid item xs={12} sm={summarySize}>
-                        <Summary
-                            totalImpact={this.state.results.totalImpact}
-                            driveEq={this.state.results.driveEq}
-                            totalLandUse={this.state.results.totalLandUse}
-                            parkingEq={this.state.results.parkingEq}
-                            totalWaterUse={this.state.results.totalWaterUse}
-                        />
+                <div id="bottomFloat">
+                    <Feedback link={FEEDBACK_FORM}/>
+                </div>
+                <div id="content">
+                    {/* TODO: scroll to recommendation card after bar chart clicked new item. */}
+                    {/* https://stackoverflow.com/questions/24739126/scroll-to-a-specific-element-using-html */}
+                    {!this.state.hasSearched && <img src={tofuHero} alt="Tofu Hero" id="tofu-hero"/>}
+                    <Typography variant='h1' style={{marginBottom: '20px', padding: '0px 20px'}}>{headline}</Typography>
+                    {this.state.hasSearched && <Typography variant='subtitle1' style={{marginBottom: '60px', padding: '0px 20px'}}>
+                        This is what it takes for food to get to your table.
+                    </Typography>}
+                    {this.state.hasSearched &&
+                    <Grid container justify={"center"}>
+                        <Grid item xs={12} md={summarySize}>
+                            <Summary
+                                totalImpact={this.state.results.totalImpact}
+                                driveEq={this.state.results.driveEq}
+                                totalLandUse={this.state.results.totalLandUse}
+                                totalTreeUse={this.state.results.totalTreeUse}
+                                totalWaterUse={this.state.results.totalWaterUse}
+                                totalShowerUse={this.state.results.totalShowerUse}
+                            />
+                        </Grid>
+                        <Grid item xs={12} sm={12}>
+                            <Comparison totalImpact={this.state.results.totalImpact} />
+                        </Grid>
+                        <Grid item xs={12} sm={12} style={{backgroundImage: 'linear-gradient(180deg, #CF7DE9, #E97DD1)'}}>
+                            <Box paddingY='100px'>
+                            {/* TODO: better way of formatting than box? */}
+                                <Typography variant='h1' style={{marginBottom: '20px', padding: '0px 20px'}}>How can I do better?</Typography>
+                                <Typography variant='subtitle1' style={{marginBottom: '40px', padding: '0px 20px'}}>
+                                Some simple ways to make small changes for the better!
+                                </Typography>
+                                <Grid container>
+                                    <Grid item xs={12} md={barSize}>
+                                        <BarChart
+                                            data={this.state.results.impacts}
+                                            labels={this.state.results.contributors}
+                                            selectFood={this.selectFood}
+                                        />
+                                    </Grid>
+                                    <Grid item xs={12} md={recoSize}>
+                                        {/* TODO: better way of aligning recommendation to chart than this empty box that disappears on small screen? */}
+                                        <Hidden smDown>
+                                            <Box width="100%" height="60px" />
+                                        </Hidden>
+                                        {/* TODO: better way of adding padding than box to auto align with chart? */}
+                                        <Box paddingX="20px" align='center'>
+                                            <div id="reco" />
+                                            <Recommendations
+                                                food={this.state.selectedFood}
+                                                updateGroceryList={this.updateGroceryList}
+                                            />
+                                        </Box>
+                                    </Grid>
+                                </Grid>
+                            </Box>
+                        </Grid>
                     </Grid>
-                    <Grid item xs={12} sm={12}>
-                        <Comparison totalImpact={this.state.results.totalImpact} />
-                    </Grid>
-                    <Grid item xs={12} sm={12}>
-                        <h2 style={{marginBottom: '40px'}}>Tell me how I can do better</h2>
-                    </Grid>
-                    <Grid item xs={12} sm={barSize}>
-                        <BarChart
-                            data={this.state.results.impacts}
-                            labels={this.state.results.contributors}
-                            selectFood={this.selectFood}
-                        />
-                    </Grid>
-                    <Grid item xs={12} sm={recoSize}>
-                        <Recommendations
-                            food={this.state.selectedFood}
-                            updateGroceryList={this.updateGroceryList}
-                        />
-                    </Grid>
-                </Grid>
-                }
+                    }
                     <GroceryList
                         search={this.search}
                         hasSearched={this.state.hasSearched}
-                        requestForUpdate={this.state.requestForUpdate}/>
+                        requestForUpdate={this.state.requestForUpdate}
+                        showPopper={this.state.showPopper}
+                        key={this.state.grocListKey}
+                    />
+                </div>
             </div>
+            </MuiThemeProvider>
         );
     }
 }

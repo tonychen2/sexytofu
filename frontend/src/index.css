@@ -10,23 +10,49 @@
     src: url(assets/economica-bold.ttf);
 }
 
+@font-face{
+    font-family: Lato;
+    src: url(assets/Lato/Lato-Regular.ttf)
+}
+
+html{
+    font-size: 16px;
+}
+
 body{
     text-align: center;
     font-size: 20px;
     padding: 2.5%;
-    background-image: linear-gradient(90deg, #fc0a7e, #bd86ff);
-    font-family: 'RobotoCondensed';
-    color: #ffdbec;
+    font-family: 'Lato', 'sans-serif';
+    color: white;
     margin: 0;
     padding: 0;
 }
 
 h1, h2, h3, h4, h5, h6 {
-    font-family: 'EconomicaBold';
-    color: #ffdbec
+    font-family: 'Lato', 'sans-serif';
+    color: white;
 }
 
 label {
+    color: #ffdbec;
+}
+
+a:link {
+    color: #F251B1;
+}
+
+a:visited {
+    color: #BD86FF;
+}
+
+a:link:hover {
+    background-color: #F251B1;
+    color: #ffdbec;
+}
+
+a:visited:hover {
+    background-color: #F251B1;
     color: #ffdbec;
 }
 
@@ -42,14 +68,37 @@ label {
 
 #header {
     display: flex;
-    width: 100vw;
+    width: 100%;
     padding: 10px 0px;
+    position: relative;
+    z-index: 2;
 }
 
 #logo {
     position: relative;
     float: left;
     width: 120px;
+}
+
+#bottomFloat {
+    position: fixed;
+    z-index: 2;
+    bottom:0px;
+    width: 100%;
+}
+
+#background{
+    background-image: linear-gradient(180deg, #F251B1, #BD86FF);
+    background-repeat: no-repeat;
+    position:fixed;
+    z-index: 0;
+    width: 100vw;
+    height: 100vh;
+}
+ 
+#content{
+    position:relative;
+    z-index:1;
 }
 
 /*Input {*/
@@ -71,24 +120,31 @@ Button {
     border: 0;
     border-radius: 3px;
     margin: 2px;
-    background-color: #ffdbec;
+    background-color: white;
     -webkit-transition: background-color 500ms cubic-bezier(.789, .159, .25, 1), color 200ms cubic-bezier(.789, .159, .25, 1);
     transition: background-color 500ms cubic-bezier(.789, .159, .25, 1), color 200ms cubic-bezier(.789, .159, .25, 1);
     transition-property: background-color, color;
     transition-duration: 500ms, 200ms;
     transition-timing-function: cubic-bezier(0.789, 0.159, 0.25, 1), cubic-bezier(0.789, 0.159, 0.25, 1);
     transition-delay: 0s, 0s;
-    color: #fc0a7e;
+    /* Style for "Show more" */
+    color: #322737;
+    font-weight: bold;
+    text-decoration: underline;
+    font-family: 'Lato', 'sans-serif';
     font-size: 16px;
     text-align: center;
+    /* To align "Show more" and "Apply" in Recommendation box */
+    padding: 0;
+    margin-right: auto;
 }
 
 Button:hover {
-  background-color: #fc0a7e;
-  color: #ffdbec;
+  background-color: #F251B1;
+  color: white;
 }
 
 .close {
-    color: #ffdbec;
+    color: white;
     background-color: transparent;
 }

@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import select, delete
 
-import schemas, models
+from . import schemas, models
 
 
 def get_all_recos(db: Session):
@@ -16,22 +16,17 @@ def get_food_by_alias(db: Session, alias: str):
     return db.query(models.Food).join(models.FoodAlias.food).filter(models.FoodAlias.alias == alias).first()
 
 
-def get_all_reco_types(db: Session):
-    return db.query(models.RecoType).all()
-
-
 def get_all_food_aliases(db: Session):
     return db.execute(select(models.Food.id, models.Food.name, models.FoodAlias.alias).join(models.FoodAlias.food)).all()
 
 
 def create_recommendation(db: Session, reco: schemas.RecoCreate):
-    # Lookup food_id's and type_id based on input text
+    # Lookup food_id's based on input text
     data = reco.dict()
     data["food_id"] = get_food_by_alias(db, data["food_name"]).id
     data.pop("food_name")
     if data["replacement_food_name"] is not None:
         data["replacement_food_id"] = get_food_by_alias(db, data["replacement_food_name"]).id
-    data.pop("replacement_food_name")
 
     db_reco = models.Recommendation(**data)
     db.add(db_reco)
