@@ -309,7 +309,7 @@ function ValueLabel(props) {
      *
      * @return  {HTMLSpanElement}  HTML element for the component
      */
-    let label = props.numPeople > 1 ? 'Per person' : 'You';
+    let label = props.numPeople > 1 ? 'Per person' : 'Me';
     // Handle case when weekly impact is greater than or less than lower and upper bounds of Mui slider
     let overflowSign = '';
     if (props.realImpact > props.weeklyImpact) { overflowSign = '>'};

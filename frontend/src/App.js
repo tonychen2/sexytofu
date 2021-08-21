@@ -36,7 +36,8 @@ class App extends Component {
         requestForUpdate: [],
         selectedFood: {},
         results: {},
-        grocListKey: 0,
+        showPopper: false,
+        grocListKey: 0
     };
 
     updateGroceryList = (food, field, newValue) => {
@@ -91,14 +92,21 @@ class App extends Component {
             .then(json => this.parseResponse(json));
 
         // Persist the response into state of the App
-        this.setState({
-            hasSearched: true,
-            selectedFood: {
-                alias: results.contributors[0],
-                grams: results.grams[0]
-            },
-            results: results
-        });
+        if (results.matched) {
+            this.setState({
+                hasSearched: true,
+                selectedFood: {
+                    alias: results.contributors[0],
+                    grams: results.grams[0]
+                },
+                results: results
+            });
+        } else {
+            // Show a popper message in grocery list, suggesting the user add more food
+            this.setState({
+                showPopper: true
+            })
+        }
 
         // Track search and results in Google Tag Manager
         let tagManagerArgs = {
@@ -120,9 +128,16 @@ class App extends Component {
          *
          * @return  {float}         Land use, measured by square meter (null if not available)
          */
-        let landUse = await fetch(`${NATIVE_API_ADDRESS}/land_use/${item.name}/`)
+        if (!item.matched) {
+            // Ignore unmatched items
+            return 0
+        } else {
+            // Get land use data per kilogram (=1000g)
+            let landUse = await fetch(`${NATIVE_API_ADDRESS}/land_use/${item.product}/`)
             .then(response => response.json());
-        return (landUse === null ? null : landUse["median"] * (item.grams / 1000));
+            // Calculate land use based on quantity in grocery list
+            return (landUse === null ? null : landUse["median"] * (item.grams / 1000));
+        }
     }
 
     // TODO: Distinguish between L and KG
@@ -134,9 +149,16 @@ class App extends Component {
          *
          * @return  {float}         Water use, measured by liter (null if not available)
          */
-        let waterUse = await fetch(`${NATIVE_API_ADDRESS}/water_use/${item.name}/`)
+        if (!item.matched) {
+            // Ignore unmatched items
+            return 0
+        } else {
+            // Get land use data per kilogram (=1000g)
+            let waterUse = await fetch(`${NATIVE_API_ADDRESS}/water_use/${item.product}/`)
             .then(response => response.json());
-        return (waterUse === null ? null : waterUse["median"] * (item.grams / 1000));
+            // Calculate land use based on quantity in grocery list
+            return (waterUse === null ? null : waterUse["median"] * (item.grams / 1000));
+        }
     }
 
     // TODO: Distinguish between originally searched food and actual ingredients
@@ -152,12 +174,23 @@ class App extends Component {
         let ingredients = [];
         // Find impact of each ingredient and rank them
         for (let item of json["items"]) {
+            let impact, product;
+            if (item["match_conf"] >= 0.5) {
+                impact = item["impact"] / 1000 * 2.2; // Convert from grams to pounds
+                product = item["product"]["alias"];
+            } else {
+                impact = null;
+                product = null;
+            }
             ingredients.push({
-                name: item["product"]["alias"],
-                impact: item["impact"] / 1000 * 2.2, // Convert from grams to pounds
+                name: item["names"][0],
+                product: product,
+                matched: Boolean(item["match_conf"] >= 0.5),
+                impact: impact,
                 grams: item["g"]});
         }
         ingredients.sort((a, b) => b.impact - a.impact);
+        let totalImpact = ingredients.reduce((acc, curr) => acc + curr.impact, 0);
 
         let landUses = await Promise.all(ingredients
             .map(async item => await this.getLandUse(item)));
@@ -176,7 +209,8 @@ class App extends Component {
             grams.push(item.grams);
         }
 
-        return {totalImpact: json["impact"] / 1000 * 2.2, // Convert from grams to pounds
+        return {matched: ingredients.reduce((acc, curr) => acc || curr.matched, false),
+                totalImpact: totalImpact,
                 contributors: contributors,
                 impacts: impacts,
                 grams: grams,
@@ -184,9 +218,9 @@ class App extends Component {
                 totalLandUse: totalLandUse,
                 // parkingEq: totalLandUse / 14, // Convert from sq meters to # parking spots
                 totalTreeUse: totalLandUse / 256, // 256sqft/tree Convert from land use to Californian tree use
-                totalWaterUse: totalWaterUse * 4.2, // Water use in cups
+                totalWaterUse: totalWaterUse, // Water use in cups
                 // totalWaterUse: totalWaterUse, // Water in liters
-                totalShowerUse: totalWaterUse / 65.1 // Converts water use to shower use (65.1 liters per shower)
+                totalShowerUse: totalWaterUse / (65.1 * 4.2) // Converts water use to shower use (65.1 liters per shower)
         };
     }
 
@@ -196,7 +230,6 @@ class App extends Component {
          *
          * @param   {int}  index  Index of the food item in sorted contributors (not grocery list) to be selected
          */
-        console.log(this.state);
         this.setState({selectedFood: {
             alias: this.state.results.contributors[index],
             grams: this.state.results.grams[index]
@@ -212,6 +245,17 @@ class App extends Component {
         };
         TagManager.dataLayer(tagManagerArgs);
     }
+    
+    componentDidUpdate() {
+        /**
+         * React lifecycle method.
+         * Ensure the command of showPopper is only sent to GroceryList once
+         *
+         */
+        if (this.state.showPopper) {
+            this.setState({showPopper: false});
+        }
+    }
 
     onLogoClicked = () => {
         // A hacky way to re-mount a new gocery list by updating an arbitrary key of grocery list, 
@@ -225,9 +269,7 @@ class App extends Component {
          *
          * @return   {HTMLDivElement}  HTML element for the App component
          */
-        const infoSize = 12;
-        const summarySize = 9;
-        const groceryListSize = 12;
+        const summarySize = 8;
         const barSize = 8;
         const recoSize = 4;
 
@@ -288,7 +330,6 @@ class App extends Component {
                 }
             }
           });
-          
 
         return (
 
@@ -307,67 +348,69 @@ class App extends Component {
                     <Feedback link={FEEDBACK_FORM}/>
                 </div>
                 <div id="content">
-                {/* TODO: scroll to recommendation card after bar chart clicked new item. */}
-                {/* https://stackoverflow.com/questions/24739126/scroll-to-a-specific-element-using-html */}
-                {!this.state.hasSearched && <img src={tofuHero} alt="Tofu Hero" id="tofu-hero"/>}
-                <Typography variant='h1' style={{marginBottom: '20px', padding: '0px 20px'}}>{headline}</Typography>
-                {this.state.hasSearched && <Typography variant='subtitle1' style={{marginBottom: '60px', padding: '0px 20px'}}> 
-                    This is what it takes for food to get to your table.
-                </Typography>}
-                {this.state.hasSearched &&
-                <Grid container justify={"center"}>
-                    <Grid item xs={12} md={summarySize}>
-                        <Summary
-                            totalImpact={this.state.results.totalImpact}
-                            driveEq={this.state.results.driveEq}
-                            totalLandUse={this.state.results.totalLandUse}
-                            totalTreeUse={this.state.results.totalTreeUse}
-                            totalWaterUse={this.state.results.totalWaterUse}
-                            totalShowerUse={this.state.results.totalShowerUse}
-                        />
-                    </Grid>
-                    <Grid item xs={12} sm={12}>
-                        <Comparison totalImpact={this.state.results.totalImpact} />
-                    </Grid>
-                    <Grid item xs={12} sm={12} style={{backgroundImage: 'linear-gradient(180deg, #CF7DE9, #E97DD1)'}}>
-                        <Box paddingY='100px'> 
-                        {/* TODO: better way of formatting than box? */}
-                            <Typography variant='h1' style={{marginBottom: '20px', padding: '0px 20px'}}>How can I do better?</Typography>
-                            <Typography variant='subtitle1' style={{marginBottom: '40px', padding: '0px 20px'}}> 
-                            Some simple ways to make small changes for the better!
-                            </Typography>
-                            <Grid container>
-                                <Grid item xs={12} md={barSize}>
-                                    <BarChart
-                                        data={this.state.results.impacts}
-                                        labels={this.state.results.contributors}
-                                        selectFood={this.selectFood}
-                                    />
-                                </Grid>
-                                <Grid item xs={12} md={recoSize}>
-                                    {/* TODO: better way of aligning recommendation to chart than this empty box that disappears on small screen? */}
-                                    <Hidden smDown>
-                                        <Box width="100%" height="60px" />
-                                    </Hidden>
-                                    {/* TODO: better way of adding padding than box to auto align with chart? */}
-                                    <Box paddingX="20px" align='center'>
-                                        <div id="reco" /> 
-                                        <Recommendations
-                                            food={this.state.selectedFood}
-                                            updateGroceryList={this.updateGroceryList}
+                    {/* TODO: scroll to recommendation card after bar chart clicked new item. */}
+                    {/* https://stackoverflow.com/questions/24739126/scroll-to-a-specific-element-using-html */}
+                    {!this.state.hasSearched && <img src={tofuHero} alt="Tofu Hero" id="tofu-hero"/>}
+                    <Typography variant='h1' style={{marginBottom: '20px', padding: '0px 20px'}}>{headline}</Typography>
+                    {this.state.hasSearched && <Typography variant='subtitle1' style={{marginBottom: '60px', padding: '0px 20px'}}>
+                        This is what it takes for food to get to your table.
+                    </Typography>}
+                    {this.state.hasSearched &&
+                    <Grid container justify={"center"}>
+                        <Grid item xs={12} md={summarySize}>
+                            <Summary
+                                totalImpact={this.state.results.totalImpact}
+                                driveEq={this.state.results.driveEq}
+                                totalLandUse={this.state.results.totalLandUse}
+                                totalTreeUse={this.state.results.totalTreeUse}
+                                totalWaterUse={this.state.results.totalWaterUse}
+                                totalShowerUse={this.state.results.totalShowerUse}
+                            />
+                        </Grid>
+                        <Grid item xs={12} sm={12}>
+                            <Comparison totalImpact={this.state.results.totalImpact} />
+                        </Grid>
+                        <Grid item xs={12} sm={12} style={{backgroundImage: 'linear-gradient(180deg, #CF7DE9, #E97DD1)'}}>
+                            <Box paddingY='100px'>
+                            {/* TODO: better way of formatting than box? */}
+                                <Typography variant='h1' style={{marginBottom: '20px', padding: '0px 20px'}}>How can I do better?</Typography>
+                                <Typography variant='subtitle1' style={{marginBottom: '40px', padding: '0px 20px'}}>
+                                Some simple ways to make small changes for the better!
+                                </Typography>
+                                <Grid container>
+                                    <Grid item xs={12} md={barSize}>
+                                        <BarChart
+                                            data={this.state.results.impacts}
+                                            labels={this.state.results.contributors}
+                                            selectFood={this.selectFood}
                                         />
-                                    </Box>
+                                    </Grid>
+                                    <Grid item xs={12} md={recoSize}>
+                                        {/* TODO: better way of aligning recommendation to chart than this empty box that disappears on small screen? */}
+                                        <Hidden smDown>
+                                            <Box width="100%" height="60px" />
+                                        </Hidden>
+                                        {/* TODO: better way of adding padding than box to auto align with chart? */}
+                                        <Box paddingX="20px" align='center'>
+                                            <div id="reco" />
+                                            <Recommendations
+                                                food={this.state.selectedFood}
+                                                updateGroceryList={this.updateGroceryList}
+                                            />
+                                        </Box>
+                                    </Grid>
                                 </Grid>
-                            </Grid>
-                        </Box>
+                            </Box>
+                        </Grid>
                     </Grid>
-                </Grid>
-                }
+                    }
                     <GroceryList
                         search={this.search}
                         hasSearched={this.state.hasSearched}
                         requestForUpdate={this.state.requestForUpdate}
-                        key={this.state.grocListKey}/>
+                        showPopper={this.state.showPopper}
+                        key={this.state.grocListKey}
+                    />
                 </div>
             </div>
             </MuiThemeProvider>
