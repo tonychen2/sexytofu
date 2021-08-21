@@ -11,7 +11,7 @@ const styles = {
     root: {
         width:'100%', 
         display: 'inline-flex', 
-        justifyContent: 'flex-end',
+        justifyContent: 'flex-start',
         '& .MuiButton-contained:hover': {
             // Button hover style
             color: '#2e3032',
@@ -25,9 +25,9 @@ const styles = {
         textTransform: "none",
         color: '#53575B',
         backgroundColor: '#F9F7F7',
-        borderRadius: '18px 0px 0px 18px',
+        borderRadius: '0px 18px 18px 0px',
         border: '3px solid #F2F2F2',
-        borderRight: 'none',
+        borderLeft: 'none',
         marginBottom: '1ch',
         // transform: "translateX(80%)",
         // animation: '$slideIn 0.5s ease-in-out',

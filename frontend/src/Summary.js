@@ -119,7 +119,7 @@ function Summary(props) {
                             <span className={classes.highlight}>{props.totalShowerUse.toFixed(1)}</span>&nbsp; 8-minute&nbsp;
                             {pluralize('shower', 'showers', props.totalShowerUse)} taken
                         </Typography>
-                    </Grid>`
+                    </Grid>
                 </Grid>
             </div>}
         </div>

@@ -299,7 +299,9 @@ class App extends Component {
                     <a href="#">
                         <img src={logo} alt="Sexy Tofu" id="logo" onClick={this.onLogoClicked}/>
                     </a>
-                    {this.state.hasSearched && <img src={tofuHero} alt="Tofu Hero" id="tofu-hero" style={{height: '61px'}}/>}
+                    <a href="https://info.sexytofu.org/" target="_blank" style={{color: "white"}}>
+                        <Typography variant="body1" style={{margin: '12px'}}>About</Typography>
+                    </a>
                 </div>
                 <div id="bottomFloat">
                     <Feedback link={FEEDBACK_FORM}/>
