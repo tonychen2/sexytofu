@@ -219,7 +219,6 @@ class App extends Component {
                 // parkingEq: totalLandUse / 14, // Convert from sq meters to # parking spots
                 totalTreeUse: totalLandUse / 256, // 256sqft/tree Convert from land use to Californian tree use
                 totalWaterUse: totalWaterUse, // Water use in cups
-                // totalWaterUse: totalWaterUse, // Water in liters
                 totalShowerUse: totalWaterUse / (65.1 * 4.2) // Converts water use to shower use (65.1 liters per shower)
         };
     }
