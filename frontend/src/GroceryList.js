@@ -243,7 +243,7 @@ class GroceryList extends Component {
             if (popperAnchor) {
                 this.setState({
                     popperAnchor: popperAnchor,
-                    popperMsg: `We can't find "${this.state.groceryList[iLast].ingredient}", but we will still add it to your list without its carbon footprint. We are working hard to provide data for more food!`
+                    popperMsg: `We don't have data for your list. Try adding more food items and search again."`
                 });
             }
         }
@@ -374,12 +374,13 @@ class GroceryList extends Component {
         if (default_grams >= 400) {
             default_qty = Math.round(default_grams / 454);
             default_unit = "pound"
-        }
-        else if (default_grams >= 100) {
+        } else if (default_grams > 100) {
             default_qty = Math.round(default_grams / 28);
             default_unit = "ounce";
-        }
-        else {
+        } else if (default_grams === 100) {
+            default_qty = 0.25;
+            default_unit = "pound";
+        } else {
             default_qty = default_grams;
             default_unit = "gram";
         }
@@ -765,19 +766,19 @@ class GroceryListItem extends Component{
                 </Grid>
                 <Grid item xs sm className={this.props.classes.inputGrid}>
                     <Autocomplete
-                            id={`${this.props.ingredient}_unit`}
-                            value={this.props.unit}
-                            options={ALL_UNITS}
-                            // TODO: allow different spellings for same unit eg. kg and kilogram
-                            // filterOptions={createFilterOptions({stringify: option => option.aliases})}
-                            renderInput={(params) => <TextField {...params} placeholder="unit" variant="outlined" />}
-                            getOptionLabel={(option) => option}
-                            autoHighlight
-                            disableClearable
-                            autoSelect
-                            onChange={this.handleUnitChange}
-                            className={textFieldClass + ' ' + this.props.classes.select}
-                        />
+                        id={`${this.props.ingredient}_unit`}
+                        value={this.props.unit}
+                        options={ALL_UNITS}
+                        // TODO: allow different spellings for same unit eg. kg and kilogram
+                        // filterOptions={createFilterOptions({stringify: option => option.aliases})}
+                        renderInput={(params) => <TextField {...params} placeholder="unit" variant="outlined" />}
+                        getOptionLabel={(option) => option}
+                        autoHighlight
+                        disableClearable
+                        autoSelect
+                        onChange={this.handleUnitChange}
+                        className={textFieldClass + ' ' + this.props.classes.select}
+                    />
                 </Grid>
                 <Grid item xs={1} sm={1}>
                     <Grid container justify={"center"}>

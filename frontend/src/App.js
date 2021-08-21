@@ -92,7 +92,7 @@ class App extends Component {
             .then(json => this.parseResponse(json));
 
         // Persist the response into state of the App
-        if (Math.abs(results.totalImpact) > 1e-5) {
+        if (results.matched) {
             this.setState({
                 hasSearched: true,
                 selectedFood: {
@@ -128,13 +128,15 @@ class App extends Component {
          *
          * @return  {float}         Land use, measured by square meter (null if not available)
          */
-        if (Math.abs(item.impact) < 1e-5) {
+        if (!item.matched) {
             // Ignore unmatched items
             return 0
         } else {
+            // Get land use data per kilogram (=1000g)
             let landUse = await fetch(`${NATIVE_API_ADDRESS}/land_use/${item.product}/`)
             .then(response => response.json());
-        return (landUse === null ? null : landUse["median"] * (item.grams / 1000));
+            // Calculate land use based on quantity in grocery list
+            return (landUse === null ? null : landUse["median"] * (item.grams / 1000));
         }
     }
 
@@ -147,12 +149,14 @@ class App extends Component {
          *
          * @return  {float}         Water use, measured by liter (null if not available)
          */
-        if (Math.abs(item.impact) < 1e-5) {
+        if (!item.matched) {
             // Ignore unmatched items
             return 0
         } else {
+            // Get land use data per kilogram (=1000g)
             let waterUse = await fetch(`${NATIVE_API_ADDRESS}/water_use/${item.product}/`)
             .then(response => response.json());
+            // Calculate land use based on quantity in grocery list
             return (waterUse === null ? null : waterUse["median"] * (item.grams / 1000));
         }
     }
@@ -170,15 +174,18 @@ class App extends Component {
         let ingredients = [];
         // Find impact of each ingredient and rank them
         for (let item of json["items"]) {
-            let impact;
+            let impact, product;
             if (item["match_conf"] >= 0.5) {
                 impact = item["impact"] / 1000 * 2.2; // Convert from grams to pounds
+                product = item["product"]["alias"];
             } else {
-                impact = 0;
+                impact = null;
+                product = null;
             }
             ingredients.push({
                 name: item["names"][0],
-                product: item["product"]["alias"],
+                product: product,
+                matched: Boolean(item["match_conf"] >= 0.5),
                 impact: impact,
                 grams: item["g"]});
         }
@@ -202,7 +209,8 @@ class App extends Component {
             grams.push(item.grams);
         }
 
-        return {totalImpact: totalImpact,
+        return {matched: ingredients.reduce((acc, curr) => acc || curr.matched, false),
+                totalImpact: totalImpact,
                 contributors: contributors,
                 impacts: impacts,
                 grams: grams,
@@ -261,7 +269,7 @@ class App extends Component {
          *
          * @return   {HTMLDivElement}  HTML element for the App component
          */
-        const summarySize = 9;
+        const summarySize = 8;
         const barSize = 8;
         const recoSize = 4;
 

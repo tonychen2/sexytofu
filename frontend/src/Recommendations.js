@@ -107,7 +107,7 @@ class Recommendations extends Component {
         if (this.state.recos.length === 0) {
             // Capitalize the first letter
             let food = this.props.food.alias.charAt(0).toUpperCase() + this.props.food.alias.slice(1);
-            reco_text = `${food} is a great choice! Thank you for helping save the world.`;
+            reco_text = `When we’re not stuffing our faces with sexy tofu, we’re working hard on developing more food for thought content. Stay tuned!`;
 
         } else {
             // Display one of the recommendations, default to the first one before the user clicks "show me more"

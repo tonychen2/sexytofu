@@ -190,7 +190,8 @@ function drawLabels(chartRef, props) {
     let meta = chartInstance.getDatasetMeta(0);
     // Write the value for each bar into a label
     meta.data.forEach((bar, index) => {
-        let impact = chartInstance.data.datasets[0].data[index].toFixed(1);
+        let impact = chartInstance.data.datasets[0].data[index];
+        impact = impact ? impact.toFixed(1) : "Data coming soon";
         chartRef.fillText(impact, bar.x+5, bar.y);
     });
 
