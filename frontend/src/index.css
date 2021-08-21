@@ -51,6 +51,11 @@ a:link:hover {
     color: #ffdbec;
 }
 
+a:visited:hover {
+    background-color: #F251B1;
+    color: #ffdbec;
+}
+
 .profile{
     width: 200px;
     height: 200px;
