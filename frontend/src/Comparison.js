@@ -97,7 +97,7 @@ const scaleStyles = makeStyles((theme) => ({
         '& *': {
             background: 'transparent',
             // color: '#000',
-            color: 'blue',
+            color: 'green',
           },
         // Change position of label accordingly when vertical slider
         '@media screen and (max-width: 600px)': {
@@ -107,8 +107,10 @@ const scaleStyles = makeStyles((theme) => ({
             // https://stackoverflow.com/questions/8549529/what-is-the-difference-between-screen-and-only-screen-in-media-queries more on media queries on mobile
             // https://stackoverflow.com/questions/7859336/why-are-my-css3-media-queries-not-working-on-mobile-devices
             // marginRight: '15rem',
+
             // marginLeft: '-14.8rem', // Causes a big change on mobile, but different from desktop!
-            marginLeft: '-230px', // Maybe issue is marginLeft vs Right?
+            // marginLeft: '-230px', // Same problem as above line -> an issue w/ marginLeft ?
+            left: '-124px',
         },
     },
     // Each persona's mark on the scale
