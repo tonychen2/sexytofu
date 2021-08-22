@@ -96,20 +96,11 @@ const scaleStyles = makeStyles((theme) => ({
         // Hide default valueLabel teardrop shape
         '& *': {
             background: 'transparent',
-            // color: '#000',
-            color: 'green',
+            color: '#000',
           },
         // Change position of label accordingly when vertical slider
-        '@media screen and (max-width: 600px)': {
+        '@media only screen and (max-width: 600px)': {
             top: '6px',
-            // marginRight: '230px', // No change on mobile...
-            // Try to make responsive for iPhone...possible this media query doesn't work on iOS?
-            // https://stackoverflow.com/questions/8549529/what-is-the-difference-between-screen-and-only-screen-in-media-queries more on media queries on mobile
-            // https://stackoverflow.com/questions/7859336/why-are-my-css3-media-queries-not-working-on-mobile-devices
-            // marginRight: '15rem',
-
-            // marginLeft: '-14.8rem', // Causes a big change on mobile, but different from desktop!
-            // marginLeft: '-230px', // Same problem as above line -> an issue w/ marginLeft ?
             left: '-124px',
         },
     },
