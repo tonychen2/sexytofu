@@ -202,6 +202,8 @@ class GroceryList extends Component {
             hasSearchError:false, searchErrorMessage : "",
             popperIndex: -1, popperMsg: "", popperAnchor: null
         };
+        // React DOM ref to SearchBar textField, to control focus.
+        this.textInput = React.createRef(); 
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -281,6 +283,8 @@ class GroceryList extends Component {
         }   
         if (event.key === 'Enter') {
             if (this.state.currentQuery === "") {
+                // Search current grocery list, and make SearchBar lose keyboard focus.
+                this.textInput.current.blur();
                 this.props.search(this.state.groceryList);
             } else {
                 this.addFood();
@@ -510,6 +514,7 @@ class GroceryList extends Component {
                                 buttonClass={buttonClass}
                                 addFood={this.addFood}
                                 inputGrid={this.props.classes.inputGrid}
+                                inputRef={this.textInput}
                             />
                         </Grid>
 
@@ -600,13 +605,14 @@ function SearchBar(props){
      * @param   {Object}    props.buttonClass       Style of component's Add button
      * @param   {function}  props.addFood           Callback function to add food (handle when Add pressed)
      * @param   {Object}    props.inputGrid         Style of component's Grid
+     * @param props.inputRef  React hook to control focus
      *
      * @return  {HTMLSpanElement}  HTML element for the component
      */
-    const input = React.useRef(); 
+    // const input = React.useRef(); 
 
     const setFocus = () => {
-        input.current.focus();
+        props.inputRef.current.focus();
     };
 
     return (
@@ -614,7 +620,7 @@ function SearchBar(props){
         <Grid item xs={12} sm={10} className={props.inputGrid}>
             <TextField
                 id="searchBox"
-                inputRef={input}
+                inputRef={props.inputRef}
                 autoFocus={true}
                 variant="outlined"
                 className={props.textFieldClass}

@@ -101,7 +101,7 @@ const scaleStyles = makeStyles((theme) => ({
         // Change position of label accordingly when vertical slider
         '@media only screen and (max-width: 600px)': {
             top: '6px',
-            marginRight: '230px',
+            left: '-124px',
         },
     },
     // Each persona's mark on the scale
