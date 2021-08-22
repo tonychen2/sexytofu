@@ -50,12 +50,7 @@ const styles = {
             // Set default appearance to none, then added custom scroll style, to show up on MacOS
             // https://stackoverflow.com/questions/7855590/preventing-scroll-bars-from-being-hidden-for-macos-trackpad-users-in-webkit-blin
             '& -webkit-appearance' : 'none',
-            // [TODO: the following doesn't work] Make scrollbar show on IOS Safari mobile: https://stackoverflow.com/questions/22907777/make-scrollbar-visible-in-mobile-browsers
-            // '& -webkit-overflow-scrolling': 'auto',
-            // https://stackoverflow.com/questions/4168974/iphone-safari-not-showing-scroll-bars
-            // https://developer.mozilla.org/en-US/docs/Web/CSS/-webkit-overflow-scrolling not supported? Look into iScroll
-            // https://github.com/ajaxorg/ace/issues/2872
-            '& -webkit-overflow-scrolling': 'scroll',
+            // TODO: Make scrollbar show on IOS Safari mobile. Note: -webkit-overflow-scrolling is no longer supported. 
             width: '24px',
         },
         '& ::-webkit-scrollbar-track': {
