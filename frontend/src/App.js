@@ -10,6 +10,7 @@ import BarChart from "./BarChart";
 import Comparison from "./Comparison";
 import Summary from "./Summary";
 import Feedback from './Feedback';
+import Footer from './Footer';
 
 import {Button} from '@material-ui/core';
 import {Box} from '@material-ui/core';
@@ -411,6 +412,14 @@ class App extends Component {
                         key={this.state.grocListKey}
                     />
                 </div>
+                <footer>
+                    <Footer
+                        policyLink={"index.html"}
+                        instagram="https://www.instagram.com/sexy.tofu/"
+                        facebook="https://www.facebook.com/sexytofugo"
+                        tiktok="https://www.tiktok.com/@sexy.tofu"
+                    />
+                </footer>
             </div>
             </MuiThemeProvider>
         );
