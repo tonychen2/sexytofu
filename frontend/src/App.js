@@ -414,7 +414,6 @@ class App extends Component {
                 </div>
                 <footer>
                     <Footer
-                        policyLink={"index.html"}
                         instagram="https://www.instagram.com/sexy.tofu/"
                         facebook="https://www.facebook.com/sexytofugo"
                         tiktok="https://www.tiktok.com/@sexy.tofu"
