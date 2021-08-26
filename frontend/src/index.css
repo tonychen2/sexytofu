@@ -29,6 +29,17 @@ body{
     padding: 0;
 }
 
+footer {
+    padding: 10px 0px;
+    z-index: 2;
+}
+
+#container{
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
 h1, h2, h3, h4, h5, h6 {
     font-family: 'Lato', 'sans-serif';
     color: white;
@@ -82,9 +93,14 @@ a:visited:hover {
 
 #bottomFloat {
     position: fixed;
-    z-index: 2;
+    z-index: 3;
     bottom:0px;
-    width: 100%;
+}
+
+@media only screen and (max-width: 600px) {
+    #bottomFloat {
+        bottom:60px;
+    }
 }
 
 #background{
@@ -99,6 +115,7 @@ a:visited:hover {
 #content{
     position:relative;
     z-index:1;
+    flex: 1;
 }
 
 /*Input {*/
