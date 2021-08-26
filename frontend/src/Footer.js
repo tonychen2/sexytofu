@@ -122,7 +122,7 @@ class PolicyPopUp extends Component {
     }
 
     render() {
-        const LAST_UPDATED_DATE = "August 24 2021"
+        const LAST_UPDATED_DATE = "August 26 2021"
         return (
             <Dialog 
                 open={this.props.isOpen} 
@@ -198,7 +198,7 @@ class PolicyPopUp extends Component {
                         </Typography>
                         <Typography component={'span'} variant="body2" display="block" align="left" style={{marginBottom: '1rem'}}>
                             If you have any questions about this Privacy Policy, please&nbsp;
-                            <a href="mailto: sexytofu@gmail.com">contact us</a>.
+                            <a href="mailto: sexytofu.info@gmail.com">contact us</a>.
                         </Typography>
                     </DialogContentText>
                 </DialogContent>
