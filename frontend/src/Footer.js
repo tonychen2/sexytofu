@@ -37,6 +37,7 @@ const styles = {
     },
     dialogContent: {
         padding: '28px 32px',
+        color: 'grey',
     },
     dialogTitle: {
         padding: '0px 24px',
@@ -144,7 +145,7 @@ class PolicyPopUp extends Component {
                     </Typography>   
                 </DialogTitle>
                 <DialogContent className={this.props.classes.dialogContent}>
-                    <DialogContentText>
+                    {/* <DialogContentText> */}
                         <Typography component={'span'} variant="body2" display="block" align="left" style={{marginBottom: '1rem'}}>
                         Last updated: <b>{LAST_UPDATED_DATE}</b>
                         </Typography>
@@ -171,7 +172,6 @@ class PolicyPopUp extends Component {
                                 <li> Recommendations you apply</li>
                                 <li> Number of people and length of time your grocery list is for </li>
                             </ul>
-
                             We use cookies from third-party partners, such as&nbsp;
                             <a href="https://www.google.com/policies/privacy/partners/" target="_blank" rel="noopener noreferrer">Google Analytics</a>,&nbsp;
                             {/* TODO: disclose ALL information collected! be specific. How do you share info? How do you use it? what do you use? */}
@@ -234,7 +234,7 @@ class PolicyPopUp extends Component {
                             If you have any questions about this Privacy Policy, please&nbsp;
                             <a href="mailto: sexytofu.info@gmail.com">contact us</a>.
                         </Typography>
-                    </DialogContentText>
+                    {/* </DialogContentText> */}
                 </DialogContent>
           </Dialog>
         )
