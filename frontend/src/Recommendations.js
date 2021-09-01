@@ -1,4 +1,5 @@
 import React, {Component} from "react";
+import DOMPurify from 'dompurify';
 
 import BarChart from "./BarChart";
 
@@ -143,7 +144,7 @@ class Recommendations extends Component {
             TagManager.dataLayer(tagManagerArgs);
         }
         // Allows anchor tags 'href' to open link in new tab, assuming 'href' appears nowhere outside of anchor tags.
-        return {__html: reco_text.replace(/href/gi, "target='_blank' rel='noreferrer noopener' href")};
+        return {__html: DOMPurify.sanitize(reco_text.replace(/href/gi, "target='_blank' rel='noreferrer noopener' href"))};
     }
 
     hasMoreReco = () => {
