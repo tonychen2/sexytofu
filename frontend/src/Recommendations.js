@@ -142,8 +142,8 @@ class Recommendations extends Component {
             };
             TagManager.dataLayer(tagManagerArgs);
         }
-
-        return {__html: reco_text};
+        // Allows anchor tags 'href' to open link in new tab, assuming 'href' appears nowhere outside of anchor tags.
+        return {__html: reco_text.replace(/href/gi, "target='_blank' rel='noreferrer noopener' href")};
     }
 
     hasMoreReco = () => {

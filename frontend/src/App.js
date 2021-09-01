@@ -339,7 +339,7 @@ class App extends Component {
                     <a href="#">
                         <img src={logo} alt="Sexy Tofu" id="logo" onClick={this.onLogoClicked}/>
                     </a>
-                    <a href="https://info.sexytofu.org/" target="_blank" style={{color: "white"}}>
+                    <a href="https://info.sexytofu.org/" target="_blank" rel="noreferrer noopener" style={{color: "white"}}>
                         <Typography variant="body1" style={{margin: '12px'}}>About</Typography>
                     </a>
                 </div>

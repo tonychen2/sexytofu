@@ -64,7 +64,7 @@ class Feedback extends Component {
 
     openLink = (link) => {     
         // Opens link in new tab or window.
-        window.open(link, '_blank','noopener');
+        window.open(link, '_blank','noreferrer noopener');
     }
     
     render() {
