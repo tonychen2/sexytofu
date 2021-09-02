@@ -5,6 +5,7 @@ import GroceryList from "./GroceryList";
 import tofuHero from "./assets/tofu-hero.gif";
 import logo from "./assets/logo-text.png";
 
+import CookieBanner from "./CookieBanner";
 import Recommendations from "./Recommendations";
 import BarChart from "./BarChart";
 import Comparison from "./Comparison";
@@ -411,6 +412,7 @@ class App extends Component {
                         key={this.state.grocListKey}
                     />
                 </div>
+                <CookieBanner />
             </div>
             </MuiThemeProvider>
         );
