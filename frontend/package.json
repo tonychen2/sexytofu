@@ -2,8 +2,8 @@
   "name": "sexy-tofu",
   "version": "1.0.0",
   "scripts": {
-    "dev": "parcel src/index.html src/addReco/addReco.html",
-    "build": "parcel build src/index.html src/addReco/addReco.html",
+    "dev": "parcel src/index.html src/addReco/addReco.html src/policy/privacyPolicy.html",
+    "build": "parcel build src/index.html src/addReco/addReco.html src/policy/privacyPolicy.html",
     "start": "npm run dev && live-server dist"
   },
   "keywords": [],

@@ -47,7 +47,6 @@ class CookieBanner extends Component {
         // Or refresh the page after decline if previously consented.
         // Ideally, set cookie consent in GTag, see https://developers.google.com/gtagjs/devguide/consent 
         // Same issue as https://github.com/alinemorelli/react-gtm/issues/61
-
       }      
 
     render() {
@@ -64,8 +63,7 @@ class CookieBanner extends Component {
                 buttonStyle={{backgroundColor: '#F2F2F2', color: '#353535', borderRadius: '3px'}}
                 >
                 This website uses cookies to enhance the user experience.&nbsp;
-                <a href="https://info.sexytofu.org/" target="_blank" rel="noopener noreferrer">Learn more</a>. 
-                {/* (TODO: link to privacy policy + allow to decline/accept cookies in privacy policy [or other place] even after banner disappears) */}
+                <a href="/policy/privacyPolicy.html" target="_blank" rel="noopener noreferrer">Learn more</a>.
             </CookieConsent>
         )
     }
