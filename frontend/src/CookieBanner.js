@@ -11,8 +11,7 @@ const styles = {
 
 class CookieBanner extends Component {
     /**
-     * React class component to get user consent via cookie banner, following cookie banner from:
-     * https://github.com/Mastermindzh/react-cookie-consent#cookie-react-cookie-consent-cookie
+     * React class component to get user consent via cookie banner.
      * @param   {Object}    props.classes           Style of the component
      */
     constructor(props) {
@@ -28,7 +27,6 @@ class CookieBanner extends Component {
     }
 
     handleAcceptCookie = () => {
-        // TODO: Add conditional: initialize only if not already initialized - don't want two tags for one user.
         const tagManagerArgs = {
             gtmId: 'GTM-K6GPKTV',
             auth: process.env.GTM_AUTH,
@@ -42,12 +40,9 @@ class CookieBanner extends Component {
         Cookies.remove("_ga");
         Cookies.remove("_gat");
         Cookies.remove("_gid");
-        // TODO: Unitialize previous tagManager eg. if previously accepted, but now want to decline, then make sure no more tracking.
-        // Worst case: inject script instead of TagManager.init w/ conditional on cookie consent, or check cookie consent every datalayer push.
-        // Or refresh the page after decline if previously consented.
-        // Ideally, set cookie consent in GTag, see https://developers.google.com/gtagjs/devguide/consent 
-        // Same issue as https://github.com/alinemorelli/react-gtm/issues/61
-      }      
+        // TODO: better way of stopping GTM tracking than current setup (checking cookie consent before dataLayer push), 
+        // which works across pages eg. can also set from privacy policy page? 
+    }
 
     render() {
         // TODO: Advanced region-based consent, eg. automatically disable for residents in CA and EU until consent, but enable for rest of USA

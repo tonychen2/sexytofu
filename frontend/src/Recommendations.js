@@ -10,6 +10,7 @@ import {joinText} from "./utils.js"
 
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import TagManager from "react-gtm-module";
+import {getCookieConsentValue} from "react-cookie-consent";
 
 
 const NATIVE_API_ADDRESS =  process.env.API_HOST || "http://localhost:8000";
@@ -129,18 +130,21 @@ class Recommendations extends Component {
                 }
             }
 
-            // Send data to Google Tag Manager
-            let tagManagerArgs = {
-                dataLayer: {
-                    event: "showReco",
-                    ingredient: this.props.food.alias,
-                    recommendation: reco.text_short,
-                    has_recipe: reco.has_recipe,
-                    replacement: reco['replacement_food_name'],
-                    impact_variant: random_group
-                }
-            };
-            TagManager.dataLayer(tagManagerArgs);
+            // Send data to Google Tag Manager if consented to cookies
+            const isConsent = getCookieConsentValue();
+            if (isConsent === "true") {
+                let tagManagerArgs = {
+                    dataLayer: {
+                        event: "showReco",
+                        ingredient: this.props.food.alias,
+                        recommendation: reco.text_short,
+                        has_recipe: reco.has_recipe,
+                        replacement: reco['replacement_food_name'],
+                        impact_variant: random_group
+                    }
+                };
+                TagManager.dataLayer(tagManagerArgs);
+            }
         }
 
         return {__html: reco_text};
@@ -198,15 +202,18 @@ class Recommendations extends Component {
         let reco = this.state.recos[this.state.indexOnDisplay];
         this.props.updateGroceryList(this.props.food.alias, 'ingredient', reco['replacement_food_name']);
 
-        // Send data to Google Tag Manager
-        let tagManagerArgs = {
-            dataLayer: {
-                event: "applyReco",
-                ingredient: this.props.food.alias,
-                replacement: reco['replacement_food_name']
-            }
-        };
-        TagManager.dataLayer(tagManagerArgs);
+        // Send data to Google Tag Manager if consented to cookies
+        const isConsent = getCookieConsentValue();
+        if (isConsent === "true") {
+            let tagManagerArgs = {
+                dataLayer: {
+                    event: "applyReco",
+                    ingredient: this.props.food.alias,
+                    replacement: reco['replacement_food_name']
+                }
+            };
+            TagManager.dataLayer(tagManagerArgs);
+        }
     }
 
     nextReco = () => {
@@ -217,14 +224,17 @@ class Recommendations extends Component {
         let newIndex = (this.state.indexOnDisplay + 1) % this.state.recos.length;
         this.setState({indexOnDisplay: newIndex});
 
-        // Send data to Google Tag Manager
-        let tagManagerArgs = {
-            dataLayer: {
-                event: "nextReco",
-                index: newIndex
-            }
-        };
-        TagManager.dataLayer(tagManagerArgs);
+        // Send data to Google Tag Manager if consented to cookies
+        const isConsent = getCookieConsentValue();
+        if (isConsent === "true") {
+            let tagManagerArgs = {
+                dataLayer: {
+                    event: "nextReco",
+                    index: newIndex
+                }
+            };
+            TagManager.dataLayer(tagManagerArgs);
+        }
     }
 
     render() {

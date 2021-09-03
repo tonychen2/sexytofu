@@ -19,6 +19,7 @@ import {MuiThemeProvider, createMuiTheme} from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import Typography from "@material-ui/core/Typography";
 import TagManager from "react-gtm-module";
+import {getCookieConsentValue} from "react-cookie-consent";  
 
 
 const GHGI_API_ADDRESS = 'https://api.sexytofu.org/api.ghgi.org:443';
@@ -59,17 +60,20 @@ class App extends Component {
          *
          * @param   {array<Object>}  groceryList  Food items with the signature {"ingredient": String, "quantity": float, "unit": String}
          */
-        // Send data to Google Tag Manager
-        for (let i = 0; i < groceryList.length; i++) {
-            let tagManagerArgs = {
-                dataLayer: {
-                    event: "searchItem",
-                    ingredient: groceryList[i]["ingredient"],
-                    quantity: groceryList[i]["quantity"],
-                    unit: groceryList[i]["unit"]
-                }
-            };
-            TagManager.dataLayer(tagManagerArgs);
+        // Send data to Google Tag Manager if consented to cookies.
+        const isConsent = getCookieConsentValue();
+        if (isConsent === "true") {
+            for (let i = 0; i < groceryList.length; i++) {
+                let tagManagerArgs = {
+                    dataLayer: {
+                        event: "searchItem",
+                        ingredient: groceryList[i]["ingredient"],
+                        quantity: groceryList[i]["quantity"],
+                        unit: groceryList[i]["unit"]
+                    }
+                };
+                TagManager.dataLayer(tagManagerArgs);
+            }
         }
 
         // Copy out groceryList so we don't change the original array
@@ -109,15 +113,17 @@ class App extends Component {
             })
         }
 
-        // Track search and results in Google Tag Manager
-        let tagManagerArgs = {
-            dataLayer: {
-                event: "search",
-                groceryListLength: groceryList.length,
-                results: results
-            }
-        };
-        TagManager.dataLayer(tagManagerArgs);
+        // Track search and results in Google Tag Manager if consented to cookies
+        if (isConsent === "true") {
+            let tagManagerArgs = {
+                dataLayer: {
+                    event: "search",
+                    groceryListLength: groceryList.length,
+                    results: results
+                }
+            };
+            TagManager.dataLayer(tagManagerArgs);
+        }
     }
 
     // TODO: Distinguish between L and KG
@@ -235,15 +241,18 @@ class App extends Component {
             grams: this.state.results.grams[index]
         }});
 
-        // Send data to Google Tag Manager
-        let tagManagerArgs = {
-            dataLayer: {
-                event: "checkReco",
-                ingredient: this.state.results.contributors[index],
-                index: index
-            }
-        };
-        TagManager.dataLayer(tagManagerArgs);
+        // Send data to Google Tag Manager if consented to cookies
+        const isConsent = getCookieConsentValue();
+        if (isConsent === "true") {
+            let tagManagerArgs = {
+                dataLayer: {
+                    event: "checkReco",
+                    ingredient: this.state.results.contributors[index],
+                    index: index
+                }
+            };
+            TagManager.dataLayer(tagManagerArgs);
+        }
     }
     
     componentDidUpdate() {

@@ -53,7 +53,6 @@ class PrivacyPolicyApp extends Component {
         const consent = !this.state.isConsent;
         this.setState({isConsent: consent});
         Cookies.set("CookieConsent", consent, { expires: 365 });
-        // TODO: change google tag manager tracking WITHOUT having to reload the page. (communication between this and index.html?)
     }
 
     render () {

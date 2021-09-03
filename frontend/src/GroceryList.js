@@ -13,6 +13,7 @@ import { withTheme } from "@material-ui/styles";
 import { color } from "chart.js/helpers";
 
 import TagManager from 'react-gtm-module'
+import {getCookieConsentValue} from "react-cookie-consent";
 import { ContactSupport } from "@material-ui/icons";
 
 
@@ -335,16 +336,19 @@ class GroceryList extends Component {
                             popperMsg: `We can't find "${parsed['names'][0]}", but we will still add it to your list without its carbon footprint. We are working hard to provide data for more food!`
                         });
 
-                        // Send data to Google Tag Manager
-                        let tagManagerArgs = {
-                            dataLayer: {
-                                event: "dataNotFound",
-                                gtm: {
-                                    errorMessage: this.state.popperMsg
+                        // Send data to Google Tag Manager if consented to cookies
+                        const isConsent = getCookieConsentValue();
+                        if (isConsent === "true") {
+                            let tagManagerArgs = {
+                                dataLayer: {
+                                    event: "dataNotFound",
+                                    gtm: {
+                                        errorMessage: this.state.popperMsg
+                                    }
                                 }
-                            }
-                        };
-                        TagManager.dataLayer(tagManagerArgs);
+                            };
+                            TagManager.dataLayer(tagManagerArgs);
+                        }
                     }
                 }
             }).catch(err => {
@@ -357,16 +361,19 @@ class GroceryList extends Component {
             this.showSearchError(errorMessage);
             console.warn("Something went wrong, default grams wasn't retrievable from GHGI.");
 
-            // Send data to Google Tag Manager
-            let tagManagerArgs = {
-                dataLayer: {
-                    event: "dataNotFound",
-                    gtm: {
-                        errorMessage: errorMessage
+            // Send data to Google Tag Manager if consented to cookies
+            const isConsent = getCookieConsentValue();
+            if (isConsent === "true") {
+                let tagManagerArgs = {
+                    dataLayer: {
+                        event: "dataNotFound",
+                        gtm: {
+                            errorMessage: errorMessage
+                        }
                     }
-                }
-            };
-            TagManager.dataLayer(tagManagerArgs);
+                };
+                TagManager.dataLayer(tagManagerArgs);
+            }
 
             return;
         }
@@ -401,17 +408,20 @@ class GroceryList extends Component {
             "quantity": quantity,
             "unit": unit});
 
-        // Send data to Google Tag Manager
-        let tagManagerArgs = {
-            dataLayer: {
-                event: "parsingComplete",
-                query: this.state.currentQuery,
-                ingredient: ingredient,
-                quantity: quantity,
-                unit: unit
-            }
-        };
-        TagManager.dataLayer(tagManagerArgs);
+        // Send data to Google Tag Manager if consented to cookies
+        const isConsent = getCookieConsentValue();
+        if (isConsent === "true") {
+            let tagManagerArgs = {
+                dataLayer: {
+                    event: "parsingComplete",
+                    query: this.state.currentQuery,
+                    ingredient: ingredient,
+                    quantity: quantity,
+                    unit: unit
+                }
+            };
+            TagManager.dataLayer(tagManagerArgs);
+        }
 
         // Set React state
         this.setState({groceryList: groceryList, currentQuery: ""});
@@ -441,14 +451,17 @@ class GroceryList extends Component {
          */
         let groceryList = this.state.groceryList;
 
-        // Send data to Google Tag Manager
-        let tagManagerArgs = {
-            dataLayer: {
-                event: "removeItem",
-                ingredient: groceryList[index]["ingredient"],
-            }
-        };
-        TagManager.dataLayer(tagManagerArgs);
+        // Send data to Google Tag Manager if consented to cookies
+        const isConsent = getCookieConsentValue();
+        if (isConsent === "true") {
+            let tagManagerArgs = {
+                dataLayer: {
+                    event: "removeItem",
+                    ingredient: groceryList[index]["ingredient"],
+                }
+            };
+            TagManager.dataLayer(tagManagerArgs);
+        }
 
         // Remove item from grocery list
         groceryList.splice(index, 1);
