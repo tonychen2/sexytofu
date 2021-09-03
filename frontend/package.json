@@ -2,8 +2,8 @@
   "name": "sexy-tofu",
   "version": "1.0.0",
   "scripts": {
-    "dev": "parcel src/index.html src/addReco/addReco.html",
-    "build": "parcel build src/index.html src/addReco/addReco.html",
+    "dev": "parcel src/index.html src/addReco/addReco.html src/policy/privacyPolicy.html",
+    "build": "parcel build src/index.html src/addReco/addReco.html src/policy/privacyPolicy.html",
     "start": "npm run dev && live-server dist"
   },
   "keywords": [],
@@ -33,6 +33,7 @@
     "babel-preset-es2015": "^6.24.1",
     "babel-preset-stage-0": "^6.24.1",
     "react": "^17.0.2",
+    "react-cookie-consent": "^6.3.0",
     "react-dom": "^17.0.2",
     "react-hot-loader": "^4.13.0"
   }
