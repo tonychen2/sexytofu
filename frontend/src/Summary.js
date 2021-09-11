@@ -4,7 +4,7 @@ import  "regenerator-runtime";
 import {List, ListItem} from "@material-ui/core";
 import {Grid} from "@material-ui/core";
 import {Typography} from "@material-ui/core";
-import {withStyles} from "@material-ui/core";
+import { withStyles } from '@material-ui/core/styles';
 
 import {pluralize} from "./utils.js"
 

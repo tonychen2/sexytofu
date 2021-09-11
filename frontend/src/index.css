@@ -1,18 +1,7 @@
-
-@font-face{
-    font-family: RobotoCondensed;
-    src: url(assets/roboto-condensed.light.ttf);
-    font-weight: 800;
-}
-
-@font-face{
-    font-family: EconomicaBold;
-    src: url(assets/economica-bold.ttf);
-}
-
 @font-face{
     font-family: Lato;
-    src: url(assets/Lato/Lato-Regular.ttf)
+    src: url(assets/Lato/Lato-Regular.ttf);
+    font-display: swap;
 }
 
 html{

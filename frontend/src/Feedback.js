@@ -2,9 +2,8 @@ import React, {useState, Component} from "react";
 
 import tofuThx from "./assets/summary_graphics/tofu_thanks.png";
 
-import {Button} from '@material-ui/core';
-import {Box, Typography} from '@material-ui/core';
-import {withStyles} from "@material-ui/core";
+import { Button, Box, Typography } from '@material-ui/core';
+import { withStyles } from '@material-ui/core/styles';
 
 
 const styles = {

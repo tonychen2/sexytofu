@@ -1,19 +1,17 @@
 import React, {Component} from "react";
 import  "regenerator-runtime";
 
-import { Collapse } from '@material-ui/core';
-import {Grid, Box, Typography} from '@material-ui/core';
-import {TextField, Button, IconButton} from '@material-ui/core';
+import { Box, Button, ClickAwayListener, 
+        Collapse, Grid, IconButton, 
+        List, ListItem, Paper, 
+        Popper, Typography, TextField } from '@material-ui/core';
+import { withStyles } from '@material-ui/core/styles';
+import { Autocomplete } from "@material-ui/lab";
+
 import DeleteIcon from '@material-ui/icons/Delete';
 import ExpandMoreRoundedIcon from '@material-ui/icons/ExpandMoreRounded';
-import {List, ListItem, ClickAwayListener, Popper, Paper} from '@material-ui/core';
-import {withStyles} from '@material-ui/core';
-import { Autocomplete } from "@material-ui/lab";
-import { withTheme } from "@material-ui/styles";
-import { color } from "chart.js/helpers";
 
 import TagManager from 'react-gtm-module'
-import { ContactSupport } from "@material-ui/icons";
 
 
 const GHGI_API_ADDRESS = 'https://api.sexytofu.org/api.ghgi.org:443';
