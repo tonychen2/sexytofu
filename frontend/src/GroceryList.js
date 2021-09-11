@@ -577,7 +577,7 @@ class GroceryList extends Component {
 
                     {
                       this.state.groceryList.length > 0 &&
-                      <Grid container justify={"flex-end"}>
+                      <Grid container justifyContent={"flex-end"}>
                           <Button className={buttonClass}
                               id="search"
                               variant="contained"
@@ -629,7 +629,7 @@ function SearchBar(props){
                 placeholder='Try "Tofu" or "2 lbs of chicken breast"'
             />
         </Grid>
-        <Grid item xs={12} sm={2} container justify="flex-end">
+        <Grid item xs={12} sm={2} container justifyContent="flex-end">
             <Button className={props.buttonClass}
                     variant="contained"
                     onClick={() => {props.addFood(); setFocus();}}><span style={{padding: '0px 30px'}}>Add</span></Button>
@@ -785,7 +785,7 @@ class GroceryListItem extends Component{
                     />
                 </Grid>
                 <Grid item xs={1} sm={1}>
-                    <Grid container justify={"center"}>
+                    <Grid container justifyContent={"center"}>
                         <IconButton
                             // style={{width: '100%'}}
                             aria-label="delete"

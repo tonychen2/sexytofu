@@ -315,7 +315,7 @@ function ValueLabel(props) {
     if (props.realImpact > props.weeklyImpact) { overflowSign = '>'};
     if (props.realImpact < props.weeklyImpact) { overflowSign = '<'};
     return (
-        <Grid container direction="row" alignItems="center" justify={"center"} id="yourImpact">
+        <Grid container direction="row" alignItems="center" justifyContent={"center"} id="yourImpact">
             <Grid item xs={10} sm={10}>
                 <Typography variant='body2' style={{color: '#322737', minWidth: '15ch'}}>
                     <span style={{display: 'block', fontWeight: 'bold'}}>{label}</span>

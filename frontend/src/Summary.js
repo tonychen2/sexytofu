@@ -75,7 +75,7 @@ function Summary(props) {
         <div id="summary" className={classes.root}>
             <div id="carbonEmission" className={classes.section}>
                 <Typography variant='subtitle1' className={classes.title}>Carbon Emissions</Typography>
-                <Grid container direction="row" alignItems="center" justify={"center"}>
+                <Grid container direction="row" alignItems="center" justifyContent={"center"}>
                     <Grid item xs={6} sm={6}>
                         <img src={driveEqGraphics} alt='car_driving' className={classes.image}/>
                     </Grid>
@@ -92,7 +92,7 @@ function Summary(props) {
             {props.totalLandUse > 0 &&
             <div id="landUse" className={classes.section}>
                 <Typography variant='subtitle1' className={classes.title}>Land Use</Typography>
-                <Grid container direction="row" alignItems="center" justify={"center"}>
+                <Grid container direction="row" alignItems="center" justifyContent={"center"}>
                     <Grid item xs={6} sm={6}>
                         <img src={landUseGraphics} alt='Central Park' className={classes.image}/>
                     </Grid>
@@ -108,7 +108,7 @@ function Summary(props) {
             {props.totalWaterUse > 0 &&
             <div id="waterUse" className={classes.section}>
                 <Typography variant='subtitle1' className={classes.title}>Water Use</Typography>
-                <Grid container direction="row" alignItems="center" justify={"center"}>
+                <Grid container direction="row" alignItems="center" justifyContent={"center"}>
                     <Grid item xs={6} sm={6}>
                         <img src={waterUseGraphics} alt='Water' className={classes.image}/>
                     </Grid>
