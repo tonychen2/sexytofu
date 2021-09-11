@@ -19,8 +19,7 @@ const plugins = [
       },
       'icons'
     ],
-    "@babel/plugin-proposal-export-default-from",
-    "@babel/plugin-proposal-class-properties"
+    ["@babel/plugin-proposal-class-properties", {}, "Unique name to allow babel parser to work with ESLint, and duplicate plugins"]
   ];
   
   module.exports = {plugins};
