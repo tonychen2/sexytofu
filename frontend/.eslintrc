@@ -2,12 +2,28 @@
     "plugins": [
         "react"
       ],
+    "env": {
+      "browser": true,
+      "node": true,
+      "es6": true
+    },
+    "parser": "@babel/eslint-parser",
     "parserOptions": {
         "sourceType": "module",
-        "ecmaVersion": 2015,
+        "ecmaVersion": 2020,
         "ecmaFeatures": {
-          "jsx": true
-        }
+          "jsx": true,
+          "modules": true
+        },
+        "babelOptions": {
+          "presets": ["@babel/preset-react"]
+       }
     },
-    "extends": ["eslint:recommended", "plugin:react/recommended"]
+    "extends": ["eslint:recommended", "plugin:react/recommended"],
+    // TODO: fix missing in props validation error; see https://reactjs.org/docs/typechecking-with-proptypes.html
+    // As mentioned in https://stackoverflow.com/questions/38684925/react-eslint-error-missing-in-props-validation,
+    // uncomment the below to disable these warnings if they persist.
+    // "rules": {
+    //   "react/prop-types": "off"
+    // }
 }
