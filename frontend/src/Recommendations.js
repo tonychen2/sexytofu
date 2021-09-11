@@ -1,10 +1,8 @@
 import React, {Component} from "react";
 import DOMPurify from 'dompurify';
 
-import BarChart from "./BarChart";
-
 import {Card, CardContent, CardActions} from '@material-ui/core';
-import {Button, Typography, Fab} from "@material-ui/core";
+import {Typography} from "@material-ui/core";
 import { withStyles } from '@material-ui/core/styles';
 
 import {joinText} from "./utils.js"

@@ -1,8 +1,8 @@
-import React, {useState, Component} from "react";
+import React, {Component} from "react";
 import  "regenerator-runtime";
 
 import { makeStyles } from '@material-ui/core/styles';
-import {Accordion, AccordionSummary, AccordionDetails} from "@material-ui/core";
+import {Accordion, AccordionDetails} from "@material-ui/core";
 import {Container, Grid} from "@material-ui/core";
 import {Typography} from "@material-ui/core";
 import {Select, MenuItem} from "@material-ui/core";

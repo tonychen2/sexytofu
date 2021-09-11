@@ -11,7 +11,6 @@ import Comparison from "./Comparison";
 import Summary from "./Summary";
 import Feedback from './Feedback';
 
-import {Button} from '@material-ui/core';
 import {Box} from '@material-ui/core';
 import {Hidden} from '@material-ui/core';
 import {MuiThemeProvider, createTheme} from '@material-ui/core/styles';

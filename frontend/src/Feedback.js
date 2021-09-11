@@ -1,4 +1,4 @@
-import React, {useState, Component} from "react";
+import React, {Component} from "react";
 
 import tofuThx from "./assets/summary_graphics/tofu_thanks.png";
 
