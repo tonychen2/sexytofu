@@ -415,7 +415,7 @@ class App extends Component {
                 <footer>
                     <Footer
                         instagram="https://www.instagram.com/sexy.tofu/"
-                        facebook="https://www.facebook.com/sexytofugo"
+                        facebook="https://www.facebook.com/sexytofu.org"
                         tiktok="https://www.tiktok.com/@sexy.tofu"
                     />
                 </footer>
