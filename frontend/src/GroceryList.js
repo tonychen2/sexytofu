@@ -636,7 +636,7 @@ function SearchBar(props){
                 value={props.currentQuery}
                 size='small'
                 placeholder='Try "Tofu" or "2 lbs of chicken breast"'
-                aria-labelledby="Search and add a grocery food item to your list."
+                aria-label="Search and add a grocery food item to your list."
                 role="searchbox"
             />
         </Grid>
