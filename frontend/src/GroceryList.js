@@ -590,6 +590,7 @@ class GroceryList extends Component {
                               id="search"
                               variant="contained"
                               align="end"
+                              role="button"
                               onClick={() => this.props.search(this.state.groceryList)}><span style={{padding: '0px 15px'}}>Search</span>
                           </Button>
                       </Grid>
@@ -635,12 +636,16 @@ function SearchBar(props){
                 value={props.currentQuery}
                 size='small'
                 placeholder='Try "Tofu" or "2 lbs of chicken breast"'
+                aria-labelledby="Search and add a grocery food item to your list."
+                role="searchbox"
             />
         </Grid>
         <Grid item xs={12} sm={2} container justifyContent="flex-end">
             <Button className={props.buttonClass}
                     variant="contained"
-                    onClick={() => {props.addFood(); setFocus();}}><span style={{padding: '0px 30px'}}>Add</span></Button>
+                    onClick={() => {props.addFood(); setFocus();}}><span style={{padding: '0px 30px'}}
+                    aria-labelledby="Add grocery food item."
+                    role="button">Add</span></Button>
         </Grid>
     </Grid>
     )
@@ -757,6 +762,8 @@ class GroceryListItem extends Component{
                         value={this.props.ingredient}
                         size='small'
                         placeholder="food"
+                        aria-label="grocery item"
+                        role="textbox"
                         // style={{float: "left", clear: 'both'}}
                     />
                 </Grid>
@@ -773,6 +780,8 @@ class GroceryListItem extends Component{
                         value={this.props.quantity}
                         size='small'
                         placeholder="quantity"
+                        aria-label="quantity"
+                        role="textbox"
                         // style={{float: "left", clear: 'both'}}
                     />
                 </Grid>
@@ -790,6 +799,8 @@ class GroceryListItem extends Component{
                         autoSelect
                         onChange={this.handleUnitChange}
                         className={textFieldClass + ' ' + this.props.classes.select}
+                        aria-label="units"
+                        role="textbox"
                     />
                 </Grid>
                 <Grid item xs={1} sm={1}>
@@ -797,6 +808,7 @@ class GroceryListItem extends Component{
                         <IconButton
                             // style={{width: '100%'}}
                             aria-label="delete"
+                            role="button"
                             size="small"
                             onClick={this.props.remove}>
                             <DeleteIcon />

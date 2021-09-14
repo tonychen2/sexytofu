@@ -152,7 +152,7 @@ export default class BarChart extends Component {
                     </Typography>
                 </Grid>
                 <Grid item xs={2} sm={2}> 
-                    <About />
+                    <About aria-label="Learn more" role="button"/>
                 </Grid>
                 </Grid>
                 
@@ -162,6 +162,8 @@ export default class BarChart extends Component {
                     ref={this.chartRef}
                     // https://stackoverflow.com/questions/41953158/set-height-of-chart-in-chart-js
                     style={{maxHeight: this.calcHeight()}}
+                    aria-label="Bar chart of each food's carbon footprint"
+                    role="figure"
                 />
             </div>
         )

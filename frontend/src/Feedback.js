@@ -69,11 +69,16 @@ class Feedback extends Component {
     render() {
         return (
             <Box className={this.props.classes.root}>
-                <Button variant="contained" className={this.props.classes.button} onClick={() => {this.openLink(this.props.link)}}> 
-                    <Typography variant="body2">
-                        Share your thoughts!
-                    </Typography> 
-                    <img src={tofuThx} alt="Tofu Thanks" id="tofu-thanks" style={{height: '25px', marginLeft: '6px'}}/>
+                <Button 
+                    variant="contained" 
+                    className={this.props.classes.button} 
+                    onClick={() => {this.openLink(this.props.link)}} 
+                    aria-labelledby="Open feedback form."
+                    role="button"> 
+                        <Typography variant="body2">
+                            Share your thoughts!
+                        </Typography> 
+                        <img src={tofuThx} alt="Tofu Thanks" id="tofu-thanks" style={{height: '25px', marginLeft: '6px'}}/>
                 </Button>
             </Box>
         )

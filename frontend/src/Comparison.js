@@ -294,7 +294,9 @@ function ComparisonScale(props) {
                                                         realImpact={normalizedImpact} 
                                                         orientation={scaleOrientation}/>}
             valueLabelDisplay='on'
-            track={false} />
+            track={false} 
+            aria-label="Comparision slider to see where you match up against others."
+            role="figure"/>
     )
 }
 
