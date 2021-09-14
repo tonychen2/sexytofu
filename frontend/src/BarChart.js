@@ -145,14 +145,14 @@ export default class BarChart extends Component {
          */
         return (
             <div className="chartContainer" style={{width: '80%', margin: 'auto'}}>
-                <Grid container justify={"flex-start"}>
+                <Grid container justifyContent={"flex-start"}>
                 <Grid item style={{maxWidth: "80%"}}> 
                     <Typography variant='h3' align='left'>
                     My food’s estimated carbon footprint: {this.props.data.reduce((a, b) => a + b, 0).toFixed(1)} pounds of CO<sub>2</sub> equivalent
                     </Typography>
                 </Grid>
                 <Grid item xs={2} sm={2}> 
-                    <About />
+                    <About aria-label="Learn more" role="button"/>
                 </Grid>
                 </Grid>
                 
@@ -162,6 +162,8 @@ export default class BarChart extends Component {
                     ref={this.chartRef}
                     // https://stackoverflow.com/questions/41953158/set-height-of-chart-in-chart-js
                     style={{maxHeight: this.calcHeight()}}
+                    aria-label="Bar chart of each food's carbon footprint"
+                    role="figure"
                 />
             </div>
         )

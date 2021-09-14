@@ -1,18 +1,15 @@
-import React, {Component} from "react";
+import React from "react";
 import  "regenerator-runtime";
 
-import {List, ListItem} from "@material-ui/core";
 import {Grid} from "@material-ui/core";
 import {Typography} from "@material-ui/core";
-import {withStyles} from "@material-ui/core";
+import { withStyles } from '@material-ui/core/styles';
 
 import {pluralize} from "./utils.js"
 
 import driveEqGraphics from "./assets/summary_graphics/tofu_driving.png";
 import landUseGraphics from "./assets/summary_graphics/tofu_land.png";
 import waterUseGraphics from "./assets/summary_graphics/tofu_water.png";
-
-import TagManager from "react-gtm-module";
 
 
 const styles = {
@@ -75,7 +72,7 @@ function Summary(props) {
         <div id="summary" className={classes.root}>
             <div id="carbonEmission" className={classes.section}>
                 <Typography variant='subtitle1' className={classes.title}>Carbon Emissions</Typography>
-                <Grid container direction="row" alignItems="center" justify={"center"}>
+                <Grid container direction="row" alignItems="center" justifyContent={"center"}>
                     <Grid item xs={6} sm={6}>
                         <img src={driveEqGraphics} alt='car_driving' className={classes.image}/>
                     </Grid>
@@ -92,7 +89,7 @@ function Summary(props) {
             {props.totalLandUse > 0 &&
             <div id="landUse" className={classes.section}>
                 <Typography variant='subtitle1' className={classes.title}>Land Use</Typography>
-                <Grid container direction="row" alignItems="center" justify={"center"}>
+                <Grid container direction="row" alignItems="center" justifyContent={"center"}>
                     <Grid item xs={6} sm={6}>
                         <img src={landUseGraphics} alt='Central Park' className={classes.image}/>
                     </Grid>
@@ -108,7 +105,7 @@ function Summary(props) {
             {props.totalWaterUse > 0 &&
             <div id="waterUse" className={classes.section}>
                 <Typography variant='subtitle1' className={classes.title}>Water Use</Typography>
-                <Grid container direction="row" alignItems="center" justify={"center"}>
+                <Grid container direction="row" alignItems="center" justifyContent={"center"}>
                     <Grid item xs={6} sm={6}>
                         <img src={waterUseGraphics} alt='Water' className={classes.image}/>
                     </Grid>

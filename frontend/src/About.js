@@ -1,5 +1,5 @@
-import React, {useState, Component} from "react";
-import {withStyles} from "@material-ui/core";
+import React, {Component} from "react";
+import { withStyles } from '@material-ui/core/styles';
 
 import {Button} from '@material-ui/core';
 import {Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle} from '@material-ui/core';
@@ -95,14 +95,14 @@ class AboutPopUp extends Component {
             <Dialog 
                 open={this.props.isOpen} 
                 onClose={this.props.onClose}
-                aria-labelledby="form-dialog-title" 
+                aria-labelledby="info-popup-dialog-title" 
                 PaperProps={{
                     style: {
                         borderRadius: '20px',
                     }
                 }}>
                 <DialogActions className={this.props.classes.dialogAction}>
-                    <Button className={this.props.classes.closeButton} onClick={this.props.onClose}>
+                    <Button className={this.props.classes.closeButton} onClick={this.props.onClose} aria-label="Close popup" role="button">
                         <CloseRoundedIcon />
                     </Button>
                 </DialogActions>

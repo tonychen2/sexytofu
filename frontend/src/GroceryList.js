@@ -1,19 +1,25 @@
 import React, {Component} from "react";
 import  "regenerator-runtime";
 
-import { Collapse } from '@material-ui/core';
-import {Grid, Box, Typography} from '@material-ui/core';
-import {TextField, Button, IconButton} from '@material-ui/core';
+import { Box, 
+        Button, 
+        ClickAwayListener, 
+        Collapse, 
+        Grid, 
+        IconButton, 
+        List, 
+        ListItem, 
+        Paper, 
+        Popper, 
+        Typography, 
+        TextField } from '@material-ui/core';
+import { withStyles } from '@material-ui/core/styles';
+import { Autocomplete } from "@material-ui/lab";
+
 import DeleteIcon from '@material-ui/icons/Delete';
 import ExpandMoreRoundedIcon from '@material-ui/icons/ExpandMoreRounded';
-import {List, ListItem, ClickAwayListener, Popper, Paper} from '@material-ui/core';
-import {withStyles} from '@material-ui/core';
-import { Autocomplete } from "@material-ui/lab";
-import { withTheme } from "@material-ui/styles";
-import { color } from "chart.js/helpers";
 
 import TagManager from 'react-gtm-module'
-import { ContactSupport } from "@material-ui/icons";
 
 
 const GHGI_API_ADDRESS = 'https://api.sexytofu.org/api.ghgi.org:443';
@@ -579,11 +585,12 @@ class GroceryList extends Component {
 
                     {
                       this.state.groceryList.length > 0 &&
-                      <Grid container justify={"flex-end"}>
+                      <Grid container justifyContent={"flex-end"}>
                           <Button className={buttonClass}
                               id="search"
                               variant="contained"
                               align="end"
+                              role="button"
                               onClick={() => this.props.search(this.state.groceryList)}><span style={{padding: '0px 15px'}}>Search</span>
                           </Button>
                       </Grid>
@@ -629,12 +636,16 @@ function SearchBar(props){
                 value={props.currentQuery}
                 size='small'
                 placeholder='Try "Tofu" or "2 lbs of chicken breast"'
+                aria-label="Search and add a grocery food item to your list."
+                role="searchbox"
             />
         </Grid>
-        <Grid item xs={12} sm={2} container justify="flex-end">
+        <Grid item xs={12} sm={2} container justifyContent="flex-end">
             <Button className={props.buttonClass}
                     variant="contained"
-                    onClick={() => {props.addFood(); setFocus();}}><span style={{padding: '0px 30px'}}>Add</span></Button>
+                    onClick={() => {props.addFood(); setFocus();}}><span style={{padding: '0px 30px'}}
+                    aria-labelledby="Add grocery food item."
+                    role="button">Add</span></Button>
         </Grid>
     </Grid>
     )
@@ -751,6 +762,8 @@ class GroceryListItem extends Component{
                         value={this.props.ingredient}
                         size='small'
                         placeholder="food"
+                        aria-label="grocery item"
+                        role="textbox"
                         // style={{float: "left", clear: 'both'}}
                     />
                 </Grid>
@@ -767,6 +780,8 @@ class GroceryListItem extends Component{
                         value={this.props.quantity}
                         size='small'
                         placeholder="quantity"
+                        aria-label="quantity"
+                        role="textbox"
                         // style={{float: "left", clear: 'both'}}
                     />
                 </Grid>
@@ -784,13 +799,16 @@ class GroceryListItem extends Component{
                         autoSelect
                         onChange={this.handleUnitChange}
                         className={textFieldClass + ' ' + this.props.classes.select}
+                        aria-label="units"
+                        role="textbox"
                     />
                 </Grid>
                 <Grid item xs={1} sm={1}>
-                    <Grid container justify={"center"}>
+                    <Grid container justifyContent={"center"}>
                         <IconButton
                             // style={{width: '100%'}}
                             aria-label="delete"
+                            role="button"
                             size="small"
                             onClick={this.props.remove}>
                             <DeleteIcon />

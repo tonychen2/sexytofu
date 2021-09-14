@@ -1,10 +1,9 @@
 import React, {Component} from "react";
-
-import BarChart from "./BarChart";
+import DOMPurify from 'dompurify';
 
 import {Card, CardContent, CardActions} from '@material-ui/core';
-import {Button, Typography, Fab} from "@material-ui/core";
-import {withStyles} from "@material-ui/core";
+import {Typography} from "@material-ui/core";
+import { withStyles } from '@material-ui/core/styles';
 
 import {joinText} from "./utils.js"
 
@@ -142,8 +141,9 @@ class Recommendations extends Component {
             };
             TagManager.dataLayer(tagManagerArgs);
         }
-
-        return {__html: reco_text};
+        // Allows anchor tags 'href' to open link in new tab, assuming 'href' appears nowhere outside of anchor tags.
+        return {__html: DOMPurify.sanitize(reco_text.replace(/href/gi, "target='_blank' rel='noreferrer noopener' href"), 
+                {ADD_ATTR: ['target'], USE_PROFILES: {html: true}} )};
     }
 
     hasMoreReco = () => {

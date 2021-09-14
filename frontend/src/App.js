@@ -12,10 +12,9 @@ import Summary from "./Summary";
 import Feedback from './Feedback';
 import Footer from './Footer';
 
-import {Button} from '@material-ui/core';
 import {Box} from '@material-ui/core';
 import {Hidden} from '@material-ui/core';
-import {MuiThemeProvider, createMuiTheme} from '@material-ui/core/styles';
+import {MuiThemeProvider, createTheme} from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import Typography from "@material-ui/core/Typography";
 import TagManager from "react-gtm-module";
@@ -276,7 +275,7 @@ class App extends Component {
         let headline = (this.state.hasSearched ? "What's my food's impact?" : "Track the climate impact of your food")
 
         // Override global themes for Typography. TODO: place in separate imported doc. like index.css
-        const theme = createMuiTheme({
+        const theme = createTheme({
             typography: {
                 h1: {
                     // Headline and Tell Me...
@@ -340,7 +339,7 @@ class App extends Component {
                     <a href="#">
                         <img src={logo} alt="Sexy Tofu" id="logo" onClick={this.onLogoClicked}/>
                     </a>
-                    <a href="https://info.sexytofu.org/" target="_blank" style={{color: "white"}}>
+                    <a href="https://info.sexytofu.org/" target="_blank" rel="noreferrer noopener" style={{color: "white"}}>
                         <Typography variant="body1" style={{margin: '12px'}}>About</Typography>
                     </a>
                 </div>
@@ -356,7 +355,7 @@ class App extends Component {
                         This is what it takes for food to get to your table.
                     </Typography>}
                     {this.state.hasSearched &&
-                    <Grid container justify={"center"}>
+                    <Grid container justifyContent={"center"}>
                         <Grid item xs={12} md={summarySize}>
                             <Summary
                                 totalImpact={this.state.results.totalImpact}

@@ -6,7 +6,7 @@ import {TextField, Checkbox, Button, IconButton, List, ListItem, Typography} fro
 import { FixedSizeList } from 'react-window';
 import DeleteIcon from '@material-ui/icons/Delete';
 import {Autocomplete} from '@material-ui/lab';
-import {withStyles} from '@material-ui/core';
+import { withStyles } from '@material-ui/core/styles';
 import {createFilterOptions} from '@material-ui/lab/Autocomplete';
 
 const styles = {

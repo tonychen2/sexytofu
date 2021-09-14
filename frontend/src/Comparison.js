@@ -1,8 +1,8 @@
-import React, {useState, Component} from "react";
+import React, {Component} from "react";
 import  "regenerator-runtime";
 
 import { makeStyles } from '@material-ui/core/styles';
-import {Accordion, AccordionSummary, AccordionDetails} from "@material-ui/core";
+import {Accordion, AccordionDetails} from "@material-ui/core";
 import {Container, Grid} from "@material-ui/core";
 import {Typography} from "@material-ui/core";
 import {Select, MenuItem} from "@material-ui/core";
@@ -294,7 +294,9 @@ function ComparisonScale(props) {
                                                         realImpact={normalizedImpact} 
                                                         orientation={scaleOrientation}/>}
             valueLabelDisplay='on'
-            track={false} />
+            track={false} 
+            aria-label="Comparision slider to see where you match up against others."
+            role="figure"/>
     )
 }
 
@@ -315,7 +317,7 @@ function ValueLabel(props) {
     if (props.realImpact > props.weeklyImpact) { overflowSign = '>'};
     if (props.realImpact < props.weeklyImpact) { overflowSign = '<'};
     return (
-        <Grid container direction="row" alignItems="center" justify={"center"} id="yourImpact">
+        <Grid container direction="row" alignItems="center" justifyContent={"center"} id="yourImpact">
             <Grid item xs={10} sm={10}>
                 <Typography variant='body2' style={{color: '#322737', minWidth: '15ch'}}>
                     <span style={{display: 'block', fontWeight: 'bold'}}>{label}</span>
