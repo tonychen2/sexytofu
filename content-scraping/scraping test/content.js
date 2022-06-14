@@ -2,12 +2,16 @@
 
 // window.addEventListener ("load", myMain, false);
 
-// function myMain (evt) {
-    var items = document.querySelectorAll('div[id^="cart_item"], div[data-testid="cartItemSizing"]');
-    for (i = 0; i < items.length; ++i) {
-    console.log(items[i].textContent);
+printCart();
+
+function printCart() {
+    var items = document.querySelectorAll('span[style*="color: rgb(52, 53, 56)"], div[class="css-1k4e3ab"]');
+        for (i = 0; i < items.length; ++i) {
+            console.log(items[i].textContent);
     }
-// }
+}
+
+//window.addEventListener("click", printCart);
  
 
 

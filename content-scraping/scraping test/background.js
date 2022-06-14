@@ -7,12 +7,17 @@
     //     });
     //   });
     //chrome.webNavigation.onHistoryStateUpdated.addListener(function(details) {
-        chrome.browserAction.onClicked.addListener(function(tab) {
-            chrome.tabs.executeScript(null, {file: "content.js"});
-          //  chrome.browserAction.onClicked.removeListener();
-        });
-      // });
+        // chrome.browserAction.onClicked.addListener(function(tab) {
+        //     chrome.tabs.executeScript(null, {file: "content.js"});
+        //   //  chrome.browserAction.onClicked.removeListener();
+        // });
+      //});
+      let cartButton = document.querySelector('button[aria-label*="View Cart"]');
+      console.log(cartButton);
 
+      cartButton.addEventListener("click", function() {
+        chrome.tabs.executeScript(null, {file: "content.js"});
+   });
     //     // Send a message to the active tab
 //     chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
 //       var activeTab = tabs[0];
