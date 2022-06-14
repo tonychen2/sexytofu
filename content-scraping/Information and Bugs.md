@@ -19,9 +19,8 @@ There are some limitations to making this work that I haven't sorted out yet, so
 5) Every time you make a change in the extension code, save it in your code editor, refresh the extension in the extension tab, and then reload the webpage. 
 
 #### Bugs: 
-1) Currently, the code runs properly ONLY when the cart button has already been clicked. The goal is to have part of it run in the background and to "listen" to when the cart button is clicked, THEN run the part that scrapes the cart. This is difficult because content scripts run once--when all elements have loaded and then never again (unless everything is refreshed). However, contents scripts are the only scripts that have access to the DOM elements of the page. 
-
-2) Fix the refresh problem from "Some Notes" #4
+1) Currently, the code runs properly ONLY when the cart button has already been clicked. The goal is to have part of it run in the background and to "listen" to when the cart button is clicked, THEN run the part that scrapes the cart. This is difficult because content scripts run once--when all elements have loaded and then never again (unless everything is refreshed). However, contents scripts are the only scripts that have access to the DOM elements of the page. (Currently considering this: https://stackoverflow.com/questions/9515704/use-a-content-script-to-access-the-page-context-variables-and-functions)
+3) Fix the refresh problem from "Some Notes" #4
 
 
 
