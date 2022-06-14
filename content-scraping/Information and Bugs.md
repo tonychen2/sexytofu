@@ -15,7 +15,8 @@ There are some limitations to making this work that I haven't sorted out yet, so
 1) The ability to only work on instacart is hardcoded into the extension, but you still need to click the blue icon for it to work based on the set up above.
 2) It's best to wait for the page to finish loading before hitting the blue icon (there's a way to implement an automatic version of this and it's very simple--it should already be in the code--but I've commented it out because it makes debugging more complicated. I'll put it back when I'm done.)
 3) Everything prints to the console, so make sure it's open.
-4) To run the extension a second time, you need to hit refresh on BOTH the extension itself (in the extensions tab) AND the webpage (this is very frustrating but I've yet to look into how to fix it. 
+4) To run the extension again, you need to hit refresh on BOTH the extension itself (in the extensions tab) AND the webpage (this is very frustrating but I've yet to look into how to fix it. 
+5) Every time you make a change in the extension code, save it in your code editor, refresh the extension in the extension tab, and then reload the webpage. 
 
 #### Bugs: 
 1) Currently, the code runs properly ONLY when the cart button has already been clicked. The goal is to have part of it run in the background and to "listen" to when the cart button is clicked, THEN run the part that scrapes the cart. This is difficult because content scripts run once--when all elements have loaded and then never again (unless everything is refreshed). However, contents scripts are the only scripts that have access to the DOM elements of the page. 
