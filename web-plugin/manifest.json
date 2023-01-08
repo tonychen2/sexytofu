@@ -22,7 +22,8 @@
 		{
 			"matches": [
 				"*://*/*/demo.html",
-				"file://*/*/demo.html"
+				"file://*/*/demo.html",
+				"*://www.instacart.com/store/*"
 			],
 			"js": [
 				"./js/jquery-3.6.0.min.js",

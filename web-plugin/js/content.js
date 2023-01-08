@@ -53,9 +53,23 @@ var OnCartItemsChange = async (array) => {
         console.log(response);
     })
 }
-//OnCartItemsChange([]);
 
 var cartItems = [];
+
+// window.onload = async function (){
+//     let { items = [] } = await chrome.storage.sync.get("items");
+//     cartItems = items;
+//     console.log(`work in window.onload = function(){}`);
+//     OnCartItemsChange(items);
+// }
+
+//kind of best practice to auto run function()
+(async function(){
+    let { items = [] } = await chrome.storage.sync.get("items");
+    cartItems = items;
+    console.log(`work in (function(){}())`);
+    OnCartItemsChange(items);
+}())
 
 /* The InstaCart Cart "button" consists of 3 parts: a path, a span, and an svg (the cart icon). This function verifies that the 
 "button" was clicked by checking if the target of user click had the attribute of any of these three parts.
