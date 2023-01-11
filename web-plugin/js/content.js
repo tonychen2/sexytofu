@@ -2,74 +2,12 @@
 window.addEventListener("click", notifyExtension);
 console.log("start")
 
-//for demo page
-if (window.location.pathname.toLowerCase().endsWith('/demo.html')) {
-    let divAdd = document.createElement('div');
-
-    let nameInput = document.createElement('input');
-    nameInput.value = "carrot";
-    divAdd.append(nameInput);
-
-    let weightInput = document.createElement('input');
-    weightInput.setAttribute('type', 'number');
-    weightInput.value = "3";
-    divAdd.append(weightInput);
-
-    let addButton = document.createElement('button');
-    addButton.innerText = 'Add Item';
-    addButton.addEventListener('click', () => {
-        if (nameInput.value?.length > 0 && weightInput.value?.length > 0) {
-            var item = new TofuItem(nameInput.value, `${weightInput.value}`);
-            cartItems.push(item);
-            OnCartItemsChange(cartItems);
-        }
-    });
-    divAdd.append(addButton);
-
-    let ClearButton = document.createElement('button');
-    ClearButton.innerText = 'Clear Cart';
-    ClearButton.setAttribute('style', "display:block");
-    ClearButton.addEventListener('click', () => {
-        cartItems = [];
-        OnCartItemsChange(cartItems);
-    });
-
-    divAdd.append(ClearButton);
-
-    document.querySelector('body').append(divAdd);
-}
-
 var OnCartItemsChange = async (array) => {
+    //send message or just use storage?
+    console.log(`storage set items:`);
+    console.log(array);
     await chrome.storage.sync.set({ items: array });
-    var status = STATUS.Empty;
-    if (array.length > 0) {
-        status = STATUS.NotEmpty;
-    }
-
-    chrome.runtime.sendMessage({
-        cartStatus: status,
-        cartCount: array.length
-    }, function (response) {
-        console.log(response);
-    })
 }
-
-var cartItems = [];
-
-// window.onload = async function (){
-//     let { items = [] } = await chrome.storage.sync.get("items");
-//     cartItems = items;
-//     console.log(`work in window.onload = function(){}`);
-//     OnCartItemsChange(items);
-// }
-
-//kind of best practice to auto run function()
-(async function(){
-    let { items = [] } = await chrome.storage.sync.get("items");
-    cartItems = items;
-    console.log(`work in (function(){}())`);
-    OnCartItemsChange(items);
-}())
 
 /* The InstaCart Cart "button" consists of 3 parts: a path, a span, and an svg (the cart icon). This function verifies that the 
 "button" was clicked by checking if the target of user click had the attribute of any of these three parts.
@@ -108,19 +46,20 @@ function printCart() {
     //     }
     var items = document.querySelectorAll('div[aria-label="product"]');
     // TODO: Consider refactor as foreach + callback
+    let cartItems = [];
     for (i = 0; i < items.length; ++i) {
         item = items[i];
 
         if (item.childElementCount == 2) { // TODO: Improve logic for failure check
-            textNode = item.lastChild.firstChild.firstChild.firstChild  // TODO: Handle situation where this is not true
+            //unit: 6 ct,  3 lb, per lb, each
+            textNode = item.firstChild.lastChild.firstChild // TODO: Handle situation where this is not true
 
-            nameNode = textNode.firstChild.firstChild
-            unitNode = textNode.firstChild.lastChild
-            quantityNode = textNode.lastChild
+            foodName = textNode.firstChild.firstChild.textContent;
+            unit = textNode.firstChild.lastChild.textContent;
+            quantity = textNode.firstChild.nextElementSibling.textContent;
 
-            console.log(nameNode.textContent);
-            console.log(unitNode.textContent);
-            console.log(quantityNode.textContent);
+            let food = BuildFoodItem(foodName, unit, quantity)
+            cartItems.push(food);
         }
         else {
             // Alternative logic as a backup
@@ -131,5 +70,26 @@ function printCart() {
             // TODO: Send notification
         }
     }
+    OnCartItemsChange(cartItems);
+}
 
+function BuildFoodItem(foodName, unit, quantity) {
+    if (unit) {
+        let numb = parseFloat(unit);
+        if (numb) {
+            console.log(`before unit: ${unit}, quantity ${quantity}`);
+            quantity = numb * quantity;
+            unit = unit.replace(numb, '').trim();
+            if(UNIT_Convert[unit]){
+                unit = UNIT_Convert[unit]
+            }
+            
+            console.log(`after unit: ${unit}, quantity ${quantity}`);
+        }
+        else if (unit == 'each' || unit.startsWith("per ")) {
+            unit = "ea"; //each
+        }
+    }
+
+    return new TofuItem(foodName, unit, quantity);
 }
