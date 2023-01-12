@@ -1,6 +1,30 @@
 <!DOCTYPE html>
 <header></header>
+<style>
+    body {
+        text-align: center;
+    }
+</style>
 
 <body>
-
+    <h2 style="font-size:26px; text-align: center;">Demo for change cart items</h2>
+    <div style="display:flex;width: 300px;margin: auto;">
+        <div style="width: 140px;text-align: left;font-weight: bold;">
+            <span style="display: block;">Name:</span>
+            <span style="display: block;">Quantity:</span>
+        </div>
+        <div style="width: auto;">
+            <input id="name" placeholder="Input the Food name..." />
+            <input type="number" id="quan" placeholder="Input the Quantity..." />
+        </div>
+    </div>
+    <div style="margin-top: 10px">
+        <button id="addItem">Add Item</button>
+        <button id="clear" style="margin-left: 80px;">Clear Cart</button>
+    </div>
+    <div style="text-align: left; 
+    width: 300px; margin: auto;margin-top: 20px;">
+        1. Unit defaut to each/ea. <br>
+        2. non-food item will not got carbon emission.
+    </div>
 </body>

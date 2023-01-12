@@ -100,10 +100,10 @@ parseResponse = async (json) => {
         matched = item["match_conf"] >= GHGI_CONFIDENCE_LIMIT;
         if (matched) {
             impact = item["impact"] / 1000 * 2.2; // Convert from grams to pounds
-            product = item["product"]["alias"];
+            product = item["product"]?.["alias"];
         } else {
             impact = null;
-            product = null;
+            product = item["product"]?.["alias"];
         }
         cartItems.push({
             name: item["names"][0],

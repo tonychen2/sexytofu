@@ -81,15 +81,38 @@ function BuildFoodItem(foodName, unit, quantity) {
             quantity = numb * quantity;
             unit = unit.replace(numb, '').trim();
             if(UNIT_Convert[unit]){
-                unit = UNIT_Convert[unit]
+                unit = UNIT_Convert[unit];
             }
             
             console.log(`after unit: ${unit}, quantity ${quantity}`);
         }
         else if (unit == 'each' || unit.startsWith("per ")) {
-            unit = "ea"; //each
+            unit = "ea";
         }
     }
 
     return new TofuItem(foodName, unit, quantity);
+}
+
+
+//for demo page
+if (window.location.pathname.toLowerCase().endsWith('/demo.html')) {
+    let addButton = document.querySelector("#addItem");
+    let nameInput = document.querySelector("#name");
+    let weightInput = document.querySelector("#quan");
+    let cartItems = [];
+    addButton.addEventListener('click', () => {
+        if (nameInput.value?.length > 0 && weightInput.value?.length > 0) {
+            var item = new TofuItem(nameInput.value, "ea", `${weightInput.value}`);
+            cartItems.push(item);
+            OnCartItemsChange(cartItems);
+        }
+    });
+
+    let ClearButton = document.querySelector("#clear");
+
+    ClearButton.addEventListener('click', () => {
+        cartItems = [];
+        OnCartItemsChange(cartItems);
+    });
 }
