@@ -94,16 +94,21 @@ function BuildFoodItem(foodName, unit, quantity) {
     return new TofuItem(foodName, unit, quantity);
 }
 
-
-
-
 //for demo page
 if (window.location.pathname.toLowerCase().endsWith('/demo.html')) {
     console.log("start for demo.html");
+    let cartItems = [];
+    
+    //for demo page, need reload the storage when reload.
+    (async function () {
+        let { items = [] } = await chrome.storage.sync.get("items");
+        cartItems = items;
+    }());
+
     let addButton = document.querySelector("#addItem");
     let nameInput = document.querySelector("#name");
     let weightInput = document.querySelector("#quan");
-    let cartItems = [];
+
     addButton.addEventListener('click', () => {
         if (nameInput.value?.length > 0 && weightInput.value?.length > 0) {
             var item = new TofuItem(nameInput.value, "ea", `${weightInput.value}`);

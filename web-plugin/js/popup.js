@@ -38,7 +38,7 @@ function buildItem(impacts) {
 
     let pCost = document.createElement('span');
     pCost.setAttribute('style', 'font-size: 20px');
-    pCost.innerText = `$0.35`;
+    pCost.innerText = impacts.offsetCost.toFixed(2);
     carbonCost.append(pCost);
 
     console.log(`add item to the cartInfo div.`);

@@ -6,6 +6,7 @@ try {
 
 const GHGI_API_ADDRESS = 'https://api.sexytofu.org/api.ghgi.org:443';
 const GHGI_CONFIDENCE_LIMIT = 0.3; //need try found a reasonable limit. 0.5 will ignore too much, like organic banana.
+const carbonCostFeeRate = 0.1; // so far 0.1 first.
 
 chrome.runtime.onInstalled.addListener(details => {
     if (details.reason === chrome.runtime.OnInstalledReason.INSTALL) {
@@ -143,6 +144,7 @@ parseResponse = async (json) => {
     let carbonEmission = {
         matched: cartItems.reduce((acc, curr) => acc || curr.matched, false),
         totalImpact: totalImpact,
+        offsetCost :totalImpact * carbonCostFeeRate,
         cartItems: cartItems
     };
 
