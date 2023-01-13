@@ -1,6 +1,6 @@
 
 window.addEventListener("click", notifyExtension);
-console.log("start")
+console.log("sexy-tofu extenstion start to inject content.js...")
 
 var OnCartItemsChange = async (array) => {
     //send message or just use storage?
@@ -80,10 +80,10 @@ function BuildFoodItem(foodName, unit, quantity) {
             console.log(`before unit: ${unit}, quantity ${quantity}`);
             quantity = numb * quantity;
             unit = unit.replace(numb, '').trim();
-            if(UNIT_Convert[unit]){
+            if (UNIT_Convert[unit]) {
                 unit = UNIT_Convert[unit];
             }
-            
+
             console.log(`after unit: ${unit}, quantity ${quantity}`);
         }
         else if (unit == 'each' || unit.startsWith("per ")) {
@@ -95,8 +95,11 @@ function BuildFoodItem(foodName, unit, quantity) {
 }
 
 
+
+
 //for demo page
 if (window.location.pathname.toLowerCase().endsWith('/demo.html')) {
+    console.log("start for demo.html");
     let addButton = document.querySelector("#addItem");
     let nameInput = document.querySelector("#name");
     let weightInput = document.querySelector("#quan");
@@ -114,5 +117,41 @@ if (window.location.pathname.toLowerCase().endsWith('/demo.html')) {
     ClearButton.addEventListener('click', () => {
         cartItems = [];
         OnCartItemsChange(cartItems);
+    });
+
+    let bageTxt = document.querySelector("#bageText");
+    let bageTxtBtn = document.querySelector("#setText");
+    let bageColor = document.querySelector("#bageColor");
+    let bageColorBtn = document.querySelector("#setColor");
+
+    bageTxtBtn.addEventListener('click', () => {
+        let text = bageTxt.value?.trim();
+        chrome.runtime.sendMessage({ bageText: text }, (response) => {
+            console.log(response);
+        });
+    });
+
+    //input 225,225,225,225/0
+    function formatColor(color) {
+        return `#${color[0]}${color[1]}${color[2]}`;
+    }
+
+    async function showBadgeColor(color) {
+        bageColor.value = formatColor(color);
+    }
+
+    bageColorBtn.addEventListener('click', async () => {
+        if (bageTxt.value?.length <= 0) {
+            bageTxt.value = '(^_*)';
+            bageTxtBtn.click();
+        }
+
+        // Next, generate a random RGBA color
+        let color = [0, 0, 0].map(() => Math.floor(Math.random() * 255).toString(16).toUpperCase());
+        let colorStr = formatColor(color);
+        chrome.runtime.sendMessage({ bageColor: colorStr }, (response) => {
+            console.log(response);
+        });
+        showBadgeColor(color);
     });
 }

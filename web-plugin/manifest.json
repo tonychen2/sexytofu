@@ -21,8 +21,8 @@
 	"content_scripts": [
 		{
 			"matches": [
-				"*://*/*/demo.html",
-				"file://*/*/demo.html",
+				"*://*/demo.html",
+				"file://*/demo.html",
 				"*://www.instacart.com/store/*"
 			],
 			"js": [

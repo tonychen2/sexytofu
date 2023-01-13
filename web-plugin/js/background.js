@@ -10,9 +10,31 @@ const GHGI_CONFIDENCE_LIMIT = 0.3; //need try found a reasonable limit. 0.5 will
 chrome.runtime.onInstalled.addListener(details => {
     if (details.reason === chrome.runtime.OnInstalledReason.INSTALL) {
         //TODO: here we need a page outside of the extension to collect feedback.
-        chrome.runtime.setUninstallURL("https://www.bing.com");
+        chrome.runtime.setUninstallURL("https://info.sexytofu.org/");
     }
 });
+
+
+async function setBageColor(color) {
+    chrome.action.setBadgeBackgroundColor({ color });
+    return color;
+}
+
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    let response = "";
+
+    if (message.bageText != undefined) {
+        response = message.bageText;
+        chrome.action.setBadgeText({ text: response });
+    }
+    else if (message.bageColor) {
+        response = message.bageColor;
+        setBageColor(response);
+    }
+
+    sendResponse(`message received: ${response}`);
+});
+
 
 function setBadge(message) {
     var popupFile = `./popup/${message.cartStatus}.html`;
