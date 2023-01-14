@@ -7,20 +7,27 @@ try {
 const GHGI_API_ADDRESS = 'https://api.sexytofu.org/api.ghgi.org:443';
 const GHGI_CONFIDENCE_LIMIT = 0.3; //need try found a reasonable limit. 0.5 will ignore too much, like organic banana.
 const carbonCostFeeRate = 0.1; // so far 0.1 first.
+const IS_Debuger = true;
 
 chrome.runtime.onInstalled.addListener(details => {
+    if (IS_Debuger) {
+        //move demo page auto open when install/update
+        chrome.tabs.create({
+            url: '../demo/index.html'
+        });
+    }
+
     if (details.reason === chrome.runtime.OnInstalledReason.INSTALL) {
         //TODO: here we need a page outside of the extension to collect feedback.
         chrome.runtime.setUninstallURL("https://info.sexytofu.org/");
     }
 });
 
+chrome.runtime.onStartup.addListener(() => {
+    console.log("onstartup...");
+})
 
-async function setBageColor(color) {
-    chrome.action.setBadgeBackgroundColor({ color });
-    return color;
-}
-
+//after demo changed work in side extension. seems no need here.
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     let response = "";
 
@@ -30,7 +37,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     }
     else if (message.bageColor) {
         response = message.bageColor;
-        setBageColor(response);
+        chrome.action.setBadgeBackgroundColor({ response });
     }
 
     sendResponse(`message received: ${response}`);
@@ -144,7 +151,7 @@ parseResponse = async (json) => {
     let carbonEmission = {
         matched: cartItems.reduce((acc, curr) => acc || curr.matched, false),
         totalImpact: totalImpact,
-        offsetCost :totalImpact * carbonCostFeeRate,
+        offsetCost: totalImpact * carbonCostFeeRate,
         cartItems: cartItems
     };
 
