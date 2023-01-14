@@ -1,39 +1,85 @@
-div {
-    text-align: center;
+body {
+  /* background-color: aqua; */
+  border-radius: 10px;
 }
 
-body {
-    width: 350px;
-    height: 420px;
+.BoardContener {
+  width: 352px;
+  /* height: 352px; */
+  font-family: Arial, Helvetica, sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 18px;
+  /* background-color: blue; */
+  text-align: center;
+  padding: 16px;
+  padding-bottom: 8px;
+}
+.container {
+  /* width: 352px; */
+  margin: auto;
+}
+.form-container {
+  margin-top: -4px;
 }
 
 input {
-    width: 330px;
-    height: 35px;
+  width: 352px;
+  height: 40px;
+  border-radius: 5px;
+  font-weight: 700;
+  margin-top: 9px;
+  margin-bottom: 9px;
 }
 
 .offset {
-    background-color: #F15CB7;
-    border-color: #F15CB7;
-    color: white;
+  background-color: #facae8;
+  border-color: white !important;
+  border-style: none;
 }
 
 .projects {
-    background-color: white;
-    border-color: #F15CB7;
-    color:#F15CB7;
+  background-color: white;
+  border-color: #f15cb7;
+  color: #f15cb7;
 }
 
 form {
-    padding: 10px;
+  /* padding: 10px; */
 }
 
 p {
-    color: #6E647A;
+  color: #6e647a;
+  font-size: 13px;
+  margin-top: -10px;
+  margin-bottom: 18px;
 }
 
 .close {
-    float: right;
-    padding-right: 15px;
-    padding-bottom: 10px;
+  float: right;
+  margin-top: 5px;
+  margin-right: 5px;
+}
+
+.triangle {
+  margin: auto;
+  width: 41px;
+  margin-top: 56px;
+  margin-bottom: 21px;
+  margin-left: 23px;
+}
+
+h2 {
+  font-style: normal;
+  font-weight: 550;
+  font-size: 16px;
+  line-height: 21px;
+  text-align: center;
+}
+
+hr {
+  width: 351px;
+  color: #dbd8de;
+  /* height: 2px; */
+  /* border-style:inset; */
 }

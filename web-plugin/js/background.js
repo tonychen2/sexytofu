@@ -73,9 +73,8 @@ async function postItems(items) {
             body: JSON.stringify({ 'recipe': food })
         })
         .then(response => response.json())
-        .then(json => this.parseResponse(json));
+        .then(json => parseResponse(json));
 }
-
 
 //kind of best practice to auto run function()
 (async function () {
@@ -86,16 +85,6 @@ async function postItems(items) {
 }())
 
 function handleCartItems(items) {
-    var status = STATUS.Empty;
-    if (items?.length > 0) {
-        status = STATUS.NotEmpty;
-    }
-
-    setBadge({
-        cartStatus: status,
-        cartCount: items?.length
-    });
-
     if (items?.length > 0) {
         postItems(items);
         console.log(`onChanged: Now have ${items.length} items:`)
@@ -105,6 +94,12 @@ function handleCartItems(items) {
     }
     else {
         console.log(`Cart cleared.\n`);
+
+        setBadge({
+            cartStatus: STATUS.Empty,
+            cartCount: 0
+        });
+        chrome.storage.local.set({ impacts: null });
     }
 }
 
@@ -114,7 +109,7 @@ chrome.storage.sync.onChanged.addListener((changes) => {
     handleCartItems(items);
 })
 
-parseResponse = async (json) => {
+const parseResponse = async (json) => {
     /**
      * Parse response from GHGI API to access data points for display
      *
@@ -147,12 +142,23 @@ parseResponse = async (json) => {
 
     cartItems.sort((a, b) => b.impact - a.impact);
     let totalImpact = cartItems.reduce((acc, curr) => acc + curr.impact, 0);
+    var status = STATUS.HaveFood;
+
+    if (totalImpact <= 0.01) {
+        status = STATUS.Empty;
+    }
+
+    setBadge({
+        cartStatus: status,
+        cartCount: cartItems?.length
+    });
 
     let carbonEmission = {
         matched: cartItems.reduce((acc, curr) => acc || curr.matched, false),
         totalImpact: totalImpact,
         offsetCost: totalImpact * carbonCostFeeRate,
-        cartItems: cartItems
+        cartItems: cartItems,
+        cartStatus: status
     };
 
     //save the impact to local.

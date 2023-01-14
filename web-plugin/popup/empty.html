@@ -1,29 +1,33 @@
 <!DOCTYPE html>
 <html>
+
 <head>
 	<link rel="stylesheet" href="empty.css">
+	<script defer src="../js/common.js"></script>
+	<script defer src="../js/popup.js"></script>
 </head>
+
 <body>
-	<div class="close">
-		<span aria-hidden="true" style="color:#6E647A; font-size: 25px;">&times;</span>
+	<div class="BoardContener">
+		<div class="close">
+			<img src="../img/close.svg" />
+		</div>
+		<div class="container">
+			<!--insert make cart carbon neutral image-->
+			<img src="../img/triangle.svg" class="triangle" />
+			<h2>Your cart is still empty</h2>
+			<p>Come back after adding food items to your shopping cart!</p>
+		</div>
+		<div class="form-container">
+			<!--link to payment method (is this going to be another website?)-->
+			<form action="https://google.com">
+				<input type="submit" value="Offset" class="offset" disabled />
+			</form>
+			<hr>
+			<!--link to projects website (for now, it's google)-->
+			<input type="submit" id="leanMoreBtn" value="Learn about carbon offsetting projects" class="projects" />
+		</div>
 	</div>
-<div class="container">
-	<!--insert make cart carbon neutral image-->
-	<img src="../img/gray-filler-img.png" style="width: 320px; height: 180px;"/>
-	<h3>Your cart is still empty</h3>
-	<p>Come back after adding food items to your shopping cart!</p>
-</div>
-<div class="form-container">
-<!--link to payment method (is this going to be another website?)-->
-	<form action="https://google.com">
-		<input type="submit" value="Offset" class="offset"/>
-	</form>
-	<hr width="330px" color="#DBD8DE">
-	<!--link to projects website (for now, it's google)-->
-	<form action="https://google.com">
-		<input type="submit" value="Learn about carbon offsetting projects" class="projects" />
-	</form>
-</div>
-<script src="../js/popup.js"></script>
 </body>
+
 </html>
