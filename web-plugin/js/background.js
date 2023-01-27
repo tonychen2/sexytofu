@@ -85,7 +85,19 @@ async function postItems(items) {
 }())
 
 function handleCartItems(items) {
+    let status = STATUS.Empty;
+    let itemsCount = items?.length;
+
     if (items?.length > 0) {
+        status = STATUS.NotEmpty;
+    }
+
+    setBadge({
+        cartStatus: status,
+        cartCount: itemsCount
+    });
+
+    if (itemsCount > 0) {
         postItems(items);
         console.log(`onChanged: Now have ${items.length} items:`)
         items.forEach((item, index) => {
@@ -94,11 +106,6 @@ function handleCartItems(items) {
     }
     else {
         console.log(`Cart cleared.\n`);
-
-        setBadge({
-            cartStatus: STATUS.Empty,
-            cartCount: 0
-        });
         chrome.storage.local.set({ impacts: null });
     }
 }
@@ -150,7 +157,7 @@ const parseResponse = async (json) => {
 
     setBadge({
         cartStatus: status,
-        cartCount: cartItems?.length
+        cartCount: cartItems.length
     });
 
     let carbonEmission = {
