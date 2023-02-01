@@ -53,3 +53,6 @@ VOLUME = { // to milliliters
 'pinch': 0.308,
 'smidgen': 0.154,
 }
+
+
+ View cart item logs in background.js is better.

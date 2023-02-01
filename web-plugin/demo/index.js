@@ -1,9 +1,8 @@
-console.log("start for demo.html");
 
 var OnCartItemsChange = async (array) => {
     //send message or just use storage?
     console.log(`storage set items:`);
-    console.log(array);
+    console.table(array);
     await chrome.storage.sync.set({ items: array });
 }
 
@@ -42,7 +41,6 @@ let bageColorBtn = document.querySelector("#setColor");
 bageTxtBtn.addEventListener('click', () => {
     let text = bageTxt.value?.trim();
     chrome.action.setBadgeText({ text: text });
-    console.log(`Update bage text to: ${text}`);
 })
 
 //input 225,225,225,225/0
@@ -54,13 +52,13 @@ bageColorBtn.addEventListener('click', async () => {
     let uiText = bageTxt.value;
     let bageShowText = await chrome.action.getBadgeText({});
     let uiEmpty = uiText?.length == 0;
-    if (uiEmpty){
+    if (uiEmpty) {
         uiText = bageShowText;
         bageTxt.value = uiText;
     }
 
     if (uiEmpty || uiText != bageShowText) {
-        if(uiEmpty) bageTxt.value = '(^_*)';
+        if (uiEmpty) bageTxt.value = '(^_*)';
         bageTxtBtn.click();
     }
 

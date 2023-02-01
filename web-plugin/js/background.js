@@ -23,6 +23,7 @@ chrome.runtime.onInstalled.addListener(details => {
     }
 });
 
+//this seems never fired...
 chrome.runtime.onStartup.addListener(() => {
     console.log("onstartup...");
 })
@@ -76,11 +77,10 @@ async function postItems(items) {
         .then(json => parseResponse(json));
 }
 
-//kind of best practice to auto run function()
+//kind of best practice to auto init
 (async function () {
     let { items = [] } = await chrome.storage.sync.get("items");
     cartItems = items;
-    console.log(`work in (function(){}())`);
     handleCartItems(items);
 }())
 
@@ -99,10 +99,6 @@ function handleCartItems(items) {
 
     if (itemsCount > 0) {
         postItems(items);
-        console.log(`onChanged: Now have ${items.length} items:`)
-        items.forEach((item, index) => {
-            console.log(`#${++index}=> Name: ${item.name} quantity: ${item.quantity} unit: ${item.unit}`);
-        })
     }
     else {
         console.log(`Cart cleared.\n`);
@@ -168,6 +164,8 @@ const parseResponse = async (json) => {
         cartStatus: status
     };
 
+    console.log("CartItems data:")
+    console.table(cartItems);
     //save the impact to local.
     await chrome.storage.local.set({ impacts: carbonEmission });
 }

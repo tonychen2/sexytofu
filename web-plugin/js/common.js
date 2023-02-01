@@ -3,7 +3,6 @@ class TofuItem {
         this.name = name;
         this.quantity = quantity;
         this.unit = unit;
-        console.log(this.toString());
     }
     toString() {
         return `TofuItem Name: ${this.name} quantity: ${this.quantity} unit: ${this.unit}`;

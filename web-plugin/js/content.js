@@ -4,8 +4,8 @@ console.log("sexy-tofu extenstion start to inject content.js...")
 
 var OnCartItemsChange = async (array) => {
     //send message or just use storage?
-    console.log(`storage set items:`);
-    console.log(array);
+    console.log('current cart items:');
+    console.table(array);
     await chrome.storage.sync.set({ items: array });
 }
 
@@ -37,7 +37,7 @@ function notifyExtension(e) {
 
 function printCart() {
     // TODO: Check if it's actually the right page
-    console.clear(); // personal preference
+    //console.clear(); // personal preference
     // Previous version: scrape based on class name, yet unstable
     // On Jul 18: 'css-1k4e3ab' stopped working
     // var items = document.querySelectorAll('span[style*="color: rgb(52, 53, 56)"], div[class="rmq-a40185f5"]');
@@ -64,7 +64,7 @@ function printCart() {
         else {
             // Alternative logic as a backup
             allTextContent = item.textContent;
-            console.log(allTextContent);
+            console.error("TODO: read cart item failed: ", allTextContent);
 
             // TODO: Parse text content
             // TODO: Send notification
@@ -77,14 +77,14 @@ function BuildFoodItem(foodName, unit, quantity) {
     if (unit) {
         let numb = parseFloat(unit);
         if (numb) {
-            console.log(`before unit: ${unit}, quantity ${quantity}`);
+            // console.log(`before unit: ${unit}, quantity: ${quantity}`);
             quantity = numb * quantity;
             unit = unit.replace(numb, '').trim();
             if (UNIT_Convert[unit]) {
                 unit = UNIT_Convert[unit];
             }
 
-            console.log(`after unit: ${unit}, quantity ${quantity}`);
+            // console.log(`after unit: ${unit}, quantity: ${quantity}`);
         }
         else if (unit == 'each' || unit.startsWith("per ")) {
             unit = "ea";

@@ -1,12 +1,9 @@
-// chrome.storage.sync.get(["item"]).then((result) => {
-//   console.log(`get item: ${result.item}`);
-//   values = result.item;
-//   document.getElementById("texts").innerText = result.item;
-// });
 let cartItems = null;
 const carbonEmission = document.querySelector('div[class="child one"]');
 const carbonCost = document.querySelector('div[class="child two"]');
 let pageUrl = window.location.pathname;
+
+//TODO: split pages & js files.
 const isOffset = pageUrl.toLowerCase().endsWith('/offset.html');
 const isEmpty = pageUrl.toLowerCase().endsWith('/empty.html');
 
@@ -22,9 +19,9 @@ chrome.storage.local.onChanged.addListener((changes) => {
 async function loadCarbonImpact() {
   //read carbonEmission
   let { impacts = [] } = await chrome.storage.local.get("impacts");
-  console.log("impacts:")
-  console.log(impacts);
-  let status = STATUS.Empty;
+  // console.info("Total Impacts:", impacts.totalImpact)
+  // console.info(impacts.cartItems);
+  let status = STATUS.Empty; 
   if (impacts) {
     status = impacts.cartStatus;
     if (status == STATUS.Empty) {
@@ -39,6 +36,7 @@ async function loadCarbonImpact() {
 
 loadCarbonImpact();
 
+//TODO: this need move to some other js file...
 function buildItem(impacts) {
   if (isOffset) {
     let pEmission = document.createElement('span');
@@ -55,8 +53,6 @@ function buildItem(impacts) {
     pCost.setAttribute('style', 'font-size: 20px');
     pCost.innerText = impacts.offsetCost.toFixed(2);
     carbonCost.append(pCost);
-
-    console.log(`add item to the cartInfo div.`);
   }
 }
 
@@ -64,8 +60,10 @@ if (isEmpty) {
   let leanMoreBtn = document.querySelector('#leanMoreBtn');
 
   leanMoreBtn.addEventListener('click', async () => {
-    chrome.tabs.create({
-      url: 'https://www.sexytofu.org/'
-    });
+    //we can jump in extension pages. but open third-party page must open new tabs.
+    this.location.href = 'payment-success.html';
+    // chrome.tabs.create({
+    //   url: 'https://www.sexytofu.org/'
+    // });
   });
 }

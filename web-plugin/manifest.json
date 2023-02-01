@@ -1,5 +1,6 @@
 {
 	"name": "Sexy Tofu Chrome Plugin",
+	"description": "TODO: Sexy tofu site related extension tool for help user with carbon emmsion fee calcuation.",
 	"version": "1.0",
 	"manifest_version": 3,
 	"background": {
