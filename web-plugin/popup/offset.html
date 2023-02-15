@@ -1,36 +1,46 @@
 <!DOCTYPE html>
 <html>
+
 <head>
 	<link rel="stylesheet" href="offset.css">
 </head>
+
 <body>
-<div class="close">
-	<span aria-hidden="true" style="color:#6E647A; font-size: 25px;">&times;</span>
-</div>
-<div class="container">
-	<!--insert make cart carbon neutral image-->
-	<img/>
-	<div class="child one">
-	<h3>Carbon Emission</h3>
-	<!--insert co2 calculation-->
+	<div class="txtbubble">
+		<img src="../img/Sexy_tofu_dither.png" />
+		<div class="triangle">&nbsp;</div>
+		<div class="frame606">
+			<span><b>Let's make your cart carbon neutral!</b></span>
+		</div>
+		<div class="close">
+			<span aria-hidden="true" style="color:#6E647A; font-size: 25px;">&times;</span>
+		</div>
 	</div>
-	<div class="child two">
-	<h3>Carbon Offset Cost</h3>
-	<!--insert offset cost calculation-->
+
+	<div class="container">
+		<!--insert make cart carbon neutral image-->
+		<img />
+		<div class="child one">
+			<h3>Carbon Emission</h3>
+			<!--insert co2 calculation-->
+			<span style="font-size: 20px;font-weight: 600;">0.0</span>
+			<span style="color:gray"> lbs of CO2</span>
+		</div>
+		<div class="child two">
+			<h3>Carbon Offset Cost</h3>
+			<!--insert offset cost calculation-->
+			<span style="font-size: 20px;font-weight: 600;">$0.0</span>
+		</div>
 	</div>
-</div>
-<div class="form-container">
-<!--link to payment method (is this going to be another website?)-->
-	<form action="https://google.com">
-		<input type="submit" value="Offset" class="offset"/>
-	</form>
-	<hr width="330px" color="#DBD8DE">
-	<!--link to projects website (for now, it's google)-->
-	<form action="https://google.com">
-		<input type="submit" value="Learn about carbon offsetting projects" class="projects" />
-	</form>
-</div>
-<script defer src="../js/common.js"></script>
-<script defer src="../js/popup.js"></script>
+	<div class="form-container">
+		<!--link to payment method (is this going to be another website?)-->
+		<input type="submit" id='paymentBtn' value="I want to offset" class="offset" />
+		<hr width="330px" color="#DBD8DE">
+		<!--link to projects website (for now, it's google)-->
+		<input type="submit" id="leanMoreBtn" value="Learn about carbon offsetting projects" class="projects" />
+	</div>
+	<script defer src="../js/common.js"></script>
+	<script defer src="../js/popup.js"></script>
 </body>
+
 </html>

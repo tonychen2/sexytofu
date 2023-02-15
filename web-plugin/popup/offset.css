@@ -1,50 +1,96 @@
 .container {
-    display: flex;
-    text-align: left;
-    margin-left: 15px;
-    padding-top: 40px;
+  display: flex;
+  text-align: left;
+  margin-left: 15px;
+  padding-top: 0px;
+  margin-bottom: 25px;
 }
 
 .child {
-    flex: 1;
-    text-align: center;
+  flex: 1;
+  text-align: center;
 }
 
-
+@font-face {
+  font-family: Poppins;
+  src: url(../fonts/Poppins-Light.ttf);
+}
 
 body {
-    width: 350px;
-    height: 250px;
+  width: 350px;
+  height: 250px;
+  font-family: Poppins;
+}
+
+.txtbubble {
+    /* Text bubble */
+    height: 32px;
+
+    /* Inside auto layout */
+    flex: none;
+    order: 1;
+    flex-grow: 0;
+}
+
+.frame606 {
+    /* Auto layout */
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    padding: 4px 4px 7px;
+    gap: 10px;
+
+    position: absolute;
+
+    height: 21px;
+    left: 64px;
+    top: 13px;
+
+    /* Neutral/Container */
+    background: #F6F5F7;
+    border-radius: 4px;
+}
+
+.triangle {
+    margin-top: -24px;
+    margin-left: 45px;
+    width: 15px;
+    height: 10.5px;
+    background-repeat: no-repeat;
+    outline: 0px solid F6F5F7;
+    background-image: linear-gradient(-50deg, #F6F5F7 50%, rgba(255, 255, 255, 0) 50%);
 }
 
 input {
-    width: 330px;
-    height: 35px;
+  width: 330px;
+  height: 35px;
+  cursor: pointer;
 }
 
 .offset {
-    background-color: #F15CB7;
-    border-color: #F15CB7;
-    color: white;
+  background-color: #f15cb7;
+  border-color: #f15cb7;
+  color: white;
 }
 
 .projects {
-    background-color: white;
-    border-color: #F15CB7;
-    color:#F15CB7;
+  background-color: white;
+  border-color: #f15cb7;
+  color: #f15cb7;
 }
 
 form {
-    padding: 7px;
+  padding: 7px;
 }
 
 .form-container {
-    text-align: center;
+  text-align: center;
 }
 
 .close {
-    float: right;
-    padding-right: 15px;
-    padding-bottom: 10px;
-    padding-top: 5px;
+  float: right;
+  padding-right: 15px;
+  padding-bottom: 10px;
+  margin-top: -35px;
+  cursor:pointer;
 }

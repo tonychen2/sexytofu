@@ -39,7 +39,8 @@ input {
   margin-top: 9px;
   margin-bottom: 9px;
   font-family: Poppins;
-  color: #FACAE8
+  color: #FACAE8;
+  cursor: pointer;
 }
 
 .offset {
@@ -71,6 +72,7 @@ p {
   float: right;
   margin-top: 5px;
   margin-right: 5px;
+  cursor:pointer;
 }
 
 .triangle {
