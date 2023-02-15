@@ -21,7 +21,7 @@ async function loadCarbonImpact() {
   let { impacts = [] } = await chrome.storage.local.get("impacts");
   // console.info("Total Impacts:", impacts.totalImpact)
   // console.info(impacts.cartItems);
-  let status = STATUS.Empty; 
+  let status = STATUS.Empty;
   if (impacts) {
     status = impacts.cartStatus;
     if (status == STATUS.Empty) {
@@ -39,31 +39,39 @@ loadCarbonImpact();
 //TODO: this need move to some other js file...
 function buildItem(impacts) {
   if (isOffset) {
-    let pEmission = document.createElement('span');
-    pEmission.setAttribute('style', 'font-size: 20px');
+    let pEmission = document.querySelector('div[class="child one"] span');
     pEmission.innerText = impacts.totalImpact.toFixed(1);
-    carbonEmission.append(pEmission);
 
-    let co2Lable = document.createElement('span');
-    co2Lable.setAttribute('style', 'color:gray');
-    co2Lable.innerText = " lbs of CO2";
-    carbonEmission.append(co2Lable);
-
-    let pCost = document.createElement('span');
-    pCost.setAttribute('style', 'font-size: 20px');
-    pCost.innerText = impacts.offsetCost.toFixed(2);
-    carbonCost.append(pCost);
+    let pCost = document.querySelector('div[class="child two"] span');
+    pCost.innerText = '$' + impacts.offsetCost.toFixed(2);
   }
 }
 
-if (isEmpty) {
-  let leanMoreBtn = document.querySelector('#leanMoreBtn');
-
+let leanMoreBtn = document.querySelector('#leanMoreBtn');
+if (leanMoreBtn) {
   leanMoreBtn.addEventListener('click', async () => {
     //we can jump in extension pages. but open third-party page must open new tabs.
-    this.location.href = 'payment-success.html';
-    // chrome.tabs.create({
-    //   url: 'https://www.sexytofu.org/'
-    // });
+    // this.location.href = 'payment-success.html';
+    chrome.tabs.create({
+      url: 'https://info.sexytofu.org/'
+    });
+  });
+}
+
+let paymentBtn = document.querySelector('#paymentBtn');
+if (paymentBtn) {
+  paymentBtn.addEventListener('click', async () => {
+    //we can jump in extension pages. but open third-party page must open new tabs.
+    // this.location.href = 'payment-success.html';
+    chrome.tabs.create({
+      url: 'https://marketplace.goldstandard.org/collections/projects'
+    });
+  });
+}
+
+let closeBtn = document.querySelector('.close');
+if (closeBtn) {
+  closeBtn.addEventListener('click', async () => {
+    self.close();
   });
 }
