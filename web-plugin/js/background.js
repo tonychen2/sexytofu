@@ -1,17 +1,18 @@
 try {
     importScripts("./common.js");
 } catch (e) {
-    console.error(e);
+    console.error(e.message);
 }
 
 const GHGI_API_ADDRESS = 'https://api.sexytofu.org/api.ghgi.org:443';
 const GHGI_CONFIDENCE_LIMIT = 0.3; //need try found a reasonable limit. 0.5 will ignore too much, like organic banana.
-const carbonCostFeeRate = 0.110; // so far 0.11 per lb,as  $50 per 1000 kg
+const G_TO_POUND = 0.00220462262185;
+const CarbonCostFeeRate = 0.000050; //  $50 per 1000 kg, as per  0.000050 /per g.
 const IS_Debuger = true;
 
 chrome.runtime.onInstalled.addListener(details => {
     if (IS_Debuger) {
-        //move demo page auto open when install/update
+        //set demo page auto open when install/update
         chrome.tabs.create({
             url: '../demo/index.html'
         });
@@ -67,7 +68,10 @@ async function postItems(items) {
             food.push(`${item["quantity"]} ${item["unit"]} of ${item["name"]}`);
         }
     }
-    console.time('Ghgi request');
+    if (IS_Debuger) {
+        console.time('Ghgi request');
+    }
+
     let results = await fetch(`${GHGI_API_ADDRESS}/rate`,
         {
             method: 'POST',
@@ -75,7 +79,10 @@ async function postItems(items) {
         })
         .then(response => response.json())
         .then(json => parseResponse(json));
-    console.timeEnd('Ghgi request');
+
+    if (IS_Debuger) {
+        console.timeEnd('Ghgi request');
+    }
 }
 
 //kind of best practice to auto init
@@ -125,10 +132,11 @@ const parseResponse = async (json) => {
     let cartItems = [];
     // Find impact of each ingredient and rank them
     for (let item of json["items"]) {
-        let impact, product, matched;
+        let impact, product, matched, origImpact;
         matched = item["match_conf"] >= GHGI_CONFIDENCE_LIMIT;
         if (matched) {
-            impact = item["impact"] / 1000 * 2.2; // Convert from grams to pounds
+            origImpact = item["impact"];
+            impact = origImpact * G_TO_POUND;
             product = item["product"]?.["alias"];
         } else {
             impact = null;
@@ -140,15 +148,18 @@ const parseResponse = async (json) => {
             match_conf: item["match_conf"],
             matched: matched,
             impact: impact,
+            origImpact: origImpact,
             grams: item["g"]
         });
     }
 
     cartItems.sort((a, b) => b.impact - a.impact);
     let totalImpact = cartItems.reduce((acc, curr) => acc + curr.impact, 0);
+    let totalOrigImpact = cartItems.reduce((acc, curr) => acc + curr.origImpact, 0)
+    let offsetCost = totalOrigImpact * CarbonCostFeeRate;
     let status = STATUS.HaveFood;
-
-    if (totalImpact <= 0.01) {
+    let cost = offsetCost.toFixed(2);
+    if (cost < 0.01) {
         status = STATUS.Empty;
         setBadge({
             cartStatus: status,
@@ -159,13 +170,16 @@ const parseResponse = async (json) => {
     let carbonEmission = {
         matched: cartItems.reduce((acc, curr) => acc || curr.matched, false),
         totalImpact: totalImpact,
-        offsetCost: totalImpact * carbonCostFeeRate,
+        totalOrigImpact: totalOrigImpact,
+        offsetCost: offsetCost,
         cartItems: cartItems,
         cartStatus: status
     };
 
-    console.log("CartItems data:")
-    console.table(cartItems);
+    if (IS_Debuger) {
+        console.log("CartItems data:")
+        console.table(cartItems);
+    }
     //save the impact to local.
     await chrome.storage.local.set({ impacts: carbonEmission });
 }

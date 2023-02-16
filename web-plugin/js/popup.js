@@ -19,18 +19,21 @@ chrome.storage.local.onChanged.addListener((changes) => {
 async function loadCarbonImpact() {
   //read carbonEmission
   let { impacts = [] } = await chrome.storage.local.get("impacts");
-  // console.info("Total Impacts:", impacts.totalImpact)
-  // console.info(impacts.cartItems);
+
   let status = STATUS.Empty;
   if (impacts) {
+    console.info("Total Impacts:", impacts.totalImpact);
+    console.info("Total Cost:", impacts.offsetCost);
+    //console.info("cartItems", impacts.cartItems);
+
     status = impacts.cartStatus;
     if (status == STATUS.Empty) {
       let h2 = document.querySelector('h2');
       h2.textContent = "Your cart has no food in it";
     }
-  }
-  if (status == STATUS.HaveFood) {
-    buildItem(impacts)
+    else if (status == STATUS.HaveFood) {
+      buildItem(impacts)
+    }
   }
 }
 

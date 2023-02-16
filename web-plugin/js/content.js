@@ -54,15 +54,15 @@ function printCart() {
             //unit: 6 ct,  3 lb, per lb, each
             textNode = item.firstChild.lastChild.firstChild // TODO: Handle situation where this is not true
 
-            foodName = textNode.firstChild?.firstChild?.textContent;
-            if (foodName) {
+            try {
+                foodName = textNode.firstChild.firstChild.textContent;
                 unit = textNode.firstChild.lastChild.textContent;
                 quantity = textNode.firstChild.nextElementSibling.textContent;
 
                 let food = BuildFoodItem(foodName, unit, quantity)
                 cartItems.push(food);
             }
-            else {
+            catch {
                 console.error('read cart item error:', textNode.outerHTML);
             }
         }
