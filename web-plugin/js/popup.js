@@ -11,29 +11,37 @@ const isEmpty = pageUrl.toLowerCase().endsWith('/empty.html');
 //V2 function... not working anymore.
 //link: https://developer.chrome.com/docs/extensions/mv3/mv3-migration-checklist/#api-background-context
 
-//TODO: maybe need check the status...
-chrome.storage.local.onChanged.addListener((changes) => {
-  loadCarbonImpact();
-})
+try {
+  chrome.storage.local.onChanged.addListener((changes) => {
+    loadCarbonImpact();
+  })
+}
+catch {
+  console.error('Add local onChanged listener failed. Not working in extension mode?');
+}
 
 async function loadCarbonImpact() {
-  //read carbonEmission
-  let { impacts = [] } = await chrome.storage.local.get("impacts");
+  try {
+    let { impacts = [] } = await chrome.storage.local.get("impacts");
 
-  let status = STATUS.Empty;
-  if (impacts) {
-    console.info("Total Impacts:", impacts.totalImpact);
-    console.info("Total Cost:", impacts.offsetCost);
-    //console.info("cartItems", impacts.cartItems);
+    let status = STATUS.Empty;
+    if (impacts) {
+      console.info("Total Impacts:", impacts.totalImpact);
+      console.info("Total Cost:", impacts.offsetCost);
+      //console.info("cartItems", impacts.cartItems);
 
-    status = impacts.cartStatus;
-    if (status == STATUS.Empty) {
-      let h2 = document.querySelector('h2');
-      h2.textContent = "Your cart has no food in it";
+      status = impacts.cartStatus;
+      if (status == STATUS.Empty) {
+        let h2 = document.querySelector('h2');
+        h2.textContent = "Your cart has no food in it";
+      }
+      else if (status == STATUS.HaveFood) {
+        buildItem(impacts)
+      }
     }
-    else if (status == STATUS.HaveFood) {
-      buildItem(impacts)
-    }
+  }
+  catch {
+    console.error('Load local storage failed. Not working in extension mode?');
   }
 }
 
@@ -76,5 +84,12 @@ let closeBtn = document.querySelector('.close');
 if (closeBtn) {
   closeBtn.addEventListener('click', async () => {
     self.close();
+  });
+}
+
+let backBtn = document.querySelector('.backBtn');
+if (backBtn) {
+  backBtn.addEventListener('click', async () => {
+    console.error('TODO: some retry action to get data in backend?');
   });
 }

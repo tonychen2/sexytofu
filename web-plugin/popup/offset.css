@@ -72,7 +72,7 @@ body {
 
 .triangle {
   margin-top: 30.5px;
-  margin-left: 8px;
+  margin-left: 6px;
   width: 15px;
   height: 10.5px;
   background-repeat: no-repeat;
@@ -82,19 +82,6 @@ body {
     #f6f5f7 50%,
     rgba(255, 255, 255, 0) 50%
   );
-}
-
-.mix {
-  position: absolute;
-  width: 7.28px;
-  height: 5.98px;
-  left: 7.28px;
-  top: 26px;
-
-  /* Neutral/Container */
-
-  background: #f6f5f7;
-  transform: matrix(-1, 0, 0, 1, 0, 0);
 }
 
 input {
@@ -158,4 +145,9 @@ h3 {
   font-weight: 600;
   font-size: 12px;
   line-height: 18px;
+}
+
+span {
+  padding: 3px;
+  font-size: 11px;
 }
