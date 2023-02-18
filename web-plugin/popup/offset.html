@@ -6,38 +6,40 @@
 </head>
 
 <body>
-	<div class="txtbubble">
-		<img src="../img/Sexy_tofu_dither.png" />
-		<div class="triangle">&nbsp;</div>
-		<div class="frame606">
-			<span><b>Let's make your cart carbon neutral!</b></span>
+	<div class="BoardContener">
+		<div class="txtbubble">
+			<img src="../img/Sexy_tofu_dither.png" class="tofoIcon" />
+			<div class="triangle">&nbsp;</div>
+			<div class="frame606">
+				<span>Here's the carbon emission for your cart!</span>
+			</div>
 		</div>
-		<div class="close">
-			<span aria-hidden="true" style="color:#6E647A; font-size: 25px;">&times;</span>
-		</div>
-	</div>
 
-	<div class="container">
-		<!--insert make cart carbon neutral image-->
-		<img />
-		<div class="child one">
-			<h3>Carbon Emission</h3>
-			<!--insert co2 calculation-->
-			<span style="font-size: 20px;font-weight: 600;">0.0</span>
-			<span style="color:gray"> lbs of CO2</span>
+		<div class="close">
+			<img src="../img/close.svg" />
 		</div>
-		<div class="child two">
-			<h3>Carbon Offset Cost</h3>
-			<!--insert offset cost calculation-->
-			<span style="font-size: 20px;font-weight: 600;">$0.0</span>
+
+		<div class="container">
+			<!--insert make cart carbon neutral image-->
+			<div class="child one">
+				<h3>Carbon Emission</h3>
+				<!--insert co2 calculation-->
+				<span class="DispValue">0.0</span>
+				<span class="DispExText"> lbs of CO2</span>
+			</div>
+			<div class="child two">
+				<h3>Carbon Offset Cost</h3>
+				<!--insert offset cost calculation-->
+				<span class="DispValue">$0.0</span>
+			</div>
 		</div>
-	</div>
-	<div class="form-container">
-		<!--link to payment method (is this going to be another website?)-->
-		<input type="submit" id='paymentBtn' value="I want to offset" class="offset" />
-		<hr width="330px" color="#DBD8DE">
-		<!--link to projects website (for now, it's google)-->
-		<input type="submit" id="leanMoreBtn" value="Learn about carbon offsetting projects" class="projects" />
+		<div class="form-container">
+			<!--link to payment method (is this going to be another website?)-->
+			<input type="submit" id='paymentBtn' value="I want to offset" class="offset" />
+			<hr>
+			<!--link to projects website (for now, it's google)-->
+			<input type="submit" id="leanMoreBtn" value="Learn about carbon offsetting projects" class="projects" />
+		</div>
 	</div>
 	<script defer src="../js/common.js"></script>
 	<script defer src="../js/popup.js"></script>
