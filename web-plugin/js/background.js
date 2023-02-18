@@ -9,6 +9,9 @@ const GHGI_CONFIDENCE_LIMIT = 0.3; //need try found a reasonable limit. 0.5 will
 const G_TO_POUND = 0.00220462262185;
 const CarbonCostFeeRate = 0.000050; //  $50 per 1000 kg, as per  0.000050 /per g.
 const IS_Debuger = true;
+const ZERO = 0.0000001;
+const MIN_COST = 0.01;
+let Request_Error = false;
 
 chrome.runtime.onInstalled.addListener(details => {
     if (IS_Debuger) {
@@ -92,7 +95,7 @@ async function postItems(items) {
     handleCartItems(items);
 }())
 
-function handleCartItems(items) {
+async function handleCartItems(items) {
     let status = STATUS.Empty;
     let itemsCount = items?.length;
 
@@ -106,7 +109,18 @@ function handleCartItems(items) {
     });
 
     if (itemsCount > 0) {
-        postItems(items);
+        try {
+            await postItems(items);
+        }
+        catch
+        {
+            //Request_Error
+            setBadge({
+                cartStatus: STATUS.ERROR,
+                cartCount: itemsCount
+            });
+            chrome.storage.local.set({ impacts: null });
+        }
     }
     else {
         console.log(`Cart cleared.\n`);
@@ -140,6 +154,7 @@ const parseResponse = async (json) => {
             product = item["product"]?.["alias"];
         } else {
             impact = null;
+            origImpact = null;
             product = item["product"]?.["alias"];
         }
         cartItems.push({
@@ -158,14 +173,17 @@ const parseResponse = async (json) => {
     let totalOrigImpact = cartItems.reduce((acc, curr) => acc + curr.origImpact, 0)
     let offsetCost = totalOrigImpact * CarbonCostFeeRate;
     let status = STATUS.HaveFood;
-    let cost = offsetCost.toFixed(2);
-    if (cost < 0.01) {
+    if (offsetCost < ZERO) {
         status = STATUS.Empty;
         setBadge({
             cartStatus: status,
             cartCount: cartItems.length
         });
     }
+    else if (offsetCost < MIN_COST) {
+        offsetCost = MIN_COST;
+    }
+
 
     let carbonEmission = {
         matched: cartItems.reduce((acc, curr) => acc || curr.matched, false),

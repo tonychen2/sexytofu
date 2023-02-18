@@ -11,7 +11,8 @@ class TofuItem {
 
 const STATUS = {
     Empty: 'empty',
-    HaveFood: 'offset'
+    HaveFood: 'offset',
+    ERROR: 'error'
 }
 
 //we need a convert table for like  "ct -> ounce". many convert GHGI support it.
