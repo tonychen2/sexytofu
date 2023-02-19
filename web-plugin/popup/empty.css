@@ -39,7 +39,6 @@ input {
   margin-bottom: 9px;
   font-family: Poppins;
   color: #facae8;
-  cursor: pointer;
 }
 
 .offset {
@@ -53,6 +52,7 @@ input {
   background-color: white;
   border-color: #f15cb7;
   color: #f15cb7;
+  cursor: pointer;
 }
 
 p {
