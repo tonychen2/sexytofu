@@ -1,6 +1,6 @@
 
 window.addEventListener("click", notifyExtension);
-console.log("sexy-tofu extenstion start to inject content.js...")
+console.warn("sexy-tofu extenstion start to inject content.js...");
 
 var OnCartItemsChange = async (array) => {
     //send message or just use storage?
@@ -13,25 +13,48 @@ var OnCartItemsChange = async (array) => {
 "button" was clicked by checking if the target of user click had the attribute of any of these three parts.
 */
 function notifyExtension(e) {
-    if (e.target.tagName.toLowerCase() == "button") {
-        if (e.target.getAttribute("aria-label")?.includes("View Cart")) {
+    let cartUI = document.querySelector('div[aria-label="Cart"]');
+    let notInCartUI = cartUI?.hasAttribute('hidden') || cartUI?.style.display == 'none';
+    let target = e.target;
+    let tagName = target?.tagName?.toLowerCase();
+
+    if (!notInCartUI && tagName == 'img') {
+        target = target.parentElement;
+        if (target.className == 'RetailerLogo') {
             setTimeout(printCart, 5000); // to make sure DOM elements load. may change to MutationObserver()
+            return;
         }
     }
-    if (e.target.tagName.toLowerCase() == "path") {
-        if (e.target.getAttribute("d").includes("M7")) {
-            setTimeout(printCart, 5000); // to make sure DOM elements load. may change to MutationObserver()
+    else if (tagName != 'span' && tagName != 'button' && tagName != 'svg' && tagName != 'path') {
+        return;
+    }
+
+    let max = 3, i = 0;
+    while (target?.tagName?.toLowerCase() !== 'button') {
+        target = target?.parentElement;
+        i++;
+        if (target == null || i > 3) {//sometimes, click area remove from UI, so no parent.
+            break;
         }
     }
-    if (e.target.tagName.toLowerCase() == "span") {
-        if (e.target.getAttribute("class") == "css-pvkn2g") {
-            setTimeout(printCart, 5000); // to make sure DOM elements load. may change to MutationObserver()
+    console.info('Button Clicked: ', target? target.outerHTML: '(button removed.)');
+    let ariaLabel = target?.getAttribute("aria-label")?.toLowerCase();
+    let btnText = target?.outerText;
+
+    if (notInCartUI) {
+        if (ariaLabel?.includes("add") || ariaLabel?.includes("remove")
+            || ariaLabel?.includes("increment") || ariaLabel?.includes("decrement")
+            || target == null || btnText == 'Add to cart' || btnText == 'Update quantity') {
+            //inform need open cart again.
+            console.warn('Need reopen the cart again!')
+            //document.querySelector('button[class="css-1xkv4c5"]').click()
+            //TODO: get message to do?
         }
     }
-    if (e.target.tagName.toLowerCase() == "svg") {
-        if (e.target.getAttribute("size") == "24") {
-            setTimeout(printCart, 5000); // to make sure DOM elements load. may change to MutationObserver()
-        }
+    //view cart click, before function call, the UI attribute is in cart.
+    else if (ariaLabel?.includes("view cart") || ariaLabel?.includes("increment") ||
+        ariaLabel?.includes("decrement") || target.outerText == 'remove') {
+        setTimeout(printCart, 5000); // to make sure DOM elements load. may change to MutationObserver()
     }
 }
 
@@ -44,6 +67,7 @@ function printCart() {
     //      for (i = 0; i < items.length; ++i) {
     //         console.log(items[i].textContent);
     //     }
+
     var items = document.querySelectorAll('div[aria-label="product"]');
     // TODO: Consider refactor as foreach + callback
     let cartItems = [];

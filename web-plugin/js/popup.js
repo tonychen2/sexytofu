@@ -90,6 +90,6 @@ if (closeBtn) {
 let backBtn = document.querySelector('.backBtn');
 if (backBtn) {
   backBtn.addEventListener('click', async () => {
-    console.error('TODO: some retry action to get data in backend?');
+    console.warn('TODO: some retry action to get data in backend?');
   });
 }
