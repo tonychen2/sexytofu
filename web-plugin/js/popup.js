@@ -87,9 +87,19 @@ if (closeBtn) {
   });
 }
 
+closeBtn = document.querySelector('.CloseBtn');
+if (closeBtn) {
+  closeBtn.addEventListener('click', async () => {
+    self.close();
+  });
+}
+
 let backBtn = document.querySelector('.backBtn');
 if (backBtn) {
   backBtn.addEventListener('click', async () => {
-    console.warn('TODO: some retry action to get data in backend?');
+    console.warn('retry action to get data in backend: message: Refresh');
+    chrome.runtime.sendMessage({
+      action: 'Refresh',
+    })
   });
 }

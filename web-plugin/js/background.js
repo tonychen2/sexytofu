@@ -11,8 +11,10 @@ const CarbonCostFeeRate = 0.000050; //  $50 per 1000 kg, as per  0.000050 /per g
 const IS_Debuger = true;
 const ZERO = 0.0000001;
 const MIN_COST = 0.01;
-const Expire_Period = 60 * 1000; //24 * 60 * 60 * 1000;
-let Request_Error = false;
+const Expire_Period = 10 * 60 * 1000; //24 * 60 * 60 * 1000;
+const OutDatedColor = '#FABB05';
+const DefaultColor = '#4285F4';
+const DefaultTextColor = '#FFFFFF';
 
 chrome.runtime.onInstalled.addListener(details => {
     if (IS_Debuger) {
@@ -79,8 +81,9 @@ function validDateCartItems(alarm) {
 chrome.alarms.onAlarm.addListener(validDateCartItems);
 
 //kind of best practice to auto init
-(async function () {
+(async function InitData() {
     let { carts } = await chrome.storage.sync.get("carts");
+    chrome.action.setBadgeTextColor({color: DefaultTextColor});
     let items = [];
     if (carts) {
         items = carts.items;
@@ -99,6 +102,27 @@ chrome.alarms.onAlarm.addListener(validDateCartItems);
     }
     handleCartItems(items);
 }())
+
+chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
+    //1. retry to calc
+    //2. set carts outdated
+    // var popupFile = `./popup/${message.cartStatus}.html`;
+
+    switch (message.action) {
+        case 'Refresh':
+            console.log('start to recalc again');
+            InitData();
+            break;
+        case 'OutDated':
+            var popupFile = `./popup/Outdated.html`;
+            chrome.action.setPopup({ popup: popupFile });
+            chrome.action.setBadgeBackgroundColor({ color: OutDatedColor });
+            break;
+        case 'Normal':
+            chrome.action.setBadgeBackgroundColor({ color: DefaultColor });
+            break;
+    }
+});
 
 async function handleCartItems(items) {
     let status = STATUS.Empty;

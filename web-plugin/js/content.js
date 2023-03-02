@@ -1,6 +1,5 @@
-
 window.addEventListener("click", notifyExtension);
-console.warn("sexy-tofu extenstion start to inject content.js...");
+console.info("sexy-tofu extenstion start to inject content.js...");
 
 var OnCartItemsChange = async (array) => {
     //send message or just use storage?
@@ -13,6 +12,12 @@ var OnCartItemsChange = async (array) => {
         timestamp: Date.now()
     }
     await chrome.storage.sync.set({ carts: carts });
+}
+
+function setOutDated(isOutDated) {
+    chrome.runtime.sendMessage({
+        action: isOutDated ? 'OutDated' : 'Normal'
+    })
 }
 
 /* The InstaCart Cart "button" consists of 3 parts: a path, a span, and an svg (the cart icon). This function verifies that the 
@@ -39,10 +44,11 @@ function notifyExtension(e) {
     while (target?.tagName?.toLowerCase() !== 'button') {
         target = target?.parentElement;
         i++;
-        if (target == null || i > 3) {//sometimes, click area remove from UI, so no parent.
+        if (target == null || i > max) {//sometimes, click area remove from UI, so no parent.
             break;
         }
     }
+
     console.info('Button Clicked: ', target ? target.outerHTML : '(button removed.)');
     let ariaLabel = target?.getAttribute("aria-label")?.toLowerCase();
     let btnText = target?.outerText;
@@ -52,9 +58,8 @@ function notifyExtension(e) {
             || ariaLabel?.includes("increment") || ariaLabel?.includes("decrement")
             || target == null || btnText == 'Add to cart' || btnText == 'Update quantity') {
             //inform need open cart again.
-            console.warn('Need reopen the cart again!')
-            //document.querySelector('button[class="css-1xkv4c5"]').click()
-            //TODO: get message to do?
+            console.info('Need reopen the cart again!')
+            setOutDated(true);
         }
     }
     //view cart click, before function call, the UI attribute is in cart.
@@ -68,6 +73,7 @@ function printCart() {
     var items = document.querySelectorAll('div[aria-label="product"]');
     // TODO: Consider refactor as foreach + callback
     let cartItems = [];
+    setOutDated(false);
     for (i = 0; i < items.length; ++i) {
         item = items[i];
 
