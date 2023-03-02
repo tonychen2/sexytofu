@@ -6,7 +6,13 @@ var OnCartItemsChange = async (array) => {
     //send message or just use storage?
     console.log('current cart items:');
     console.table(array);
-    await chrome.storage.sync.set({ items: array });
+
+    //add time flag for clear cache after outdated. now: 24h.
+    let carts = {
+        items: array,
+        timestamp: Date.now()
+    }
+    await chrome.storage.sync.set({ carts: carts });
 }
 
 /* The InstaCart Cart "button" consists of 3 parts: a path, a span, and an svg (the cart icon). This function verifies that the 
@@ -37,7 +43,7 @@ function notifyExtension(e) {
             break;
         }
     }
-    console.info('Button Clicked: ', target? target.outerHTML: '(button removed.)');
+    console.info('Button Clicked: ', target ? target.outerHTML : '(button removed.)');
     let ariaLabel = target?.getAttribute("aria-label")?.toLowerCase();
     let btnText = target?.outerText;
 
@@ -59,15 +65,6 @@ function notifyExtension(e) {
 }
 
 function printCart() {
-    // TODO: Check if it's actually the right page
-    //console.clear(); // personal preference
-    // Previous version: scrape based on class name, yet unstable
-    // On Jul 18: 'css-1k4e3ab' stopped working
-    // var items = document.querySelectorAll('span[style*="color: rgb(52, 53, 56)"], div[class="rmq-a40185f5"]');
-    //      for (i = 0; i < items.length; ++i) {
-    //         console.log(items[i].textContent);
-    //     }
-
     var items = document.querySelectorAll('div[aria-label="product"]');
     // TODO: Consider refactor as foreach + callback
     let cartItems = [];

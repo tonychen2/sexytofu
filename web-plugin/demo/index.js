@@ -3,15 +3,21 @@ var OnCartItemsChange = async (array) => {
     //send message or just use storage?
     console.log(`storage set items:`);
     console.table(array);
-    await chrome.storage.sync.set({ items: array });
+    let carts = {
+        items: array,
+        timestamp: Date.now()
+    }
+    await chrome.storage.sync.set({ carts: carts });
 }
 
 let cartItems = [];
 
 //for demo page, need reload the storage when reload.
 (async function () {
-    let { items = [] } = await chrome.storage.sync.get("items");
-    cartItems = items;
+    let { carts } = await chrome.storage.sync.get("carts");
+    if (carts) {
+        cartItems = carts.items;
+    }
 }());
 
 let addButton = document.querySelector("#addItem");

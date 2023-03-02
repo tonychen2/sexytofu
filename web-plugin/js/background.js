@@ -11,6 +11,7 @@ const CarbonCostFeeRate = 0.000050; //  $50 per 1000 kg, as per  0.000050 /per g
 const IS_Debuger = true;
 const ZERO = 0.0000001;
 const MIN_COST = 0.01;
+const Expire_Period = 60 * 1000; //24 * 60 * 60 * 1000;
 let Request_Error = false;
 
 chrome.runtime.onInstalled.addListener(details => {
@@ -26,28 +27,6 @@ chrome.runtime.onInstalled.addListener(details => {
         chrome.runtime.setUninstallURL("https://info.sexytofu.org/");
     }
 });
-
-//this seems never fired...
-chrome.runtime.onStartup.addListener(() => {
-    console.log("onstartup...");
-})
-
-//after demo changed work in side extension. seems no need here.
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    let response = "";
-
-    if (message.bageText != undefined) {
-        response = message.bageText;
-        chrome.action.setBadgeText({ text: response });
-    }
-    else if (message.bageColor) {
-        response = message.bageColor;
-        chrome.action.setBadgeBackgroundColor({ response });
-    }
-
-    sendResponse(`message received: ${response}`);
-});
-
 
 function setBadge(message) {
     var popupFile = `./popup/${message.cartStatus}.html`;
@@ -88,18 +67,44 @@ async function postItems(items) {
     }
 }
 
+function validDateCartItems(alarm) {
+    if ('validCartItems' == alarm.name) {
+        let json = JSON.stringify(alarm);
+        console.log(`Alarm "${alarm.name}" fired at ${new Date().toLocaleString()}\n${json}}`);
+        chrome.storage.sync.set({ carts: null });
+        chrome.alarms.clear(alarm.name);
+    }
+}
+
+chrome.alarms.onAlarm.addListener(validDateCartItems);
+
 //kind of best practice to auto init
 (async function () {
-    let { items = [] } = await chrome.storage.sync.get("items");
-    cartItems = items;
+    let { carts } = await chrome.storage.sync.get("carts");
+    let items = [];
+    if (carts) {
+        items = carts.items;
+        timestamp = carts.timestamp;
+
+        timestamp = Number(timestamp);
+        if (timestamp) {
+            timestamp += Expire_Period;
+            if (Date.now() > timestamp) {
+                items = [];//clear the cart items.
+            }
+            else {//create alarm
+                chrome.alarms.create("validCartItems", { when: timestamp });
+            }
+        }
+    }
     handleCartItems(items);
 }())
 
 async function handleCartItems(items) {
     let status = STATUS.Empty;
-    let itemsCount = items?.length;
+    let itemsCount = items ? items.length : 0;
 
-    if (items?.length > 0) {
+    if (itemsCount > 0) {
         status = STATUS.HaveFood;
     }
 
@@ -108,7 +113,11 @@ async function handleCartItems(items) {
         cartCount: itemsCount
     });
 
+    //set null before start to calc.
+    chrome.storage.local.set({ impacts: null });
+
     if (itemsCount > 0) {
+        console.log(`Cart items received at ${new Date().toLocaleString()}`)
         try {
             await postItems(items);
         }
@@ -119,19 +128,25 @@ async function handleCartItems(items) {
                 cartStatus: STATUS.ERROR,
                 cartCount: itemsCount
             });
-            chrome.storage.local.set({ impacts: null });
         }
     }
     else {
         console.log(`Cart cleared.\n`);
-        chrome.storage.local.set({ impacts: null });
     }
 }
 
-//TODO: use message get change from content js?
+//when get cart items changes
 chrome.storage.sync.onChanged.addListener((changes) => {
-    var items = changes.items.newValue;
-    handleCartItems(items);
+    var carts = changes.carts;
+    if (carts) {
+        items = carts.newValue?.items;
+        timestamp = carts.newValue?.timestamp;
+        if (items) {
+            let expireTime = Number(timestamp) + Expire_Period;
+            chrome.alarms.create("validCartItems", { when: expireTime });
+        }
+        handleCartItems(items);
+    }
 })
 
 const parseResponse = async (json) => {
