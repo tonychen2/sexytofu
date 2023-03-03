@@ -32,7 +32,7 @@ function notifyExtension(e) {
     if (!notInCartUI && tagName == 'img') {
         target = target.parentElement;
         if (target.className == 'RetailerLogo') {
-            setTimeout(printCart, 5000); // to make sure DOM elements load. may change to MutationObserver()
+            delayPrintCart();
             return;
         }
     }
@@ -50,8 +50,10 @@ function notifyExtension(e) {
     }
 
     console.info('Button Clicked: ', target ? target.outerHTML : '(button removed.)');
+
     let ariaLabel = target?.getAttribute("aria-label")?.toLowerCase();
-    let btnText = target?.outerText;
+    let btnText = target?.outerText.toLowerCase();
+    let isHomePage = window.location.pathname.trim().toLowerCase().endsWith('/store');
 
     if (notInCartUI) {
         if (ariaLabel?.includes("add") || ariaLabel?.includes("remove")
@@ -63,10 +65,19 @@ function notifyExtension(e) {
         }
     }
     //view cart click, before function call, the UI attribute is in cart.
-    else if (ariaLabel?.includes("view cart") || ariaLabel?.includes("increment") ||
+    else if ((!isHomePage && ariaLabel?.includes("view cart")) || ariaLabel?.includes("increment") ||
         ariaLabel?.includes("decrement") || target.outerText == 'remove') {
-        setTimeout(printCart, 5000); // to make sure DOM elements load. may change to MutationObserver()
+        delayPrintCart();
     }
+}
+
+async function delayPrintCart() {
+    //set isCalc first.
+    chrome.runtime.sendMessage({
+        action: 'isCalcuating'
+    })
+
+    setTimeout(printCart, 5000); // to make sure DOM elements load. may change to MutationObserver()
 }
 
 function printCart() {

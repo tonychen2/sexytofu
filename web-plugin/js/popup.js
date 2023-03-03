@@ -11,18 +11,30 @@ const isEmpty = pageUrl.toLowerCase().endsWith('/empty.html');
 //V2 function... not working anymore.
 //link: https://developer.chrome.com/docs/extensions/mv3/mv3-migration-checklist/#api-background-context
 
-try {
-  chrome.storage.local.onChanged.addListener((changes) => {
-    loadCarbonImpact();
-  })
+let timerCalc = null;
+let i = 0;
+
+if (isEmpty) {
+  loadCarbonImpact();
 }
-catch {
-  console.error('Add local onChanged listener failed. Not working in extension mode?');
+else {
+  timerCalc = setTimeout(() => { checkIsCalc() }, 300);
+}
+
+async function checkIsCalc() {
+  let { isCalc } = await chrome.storage.local.get("isCalc");
+
+  if (isCalc) {
+    timerCalc = setTimeout(() => { checkIsCalc() }, 100);
+  } else {
+    loadCarbonImpact();
+    clearTimeout(timerCalc);
+  }
 }
 
 async function loadCarbonImpact() {
   try {
-    let { impacts = [] } = await chrome.storage.local.get("impacts");
+    let { impacts } = await chrome.storage.local.get("impacts");
 
     let status = STATUS.Empty;
     if (impacts) {
@@ -31,12 +43,32 @@ async function loadCarbonImpact() {
       //console.info("cartItems", impacts.cartItems);
 
       status = impacts.cartStatus;
+
       if (status == STATUS.Empty) {
-        let h2 = document.querySelector('h2');
-        h2.textContent = "Your cart has no food in it";
+        if (isEmpty) {
+          let h2 = document.querySelector('h2');
+          h2.textContent = "Your cart has no food in it";
+        }
+        else {
+          this.location.href = 'empty.html';
+        }
       }
       else if (status == STATUS.HaveFood) {
-        buildItem(impacts)
+        if (isOffset) {
+          let bubbleTxt = document.querySelector('#bubbleTxt');
+          let offsetBtn = document.querySelector('#paymentBtn');
+
+          if (bubbleTxt) {
+            bubbleTxt.textContent = "Here's the carbon emission for your cart!";
+          }
+          if (offsetBtn) {
+            offsetBtn.toggleAttribute("disabled");
+          }
+          buildItem(impacts)
+        }
+        else {
+          this.location.href = 'offset.html';
+        }
       }
     }
   }
@@ -44,8 +76,6 @@ async function loadCarbonImpact() {
     console.error('Load local storage failed. Not working in extension mode?');
   }
 }
-
-loadCarbonImpact();
 
 //TODO: this need move to some other js file...
 function buildItem(impacts) {

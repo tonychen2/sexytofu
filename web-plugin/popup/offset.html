@@ -3,15 +3,16 @@
 
 <head>
 	<link rel="stylesheet" href="offset.css">
+	<meta charset="utf-8">
 </head>
 
 <body>
-	<div class="BoardContener">
+	<div class="BoardContainer">
 		<div class="txtbubble">
 			<img src="../img/Sexy_tofu_dither.png" class="tofoIcon" />
 			<div class="triangle">&nbsp;</div>
 			<div class="frame606">
-				<span>Here's the carbon emission for your cart!</span>
+				<span id="bubbleTxt">Calculating... Please wait...</span>
 			</div>
 		</div>
 
@@ -24,18 +25,18 @@
 			<div class="child one">
 				<h3>Carbon Emission</h3>
 				<!--insert co2 calculation-->
-				<span class="DispValue">0.0</span>
+				<span class="DispValue">···</span>
 				<span class="DispExText"> lbs of CO2</span>
 			</div>
 			<div class="child two">
 				<h3>Carbon Offset Cost</h3>
 				<!--insert offset cost calculation-->
-				<span class="DispValue">$0.0</span>
+				<span class="DispValue">···</span>
 			</div>
 		</div>
 		<div class="form-container">
 			<!--link to payment method (is this going to be another website?)-->
-			<input type="submit" id='paymentBtn' value="I want to offset" class="offset" />
+			<input type="submit" id='paymentBtn' value="I want to offset" class="offset" disabled/>
 			<hr>
 			<!--link to projects website (for now, it's google)-->
 			<input type="submit" id="leanMoreBtn" value="Learn about carbon offsetting projects" class="projects" />

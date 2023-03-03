@@ -11,7 +11,7 @@ const CarbonCostFeeRate = 0.000050; //  $50 per 1000 kg, as per  0.000050 /per g
 const IS_Debuger = true;
 const ZERO = 0.0000001;
 const MIN_COST = 0.01;
-const Expire_Period = 10 * 60 * 1000; //24 * 60 * 60 * 1000;
+const Expire_Period = 24 * 60 * 60 * 1000;
 const OutDatedColor = '#FABB05';
 const DefaultColor = '#4285F4';
 const DefaultTextColor = '#FFFFFF';
@@ -83,8 +83,11 @@ chrome.alarms.onAlarm.addListener(validDateCartItems);
 //kind of best practice to auto init
 (async function InitData() {
     let { carts } = await chrome.storage.sync.get("carts");
-    chrome.action.setBadgeTextColor({color: DefaultTextColor});
     let items = [];
+
+    chrome.action.setBadgeTextColor({ color: DefaultTextColor });
+    setIsCalcStatus(true);
+
     if (carts) {
         items = carts.items;
         timestamp = carts.timestamp;
@@ -121,6 +124,9 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
         case 'Normal':
             chrome.action.setBadgeBackgroundColor({ color: DefaultColor });
             break;
+        case 'isCalcuating':
+            setIsCalcStatus(true);
+            break;
     }
 });
 
@@ -137,9 +143,6 @@ async function handleCartItems(items) {
         cartCount: itemsCount
     });
 
-    //set null before start to calc.
-    chrome.storage.local.set({ impacts: null });
-
     if (itemsCount > 0) {
         console.log(`Cart items received at ${new Date().toLocaleString()}`)
         try {
@@ -152,11 +155,19 @@ async function handleCartItems(items) {
                 cartStatus: STATUS.ERROR,
                 cartCount: itemsCount
             });
+            chrome.storage.local.set({ impacts: null });
         }
     }
     else {
+        chrome.storage.local.set({ impacts: null });
         console.log(`Cart cleared.\n`);
     }
+
+    setIsCalcStatus(false);
+}
+
+function setIsCalcStatus(flag) {
+    chrome.storage.local.set({ isCalc: flag });
 }
 
 //when get cart items changes
@@ -222,7 +233,6 @@ const parseResponse = async (json) => {
     else if (offsetCost < MIN_COST) {
         offsetCost = MIN_COST;
     }
-
 
     let carbonEmission = {
         matched: cartItems.reduce((acc, curr) => acc || curr.matched, false),
