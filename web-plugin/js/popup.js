@@ -18,7 +18,7 @@ if (isEmpty) {
   loadCarbonImpact();
 }
 else {
-  timerCalc = setTimeout(() => { checkIsCalc() }, 300);
+  timerCalc = setTimeout(() => { checkIsCalc() }, 1000);
 }
 
 async function checkIsCalc() {

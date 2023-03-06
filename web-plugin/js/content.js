@@ -1,7 +1,7 @@
 window.addEventListener("click", notifyExtension);
 console.info("sexy-tofu extenstion start to inject content.js...");
 
-var OnCartItemsChange = async (array) => {
+OnCartItemsChange = async (array) => {
     //send message or just use storage?
     console.log('current cart items:');
     console.table(array);
@@ -66,22 +66,41 @@ function notifyExtension(e) {
     }
     //view cart click, before function call, the UI attribute is in cart.
     else if ((!isHomePage && ariaLabel?.includes("view cart")) || ariaLabel?.includes("increment") ||
-        ariaLabel?.includes("decrement") || target.outerText == 'remove') {
+        ariaLabel?.includes("decrement") || btnText == 'remove') {
         delayPrintCart();
     }
 }
 
+let timerPrint = null;
 async function delayPrintCart() {
     //set isCalc first.
     chrome.runtime.sendMessage({
         action: 'isCalcuating'
     })
 
-    setTimeout(printCart, 5000); // to make sure DOM elements load. may change to MutationObserver()
+    clearTimeout(timerPrint);//cancel the before timer first.
+    console.log(`Go to read  carts, wait 500ms first: ${new Date().toLocaleString()}`);
+    timerPrint = setTimeout(printCart, 500);
 }
 
 function printCart() {
-    var items = document.querySelectorAll('div[aria-label="product"]');
+    //if user have exit the cart, need set OutDated.
+    let cartUI = document.querySelector('div[aria-label="Cart"]');
+    let notInCartUI = cartUI?.hasAttribute('hidden') || cartUI?.style.display == 'none';
+    if (notInCartUI) {
+        console.log("User exit the cart UI, we can't read cart items now...")
+        setOutDated(true);
+        return;
+    }
+    let cartBody = document.querySelector('div[id="cart-body"]');
+    if (!cartBody) {//here to make sure cartbody is loaded.
+        console.log(`Cart Body not ready, wait 300ms again: ${new Date().toLocaleString()}`);
+        timerPrint = setTimeout(printCart, 300);
+        return;
+    }
+
+    console.log(`Print start: ${new Date().toLocaleString()}`);
+    let items = document.querySelectorAll('div[aria-label="product"]');
     // TODO: Consider refactor as foreach + callback
     let cartItems = [];
     setOutDated(false);
@@ -101,7 +120,7 @@ function printCart() {
                 cartItems.push(food);
             }
             catch {
-                console.error('read cart item error:', textNode.outerHTML);
+                console.warn('read cart item error:', textNode.outerHTML);
             }
         }
         else {

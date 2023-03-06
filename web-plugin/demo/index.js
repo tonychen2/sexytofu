@@ -1,5 +1,5 @@
 
-var OnCartItemsChange = async (array) => {
+OnCartItemsChange = async (array) => {
     //send message or just use storage?
     console.log(`storage set items:`);
     console.table(array);
@@ -26,7 +26,7 @@ let weightInput = document.querySelector("#quan");
 
 addButton.addEventListener('click', () => {
     if (nameInput.value?.length > 0 && weightInput.value?.length > 0) {
-        var item = new TofuItem(nameInput.value, "ea", `${weightInput.value}`);
+        let item = new TofuItem(nameInput.value, "ea", `${weightInput.value}`);
         cartItems.push(item);
         OnCartItemsChange(cartItems);
     }

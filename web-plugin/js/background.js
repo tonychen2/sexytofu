@@ -5,7 +5,7 @@ try {
 }
 
 const GHGI_API_ADDRESS = 'https://api.sexytofu.org/api.ghgi.org:443';
-const GHGI_CONFIDENCE_LIMIT = 0.3; //need try found a reasonable limit. 0.5 will ignore too much, like organic banana.
+const GHGI_CONFIDENCE_LIMIT = 0.2; //need try found a reasonable limit. 0.5 will ignore too much, like organic banana.
 const G_TO_POUND = 0.00220462262185;
 const CarbonCostFeeRate = 0.000050; //  $50 per 1000 kg, as per  0.000050 /per g.
 const IS_Debuger = true;
@@ -31,7 +31,7 @@ chrome.runtime.onInstalled.addListener(details => {
 });
 
 function setBadge(message) {
-    var popupFile = `./popup/${message.cartStatus}.html`;
+    let popupFile = `./popup/${message.cartStatus}.html`;
     chrome.action.setPopup({ popup: popupFile });
 
     let text = message.cartCount.toString();
@@ -109,15 +109,13 @@ chrome.alarms.onAlarm.addListener(validDateCartItems);
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     //1. retry to calc
     //2. set carts outdated
-    // var popupFile = `./popup/${message.cartStatus}.html`;
-
     switch (message.action) {
         case 'Refresh':
             console.log('start to recalc again');
             InitData();
             break;
         case 'OutDated':
-            var popupFile = `./popup/Outdated.html`;
+            let popupFile = `./popup/Outdated.html`;
             chrome.action.setPopup({ popup: popupFile });
             chrome.action.setBadgeBackgroundColor({ color: OutDatedColor });
             break;
@@ -172,7 +170,7 @@ function setIsCalcStatus(flag) {
 
 //when get cart items changes
 chrome.storage.sync.onChanged.addListener((changes) => {
-    var carts = changes.carts;
+    let carts = changes.carts;
     if (carts) {
         items = carts.newValue?.items;
         timestamp = carts.newValue?.timestamp;
