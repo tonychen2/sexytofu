@@ -24,11 +24,9 @@ $Web-plugin\
 │  package-lock.json
 │  package.json
 │  readme.MD
-│  
 ├─demo
 │      index.html
 │      index.js
-│      
 ├─fonts
 │      OFL.txt
 │      Poppins-Black.ttf
@@ -49,7 +47,6 @@ $Web-plugin\
 │      Poppins-SemiBoldItalic.ttf
 │      Poppins-Thin.ttf
 │      Poppins-ThinItalic.ttf
-│      
 ├─img
 │      128x128.png
 │      16x16.png
@@ -59,14 +56,19 @@ $Web-plugin\
 │      Sexy_Tofu_2.png
 │      Sexy_tofu_dither.png
 │      triangle.svg
-│      
 ├─js
 │      background.js
 │      common.js
 │      content.js
 │      jquery-3.6.0.min.js
 │      popup.js
-│      
+├─mdImg
+│      backgroundlog.png
+│      backgroundlogrequest.png
+│      contentJs.png
+│      demopage.png
+│      Overview.png
+│      screens.png
 └─popup
         empty.css
         empty.html
@@ -96,8 +98,8 @@ erDiagram
 ```
 
 ### Screen shots:
-![overview](./Overview.PNG)
-![screens](./screens.png)
+![overview](./mdImg/Overview.PNG)
+![screens](./mdImg/screens.png)
 
 ## 3. Analysis & Debug Tips
 
@@ -114,7 +116,7 @@ body: '{"recipe":["1 lb Container of Strawberries"]}'
 
 Capture about run this in instacart's F12 (devloper mode console page.)
 
-![run request](./manualrequest.PNG)
+![run request](./mdImg/manualrequest.PNG)
 
 ### 3.2 Use the demo page help development
 In demo page can support some developement work. The functions can and may support are: 
@@ -128,13 +130,13 @@ In demo page can support some developement work. The functions can and may suppo
 ### 3.3 Logs
 We have many logs, mostly in the background.js for debug and so on.  Content.js inject to the instacart site, and popup page also will have some log for show the popup page status.
  * If found read cart items faild, please check log for content.js.  At instacart page, press `F12` to open developer console.
-  ![contentjs injected](./contentJs.png)
+  ![contentjs injected](./mdImg/contentJs.png)
  * If want know more data request logs, better look into the background.js log.
   You need move to the `chrome://extensions/` page, and click `service worker` on the `Inspect views`.
   Capture:
-  ![background log](./backgroundlog.PNG)
+  ![background log](./mdImg/backgroundlog.PNG)
   Here also we can know the request status in the background related `Network` tab.
-  ![background request](./backgroundrequest.PNG)
+  ![background request](./mdImg/backgroundrequest.PNG)
  * If you want know more about the popup pages, just right click on the popup page, and select `Inspect`.
  
 ### 3.4 Want know more about GHGI API?
