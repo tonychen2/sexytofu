@@ -1,10 +1,11 @@
 # <center>Sexy-tofu Chrome Extension</center>
 
 ## 1. Introduce
-   This extension work along with [instacart](https://www.instacart.com/) site. It's lead by the sexy-tofu team at: https://www.sexytofu.org/
+This extension work along with [instacart](https://www.instacart.com/) site. It's lead by the sexy-tofu team at: https://www.sexytofu.org/
 
 ## 2. Extension related
-    The extension developement with JavaScript. Use the Chrome api to support the extension functions. So far, not use the jQuery.
+The extension developement with JavaScript. Use the Chrome api to support the extension functions. So far, not use the jQuery.
+  
   <details><summary>Click to check the detail code structure...</summary>
   Detail struct is here:
   
@@ -73,15 +74,15 @@ $Web-plugin\
 </details>
 
 ### The workflow like:
-    This extension now works with instacrt site. It read the cart items, and load related carbon emmission info to the extension.
+This extension now works with instacrt site. It read the cart items, and load related carbon emmission info to the extension.
 
 ```mermaid
 erDiagram
     User ||--o{ View-Cart : click
     View-Cart ||--|{ Background : read-to
-    Background }|..|{ tofu-site : calcuation-data
-    Background  }|..|{ extension : show-data
-    User  ||--o{ extension : click
+    Background }|..|{ tofu-site : calcuation
+    Background  }|..|{ popup-page : show-data
+    User  ||--o{ popup-page : click
 ```
 
 ### Screen shots:
@@ -91,7 +92,7 @@ erDiagram
 ## 3. Analysis & Debug Tips
 
 ### 3.1 We can use manual query the food carbon info
- Copy below code put to develop console, and modify the food name than you can return to send the request.
+Copy below code put to develop console, and modify the food name than you can return to send the request.
 
 ```
 fetch(`https://api.sexytofu.org/api.ghgi.org:443/rate`,
@@ -115,7 +116,7 @@ In demo page can support some developement work. The functions can and may suppo
 - [ ] more ideas?
 
 ### 3.3 Logs
-
+We have many logs, mostly in the background.js for debug and so on.  Content.js inject to the instacart site, and popup page also will have some log for show the popup page status.
  * If found read cart items faild, please check log for content.js.  At instacart page, press `F12` to open developer console.
   ![contentjs injected](./contentJs.png)
  * If want know more data request logs, better look into the background.js log.
@@ -124,12 +125,12 @@ In demo page can support some developement work. The functions can and may suppo
   ![background log](./backgroundlog.PNG)
   Here also we can know the request status in the background related `Network` tab.
   ![background request](./backgroundrequest.PNG)
-
+ * If you want know more about the popup pages, just right click on the popup page, and select `Inspect`.
+ 
 ### 3.4 Want know more about GHGI API?
-
 you can reference to here: https://github.com/ghgindex/ghgi/blob/main/ghgi/datasets/master/products.json
 
-Sexy-tofu site have embedded this content in our site. The simple data as below: 
+Sexy-tofu site have embedded this content in it. The simple data as below: 
 
 ```
     "bananas": {
