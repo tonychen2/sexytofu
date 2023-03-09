@@ -1,9 +1,18 @@
-# <center>Sexy-tofu Chrome Extension</center>
+<h1 align="center">Sexy Tofu Carbon Calculator </h1>
+
+## Table of Content
+
+-  [1. Introduce](#1-introduce)
+-  [2. Extension Related](#2-extension-related)
+-  [3. Analysis & Debug Tips](#3-analysis--debug-tips)
+   -  [3.1 We can use manual query the food carbon info](#31-we-can-use-manual-query-the-food-carbon-info)
+   -  [3.2 Use the demo page help development](#32-use-the-demo-page-help-development)
+   -  [3.3 Logs](#33-logs)
 
 ## 1. Introduce
 This extension work along with [instacart](https://www.instacart.com/) site. It's lead by the sexy-tofu team at: https://www.sexytofu.org/
 
-## 2. Extension related
+## 2. Extension Related
 The extension developement with JavaScript. Use the Chrome api to support the extension functions. So far, not use the jQuery.
   
   <details><summary>Click to check the detail code structure...</summary>
@@ -79,10 +88,11 @@ This extension now works with instacrt site. It read the cart items, and load re
 ```mermaid
 erDiagram
     User ||--o{ View-Cart : click
-    View-Cart ||--|{ Background : read-to
-    Background }|..|{ tofu-site : calcuation
-    Background  }|..|{ popup-page : show-data
-    User  ||--o{ popup-page : click
+    View-Cart  ||--o{ ContentJs : read
+    ContentJs ||--|{ BackgroundJs : send-to
+    BackgroundJs }|..|{ tofu-site : calcuation
+    BackgroundJs ||--o{Popup-Page : load-data
+    User  ||--o{ Popup-Page : click
 ```
 
 ### Screen shots:
