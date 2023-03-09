@@ -4,8 +4,12 @@
 
 -  [1. Introduce](#1-introduce)
 -  [2. Extension Related](#2-extension-related)
+   -  [Code Structure](#code-structure)
+   -  [Work Diagram](#work-diagram)
+   -  [Screenshots](#screenshots)
+   -  [Pack the extension](#pack-the-extension)
 -  [3. Analysis & Debug Tips](#3-analysis--debug-tips)
-   -  [3.1 We can use manual query the food carbon info](#31-we-can-use-manual-query-the-food-carbon-info)
+   -  [3.1 We can manual query the food carbon info](#31-we-can-manual-query-the-food-carbon-info)
    -  [3.2 Use the demo page help development](#32-use-the-demo-page-help-development)
    -  [3.3 Logs](#33-logs)
 
@@ -14,15 +18,17 @@ This extension work along with [instacart](https://www.instacart.com/) site. It'
 
 ## 2. Extension Related
 The extension developement with JavaScript. Use the Chrome api to support the extension functions. So far, not use the jQuery.
-  
+
+### Code Structure
   <details><summary>Click to check the detail code structure...</summary>
-  Detail struct is here:
   
 ```
 $Web-plugin\
 │  manifest.json
 │  package-lock.json
 │  package.json
+│  exclude.txt
+│  packFile.bat
 │  readme.MD
 ├─demo
 │      index.html
@@ -84,7 +90,7 @@ $Web-plugin\
     
 </details>
 
-### The workflow like:
+### Work Diagram
 This extension now works with instacrt site. It read the cart items, and load related carbon emmission info to the extension.
 
 ```mermaid
@@ -97,13 +103,19 @@ erDiagram
     User  ||--o{ Popup-Page : click
 ```
 
-### Screen shots:
+### Screenshots
 ![overview](./mdImg/Overview.PNG)
 ![screens](./mdImg/screens.png)
 
+### Pack the extension
+  There is a Windows batch file: `packFile.bat`, we can use this file to pack the extension. Now the batch file will zip a `ZIP` file & a `CRX` file. Packed `CRX` file mostly only can used by Lnux user. 
+  About CRX now only support in Linux file: https://developer.chrome.com/docs/extensions/mv3/linux_hosting/
+  The Google Webstore need a ZIP file to upload.  We can upload from here: 
+  https://chrome.google.com/webstore/devconsole
+  
 ## 3. Analysis & Debug Tips
 
-### 3.1 We can use manual query the food carbon info
+### 3.1 We can manual query the food carbon info
 Copy below code put to develop console, and modify the food name than you can return to send the request.
 
 ```
