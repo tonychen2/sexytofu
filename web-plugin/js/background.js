@@ -81,7 +81,7 @@ function validDateCartItems(alarm) {
 chrome.alarms.onAlarm.addListener(validDateCartItems);
 
 //kind of best practice to auto init
-(async function InitData() {
+async function InitData() {
     let { carts } = await chrome.storage.sync.get("carts");
     let items = [];
 
@@ -104,7 +104,8 @@ chrome.alarms.onAlarm.addListener(validDateCartItems);
         }
     }
     handleCartItems(items);
-}())
+}
+InitData();
 
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     //1. retry to calc
@@ -248,4 +249,3 @@ const parseResponse = async (json) => {
     //save the impact to local.
     await chrome.storage.local.set({ impacts: carbonEmission });
 }
-

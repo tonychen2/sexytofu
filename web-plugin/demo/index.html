@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <header>
+    <script defer src="../js/jquery-3.6.0.min.js"></script>
     <script defer src="../js/common.js"></script>
     <script defer src="index.js"></script>
 </header>
@@ -12,6 +13,7 @@
     body {
         text-align: center;
         font-family: Poppins, 'Courier New', Courier, monospace;
+        font-size: 75%;
     }
 
     span {
@@ -24,6 +26,9 @@
 
     .bigButton {
         width: 120px;
+    }
+    .smallBtn{
+        width: 60px;
     }
 </style>
 
@@ -45,13 +50,27 @@
     </div>
     <div style="margin: auto; margin-top: 10px; width: 350px;">
         <input id="bageText" placeholder="input bage text" />
-        <button id="setText" class="bigButton">Set Bage Text</button>
-        <input id="bageColor" disabled placeholder="show badge color here" />
-        <button id="setColor" class="bigButton">Random Color</button>
+        <button id="btnText" class="bigButton">Set Bage Text</button>
+        <input id="txtColor"  placeholder="show text color here" />
+        <button id="btnTxtColor" class="smallBtn">Text Color</button>
+        <button id="btnTxtRdm" class="smallBtn">Random Set</button>
+        <input id="bageColor"  placeholder="show badge color here" />
+        <button id="btnColor" class="smallBtn">Back Color</button>
+        <button id="btnBackRdm" class="smallBtn">Random Set</button>
+        <div style="display:inline-flex; text-align: left;">
+            <span style="width: 177px;">Please select a status:</span>
+        </div>
+            <select id="sel_Popup" name="popupST" style="width: 120px" default="empty">
+                <option value="" selected >Select Status</option>
+                <option value="empty">Empty</option>
+                <option value="offset">Offset</option>
+                <option value="error">Error</option>
+            </select>
     </div>
     <div style="text-align: left; 
     width: 300px; margin: auto;margin-top: 20px;">
         1. Unit defaut to each/ea. <br>
         2. non-food item will not got carbon emission.
+        3. set color please input valid color like: red, #FEFEFE
     </div>
 </body>

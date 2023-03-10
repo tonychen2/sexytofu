@@ -1,4 +1,5 @@
 
+
 OnCartItemsChange = async (array) => {
     //send message or just use storage?
     console.log(`storage set items:`);
@@ -18,61 +19,114 @@ let cartItems = [];
     if (carts) {
         cartItems = carts.items;
     }
+    chrome.action.getBadgeText({}, (res) => {
+        $("#bageText").val(res);
+    });
+    chrome.action.getBadgeTextColor({}, (res) => {
+        $("#txtColor").val(formatColor(res));
+    });
+
+    chrome.action.getBadgeBackgroundColor({}, (res) => {
+        $("#bageColor").val(formatColor(res));
+    });
+
+    chrome.action.getPopup({}, (page)=> {
+        let val = page.split('/').pop().split('.').at(0);
+        $("#sel_Popup").val(val);
+    })
+
 }());
 
-let addButton = document.querySelector("#addItem");
-let nameInput = document.querySelector("#name");
-let weightInput = document.querySelector("#quan");
-
-addButton.addEventListener('click', () => {
-    if (nameInput.value?.length > 0 && weightInput.value?.length > 0) {
-        let item = new TofuItem(nameInput.value, "ea", `${weightInput.value}`);
+$("#addItem").click(() => {
+    let name = $("#name").val();
+    let weight = $("#quan").val();
+    if (name?.length > 0 && weight?.length > 0) {
+        let item = new TofuItem(name, "ea", weight);
         cartItems.push(item);
         OnCartItemsChange(cartItems);
     }
 });
 
-let ClearButton = document.querySelector("#clear");
+let ClearButton = document.querySelector;
 
-ClearButton.addEventListener('click', () => {
+$("#clear").click(() => {
     cartItems = [];
     OnCartItemsChange(cartItems);
 });
 
-let bageTxt = document.querySelector("#bageText");
-let bageTxtBtn = document.querySelector("#setText");
-let bageColor = document.querySelector("#bageColor");
-let bageColorBtn = document.querySelector("#setColor");
-
-bageTxtBtn.addEventListener('click', () => {
-    let text = bageTxt.value?.trim();
-    chrome.action.setBadgeText({ text: text });
+$("#btnText").click(() => {
+    chrome.action.setBadgeText({ text: $("#bageText").val().trim() });
 })
 
 //input 225,225,225,225/0
+function toHex(color) {
+    return color.toString(16).padStart(2, '0').toUpperCase();
+}
 function formatColor(color) {
-    return `#${color[0]}${color[1]}${color[2]}`;
+    return `#${toHex(color[0])}${toHex(color[1])}${toHex(color[2])}`;
 }
 
-bageColorBtn.addEventListener('click', async () => {
-    let uiText = bageTxt.value;
+$("#btnColor").click(async () => {
+    resetBageText();
+    let bkColor = resetColor($("#bageColor").val());
+    chrome.action.setBadgeBackgroundColor({ color: bkColor});
+    $("#bageColor").val(bkColor);//reset if before is empty.
+});
+
+function resetColor(color){
+    if(!color){
+        // Next, generate a random RGBA color
+        let rdmColor = [0, 0, 0].map(() => Math.floor(Math.random() * 255));
+        color = formatColor(rdmColor);
+    }
+    return color;
+}
+
+$("#btnBackRdm").click(async () => {
+    resetBageText();
+    let rdmColor = resetColor();
+    chrome.action.setBadgeBackgroundColor({ color: rdmColor});
+    $("#bageColor").val(rdmColor);
+});
+
+$("#btnTxtColor").click(async () => {
+    resetBageText();
+    let rdmColor = resetColor($("#txtColor").val());
+    chrome.action.setBadgeTextColor({ color: rdmColor });
+    $("#txtColor").val(rdmColor);
+});
+
+$("#btnTxtRdm").click(async () => {
+    resetBageText();
+    let rdmColor = resetColor();
+    chrome.action.setBadgeTextColor({ color: rdmColor });
+    $("#txtColor").val(rdmColor);
+});
+
+async function resetBageText() {
+    let uiText = $("#bageText").val();
     let bageShowText = await chrome.action.getBadgeText({});
     let uiEmpty = uiText?.length == 0;
     if (uiEmpty) {
         uiText = bageShowText;
-        bageTxt.value = uiText;
+        $("#bageText").val(uiText);
     }
 
     if (uiEmpty || uiText != bageShowText) {
-        if (uiEmpty) bageTxt.value = '(^_*)';
-        bageTxtBtn.click();
+        if (uiEmpty) {
+            $("#bageText").val('(^_*)');
+        }
+        $("#btnText").click();
     }
+}
 
-    // Next, generate a random RGBA color
-    let color = [0, 0, 0].map(() => Math.floor(Math.random() * 255).toString(16).toUpperCase());
-    let colorStr = formatColor(color);
-
-    chrome.action.setBadgeBackgroundColor({ color: colorStr });
-    bageColor.value = colorStr;
+$("#sel_Popup").change(async () => {
+    let page = $("#sel_Popup").val();
+    if (page) {
+        let popupFile = `./popup/${page}.html`;
+        chrome.action.setPopup({ popup: popupFile });
+        if(page != 'offset'){
+            chrome.storage.local.set({ impacts: null });
+        }
+    }
 });
-
