@@ -8,7 +8,7 @@ const GHGI_API_ADDRESS = 'https://api.sexytofu.org/api.ghgi.org:443';
 const GHGI_CONFIDENCE_LIMIT = 0.2; //need try found a reasonable limit. 0.5 will ignore too much, like organic banana.
 const G_TO_POUND = 0.00220462262185;
 const CarbonCostFeeRate = 0.000050; //  $50 per 1000 kg, as per  0.000050 /per g.
-const IS_Debuger = true;
+let IS_Debuger = true;
 const ZERO = 0.0000001;
 const MIN_COST = 0.01;
 const Expire_Period = 24 * 60 * 60 * 1000;
@@ -17,13 +17,6 @@ const DefaultColor = '#4285F4';
 const DefaultTextColor = '#FFFFFF';
 
 chrome.runtime.onInstalled.addListener(details => {
-    if (IS_Debuger) {
-        //set demo page auto open when install/update
-        chrome.tabs.create({
-            url: '../demo/index.html'
-        });
-    }
-
     if (details.reason === chrome.runtime.OnInstalledReason.INSTALL) {
         //TODO: here we need a page outside of the extension to collect feedback.
         chrome.runtime.setUninstallURL("https://info.sexytofu.org/");
@@ -110,22 +103,46 @@ InitData();
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     //1. retry to calc
     //2. set carts outdated
-    switch (message.action) {
-        case 'Refresh':
-            console.log('start to recalc again');
-            InitData();
-            break;
-        case 'OutDated':
-            let popupFile = `./popup/Outdated.html`;
-            chrome.action.setPopup({ popup: popupFile });
-            chrome.action.setBadgeBackgroundColor({ color: OutDatedColor });
-            break;
-        case 'Normal':
-            chrome.action.setBadgeBackgroundColor({ color: DefaultColor });
-            break;
-        case 'isCalcuating':
-            setIsCalcStatus(true);
-            break;
+    let action = message.action?.toString();
+    if (action) {
+        switch (action) {
+            case 'Refresh':
+                console.log('start to recalc again');
+                InitData();
+                break;
+            case 'OutDated':
+                let popupFile = `./popup/Outdated.html`;
+                chrome.action.setPopup({ popup: popupFile });
+                chrome.action.setBadgeBackgroundColor({ color: OutDatedColor });
+                break;
+            case 'Normal':
+                chrome.action.setBadgeBackgroundColor({ color: DefaultColor });
+                break;
+            case 'isCalcuating':
+                setIsCalcStatus(true);
+                break;
+        }
+    }
+
+    let debug = message.Debug?.toString();
+    if (debug) {
+        switch (debug.toLowerCase()) {
+            case "on":
+            case "1":
+            case "true":
+                IS_Debuger = true;
+                //open demo page, when get message to open debug.
+                chrome.tabs.create({
+                    url: '../demo/index.html'
+                });
+                break;
+            default:
+            // case "off":
+            // case "0":
+            // case "false":
+                IS_Debuger = false
+                break;
+        }
     }
 });
 
