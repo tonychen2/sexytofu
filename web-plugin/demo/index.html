@@ -3,34 +3,8 @@
     <script defer src="../js/jquery-3.6.0.min.js"></script>
     <script defer src="../js/common.js"></script>
     <script defer src="index.js"></script>
+    <link rel="stylesheet" href="index.css">
 </header>
-<style>
-    @font-face {
-        font-family: Poppins;
-        src: url(../fonts/Poppins-Light.ttf);
-    }
-
-    body {
-        text-align: center;
-        font-family: Poppins, 'Courier New', Courier, monospace;
-        font-size: 75%;
-    }
-
-    span {
-        margin-top: 5px;
-    }
-
-    input {
-        margin-top: 5px;
-    }
-
-    .bigButton {
-        width: 120px;
-    }
-    .smallBtn{
-        width: 59px;
-    }
-</style>
 
 <body>
     <h2 style="font-size:26px; text-align: center;">Demo for change cart items</h2>
@@ -44,33 +18,44 @@
             <input type="number" id="quan" placeholder="Input the Quantity..." />
         </div>
     </div>
-    <div style="margin-top: 10px">
+    <div style="margin: auto; margin-top: 10px; border: 2px dotted lightgray; border-width:0px 0px 2px 0px ;
+        width: 300px ;padding-bottom: 10px;">
         <button id="addItem">Add Item</button>
         <button id="clear" style="margin-left: 80px;">Clear Cart</button>
     </div>
-    <div style="margin: auto; margin-top: 10px; width: 350px;">
+    <div style="margin: auto; margin-top: 10px; width: 350px; ">
         <input id="bageText" placeholder="input bage text" />
         <button id="btnText" class="bigButton">Set Bage Text</button>
-        <input id="txtColor"  placeholder="show text color here" />
+        <input id="txtColor" placeholder="show text color here" />
         <button id="btnTxtColor" class="smallBtn">Text Color</button>
         <button id="btnTxtRdm" class="smallBtn">Random Set</button>
-        <input id="bageColor"  placeholder="show badge color here" />
+        <input id="bageColor" placeholder="show badge color here" />
         <button id="btnColor" class="smallBtn">Back Color</button>
         <button id="btnBackRdm" class="smallBtn">Random Set</button>
         <div style="display:inline-flex; text-align: left;">
-            <span style="width: 177px;">Please select a status:</span>
+            <span style="width: 177px;font-weight: bold;">Please select a status:</span>
         </div>
-            <select id="sel_Popup" name="popupST" style="width: 120px" default="empty">
-                <option value="" selected >Select Status</option>
-                <option value="empty">Empty</option>
-                <option value="offset">Offset</option>
-                <option value="error">Error</option>
-            </select>
+        <select id="sel_Popup" name="popupST" style="width: 120px" default="empty">
+            <option value="" selected>Select Status</option>
+            <option value="empty">Empty</option>
+            <option value="offset">Offset</option>
+            <option value="error">Error</option>
+        </select>
     </div>
     <div style="text-align: left; 
-    width: 300px; margin: auto;margin-top: 20px;">
-        1. Unit defaut to each/ea. <br>
-        2. non-food item will not got carbon emission.
-        3. set color please input valid color like: red, #FEFEFE
+    width: 300px; margin: auto;margin-top: 20px;display: flex;flex-direction: column;
+    border: 2px dotted lightgray; border-width:2px 0px 0px 0px ;
+    padding-bottom: 10px;">
+        <span>1. Unit defaut to each/ea. </span>
+        <span>2. non-food item will not got carbon emission.</span>
+        <span>3. set color please input valid color like: red, #FEFEFE</span>
+    </div>
+
+    <div style="margin: auto; text-align: left; width: 400px; 
+        border: 2px gray; border-style: ridge; padding: 3px;">
+        <b>Current Cart Info:</b><br>
+        Total Items: <span id="count">12</span><br>
+        Timestamp: <span id="timeInfo">333</span>
+        <pre id="display2" class="display2"></pre>
     </div>
 </body>

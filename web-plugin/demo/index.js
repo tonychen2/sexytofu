@@ -9,15 +9,24 @@ OnCartItemsChange = async (array) => {
         timestamp: Date.now()
     }
     await chrome.storage.sync.set({ carts: carts });
+    showItems(carts);
 }
 
 let cartItems = [];
+
+function showItems(carts) {
+    console.log("show items.")
+    $("#display2").html(JSON.stringify(carts, null, 4));
+    $("#count").text(carts?.items?.length);
+    $("#timeInfo").text(new Date(carts.timestamp).toLocaleString());
+}
 
 //for demo page, need reload the storage when reload.
 (async function () {
     let { carts } = await chrome.storage.sync.get("carts");
     if (carts) {
         cartItems = carts.items;
+        showItems(carts);
     }
     chrome.action.getBadgeText({}, (res) => {
         $("#bageText").val(res);
@@ -30,7 +39,7 @@ let cartItems = [];
         $("#bageColor").val(formatColor(res));
     });
 
-    chrome.action.getPopup({}, (page)=> {
+    chrome.action.getPopup({}, (page) => {
         let val = page.split('/').pop().split('.').at(0);
         $("#sel_Popup").val(val);
     })
@@ -69,12 +78,12 @@ function formatColor(color) {
 $("#btnColor").click(async () => {
     resetBageText();
     let bkColor = resetColor($("#bageColor").val());
-    chrome.action.setBadgeBackgroundColor({ color: bkColor});
+    chrome.action.setBadgeBackgroundColor({ color: bkColor });
     $("#bageColor").val(bkColor);//reset if before is empty.
 });
 
-function resetColor(color){
-    if(!color){
+function resetColor(color) {
+    if (!color) {
         // Next, generate a random RGBA color
         let rdmColor = [0, 0, 0].map(() => Math.floor(Math.random() * 255));
         color = formatColor(rdmColor);
@@ -85,7 +94,7 @@ function resetColor(color){
 $("#btnBackRdm").click(async () => {
     resetBageText();
     let rdmColor = resetColor();
-    chrome.action.setBadgeBackgroundColor({ color: rdmColor});
+    chrome.action.setBadgeBackgroundColor({ color: rdmColor });
     $("#bageColor").val(rdmColor);
 });
 
@@ -125,7 +134,7 @@ $("#sel_Popup").change(async () => {
     if (page) {
         let popupFile = `./popup/${page}.html`;
         chrome.action.setPopup({ popup: popupFile });
-        if(page != 'offset'){
+        if (page != 'offset') {
             chrome.storage.local.set({ impacts: null });
         }
     }
