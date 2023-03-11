@@ -131,5 +131,6 @@ if (backBtn) {
     chrome.runtime.sendMessage({
       action: 'Refresh',
     })
+    self.close();
   });
 }
