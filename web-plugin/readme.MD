@@ -65,7 +65,7 @@ $Web-plugin\
 │      close.svg
 │      gray-filler-img.png
 │      error-tofu.png
-│      Sexy_tofu_dither.png
+│      dither-tofu.png
 │      triangle.svg
 ├─js
 │      background.js
@@ -150,8 +150,8 @@ Capture about run this in instacart's F12 (devloper mode console page.)
 In demo page can support some developement work. The functions can and may support are:
 
 - [x] add/clear items
-- [x] change bage text & bage background color
-- [x] change bage text color
+- [x] change badge text & badge background color
+- [x] change badge text color
 - [x] set popup status
 - [x] show carts status
 - [x] set request status (reuse set popup status)

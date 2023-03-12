@@ -147,12 +147,9 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
 });
 
 async function handleCartItems(items) {
-    let status = STATUS.Empty;
+    
     let itemsCount = items ? items.length : 0;
-
-    if (itemsCount > 0) {
-        status = STATUS.HaveFood;
-    }
+    let status =  itemsCount > 0 ? STATUS.HaveFood : STATUS.Empty;
 
     setBadge({
         cartStatus: status,

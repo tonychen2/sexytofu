@@ -15,7 +15,7 @@ const STATUS = {
     ERROR: 'error'
 }
 
-//we need a convert table for like  "ct -> ounce". many convert GHGI support it.
+//convert table for like  "ct -> ounce". many convert GHGI support it.
 const UNIT_Convert = {
     //"lb" : "pound", // found this valid short can auto convert by the API.
     //"oz" : "ounce",

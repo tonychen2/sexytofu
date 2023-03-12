@@ -36,7 +36,7 @@ function showItems(carts) {
     });
 
     chrome.action.getBadgeBackgroundColor({}, (res) => {
-        $("#bageColor").val(formatColor(res));
+        $("#badgeColor").val(formatColor(res));
     });
 
     chrome.action.getPopup({}, (page) => {
@@ -76,10 +76,10 @@ function formatColor(color) {
 }
 
 $("#btnColor").click(async () => {
-    resetBageText();
-    let bkColor = resetColor($("#bageColor").val());
+    resetbadgeText();
+    let bkColor = resetColor($("#badgeColor").val());
     chrome.action.setBadgeBackgroundColor({ color: bkColor });
-    $("#bageColor").val(bkColor);//reset if before is empty.
+    $("#badgeColor").val(bkColor);//reset if before is empty.
 });
 
 function resetColor(color) {
@@ -92,38 +92,38 @@ function resetColor(color) {
 }
 
 $("#btnBackRdm").click(async () => {
-    resetBageText();
+    resetbadgeText();
     let rdmColor = resetColor();
     chrome.action.setBadgeBackgroundColor({ color: rdmColor });
-    $("#bageColor").val(rdmColor);
+    $("#badgeColor").val(rdmColor);
 });
 
 $("#btnTxtColor").click(async () => {
-    resetBageText();
+    resetbadgeText();
     let rdmColor = resetColor($("#txtColor").val());
     chrome.action.setBadgeTextColor({ color: rdmColor });
     $("#txtColor").val(rdmColor);
 });
 
 $("#btnTxtRdm").click(async () => {
-    resetBageText();
+    resetbadgeText();
     let rdmColor = resetColor();
     chrome.action.setBadgeTextColor({ color: rdmColor });
     $("#txtColor").val(rdmColor);
 });
 
-async function resetBageText() {
-    let uiText = $("#bageText").val();
-    let bageShowText = await chrome.action.getBadgeText({});
+async function resetbadgeText() {
+    let uiText = $("#badgeText").val();
+    let badgeShowText = await chrome.action.getBadgeText({});
     let uiEmpty = uiText?.length == 0;
     if (uiEmpty) {
-        uiText = bageShowText;
-        $("#bageText").val(uiText);
+        uiText = badgeShowText;
+        $("#badgeText").val(uiText);
     }
 
-    if (uiEmpty || uiText != bageShowText) {
+    if (uiEmpty || uiText != badgeShowText) {
         if (uiEmpty) {
-            $("#bageText").val('(^_*)');
+            $("#badgeText").val('(^_*)');
         }
         $("#btnText").click();
     }
