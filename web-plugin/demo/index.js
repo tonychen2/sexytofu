@@ -64,7 +64,7 @@ $("#clear").click(() => {
 });
 
 $("#btnText").click(() => {
-    chrome.action.setBadgeText({ text: $("#bageText").val().trim() });
+    chrome.action.setBadgeText({ text: $("#badgeText").val().trim() });
 })
 
 //input 225,225,225,225/0
