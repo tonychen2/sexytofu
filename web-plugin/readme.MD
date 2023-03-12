@@ -64,7 +64,7 @@ $Web-plugin\
 │      48x48.png
 │      close.svg
 │      gray-filler-img.png
-│      Sexy_Tofu_2.png
+│      error-tofu.png
 │      Sexy_tofu_dither.png
 │      triangle.svg
 ├─js
