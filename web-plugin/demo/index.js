@@ -29,7 +29,7 @@ function showItems(carts) {
         showItems(carts);
     }
     chrome.action.getBadgeText({}, (res) => {
-        $("#bageText").val(res);
+        $("#badgeText").val(res);
     });
     chrome.action.getBadgeTextColor({}, (res) => {
         $("#txtColor").val(formatColor(res));
