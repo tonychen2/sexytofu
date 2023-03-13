@@ -211,13 +211,13 @@ const parseResponse = async (json) => {
     for (let item of json["items"]) {
         let impact, product, matched, origImpact;
         matched = item["match_conf"] >= GHGI_CONFIDENCE_LIMIT;
+        origImpact = item["impact"];
+
         if (matched) {
-            origImpact = item["impact"];
             impact = origImpact * G_TO_POUND;
             product = item["product"]?.["alias"];
         } else {
             impact = null;
-            origImpact = null;
             product = item["product"]?.["alias"];
         }
         cartItems.push({

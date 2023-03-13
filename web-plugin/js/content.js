@@ -20,6 +20,18 @@ function setOutDated(isOutDated) {
     })
 }
 
+function getTargetbyType(item, tagType) {
+    let max = 3, i = 0;
+    while (item?.tagName?.toLowerCase() !== tagType) {
+        item = item?.parentElement;
+        if (item == null || i > max) {//sometimes, click area remove from UI, so no parent.
+            return null;
+        }
+        i++;
+    }
+    return item;
+}
+
 /* The InstaCart Cart "button" consists of 3 parts: a path, a span, and an svg (the cart icon). This function verifies that the 
 "button" was clicked by checking if the target of user click had the attribute of any of these three parts.
 */
@@ -27,26 +39,18 @@ function notifyExtension(e) {
     let cartUI = document.querySelector('div[aria-label="Cart"]');
     let notInCartUI = cartUI?.hasAttribute('hidden') || cartUI?.style.display == 'none';
     let target = e.target;
-    let tagName = target?.tagName?.toLowerCase();
+    let origTagName = target?.tagName?.toLowerCase();
 
-    if (!notInCartUI && tagName == 'img') {
-        target = target.parentElement;
-        if (target.className == 'RetailerLogo') {
-            waitThenScrapeCart();
-            return;
-        }
-    }
-    else if (tagName != 'span' && tagName != 'button' && tagName != 'svg' && tagName != 'path') {
+    target = getTargetbyType(target, 'button');
+    let isRetailBtn = target?.querySelector(".RetailerLogo") ? true : false;
+
+    if (isRetailBtn) {
+        // Re-scrape if user goes to a different retailer's cart
+        waitThenScrapeCart();
         return;
     }
-
-    let max = 3, i = 0;
-    while (target?.tagName?.toLowerCase() !== 'button') {
-        target = target?.parentElement;
-        i++;
-        if (target == null || i > max) {//sometimes, click area remove from UI, so no parent.
-            break;
-        }
+    else if (origTagName != 'span' && origTagName != 'button' && origTagName != 'svg' && origTagName != 'path') {
+        return;
     }
 
     console.info('Button Clicked: ', target ? target.outerHTML : '(button removed.)');
@@ -66,13 +70,13 @@ function notifyExtension(e) {
     }
     //view cart click, before function call, the UI attribute is in cart.
     else if ((!isHomePage && ariaLabel?.includes("view cart")) || ariaLabel?.includes("increment") ||
-        ariaLabel?.includes("decrement") || btnText == 'remove') {
+        ariaLabel?.includes("decrement") || ariaLabel?.includes("remove") || btnText == 'remove') {
         waitThenScrapeCart();
     }
 }
 
-let timerPrint = null;
-async function waitThenScrapeCart(timeout=500) {
+let scrapeTimer = null;
+async function waitThenScrapeCart(timeout = 500) {
     //set isCalc first.
     chrome.runtime.sendMessage({
         action: 'isCalcuating'
@@ -95,7 +99,7 @@ function scrapeCart(timeoutBeforeRetry=300) {
     let cartBody = document.querySelector('div[id="cart-body"]');
     if (!cartBody) {//here to make sure cartbody is loaded.
         console.log(`Cart Body not ready, wait ${timeoutBeforeRetry}ms again: ${new Date().toLocaleString()}`);
-        timerPrint = setTimeout(scrapeCart, timeoutBeforeRetry);
+        scrapeTimer = setTimeout(scrapeCart, timeoutBeforeRetry);
         return;
     }
 
@@ -142,6 +146,9 @@ function BuildFoodItem(foodName, unit, quantity) {
             // console.log(`before unit: ${unit}, quantity: ${quantity}`);
             quantity = numb * quantity;
             unit = unit.replace(numb, '').trim();
+            
+            //remove container words, like: bag, container 
+            unit = unit?.replace(" container", "")?.replace(" bag", "");
             if (UNIT_Convert[unit]) {
                 unit = UNIT_Convert[unit];
             }
