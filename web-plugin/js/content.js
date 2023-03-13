@@ -82,9 +82,9 @@ async function waitThenScrapeCart(timeout = 500) {
         action: 'isCalcuating'
     })
 
-    clearTimeout(timerPrint);//cancel the before timer first.
+    clearTimeout(scrapeTimer);//cancel the before timer first.
     console.log(`Go to read  carts, wait ${timeout}ms first: ${new Date().toLocaleString()}`);
-    timerPrint = setTimeout(scrapeCart, timeout);
+    scrapeTimer = setTimeout(scrapeCart, timeout);
 }
 
 function scrapeCart(timeoutBeforeRetry=300) {
