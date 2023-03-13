@@ -32,7 +32,7 @@ function notifyExtension(e) {
     if (!notInCartUI && tagName == 'img') {
         target = target.parentElement;
         if (target.className == 'RetailerLogo') {
-            delayPrintCart();
+            waitThenScrapeCart();
             return;
         }
     }
@@ -67,23 +67,23 @@ function notifyExtension(e) {
     //view cart click, before function call, the UI attribute is in cart.
     else if ((!isHomePage && ariaLabel?.includes("view cart")) || ariaLabel?.includes("increment") ||
         ariaLabel?.includes("decrement") || btnText == 'remove') {
-        delayPrintCart();
+        waitThenScrapeCart();
     }
 }
 
 let timerPrint = null;
-async function delayPrintCart() {
+async function waitThenScrapeCart(timeout=500) {
     //set isCalc first.
     chrome.runtime.sendMessage({
         action: 'isCalcuating'
     })
 
     clearTimeout(timerPrint);//cancel the before timer first.
-    console.log(`Go to read  carts, wait 500ms first: ${new Date().toLocaleString()}`);
-    timerPrint = setTimeout(printCart, 500);
+    console.log(`Go to read  carts, wait ${timeout}ms first: ${new Date().toLocaleString()}`);
+    timerPrint = setTimeout(scrapeCart, timeout);
 }
 
-function printCart() {
+function scrapeCart(timeoutBeforeRetry=300) {
     //if user have exit the cart, need set OutDated.
     let cartUI = document.querySelector('div[aria-label="Cart"]');
     let notInCartUI = cartUI?.hasAttribute('hidden') || cartUI?.style.display == 'none';
@@ -94,8 +94,8 @@ function printCart() {
     }
     let cartBody = document.querySelector('div[id="cart-body"]');
     if (!cartBody) {//here to make sure cartbody is loaded.
-        console.log(`Cart Body not ready, wait 300ms again: ${new Date().toLocaleString()}`);
-        timerPrint = setTimeout(printCart, 300);
+        console.log(`Cart Body not ready, wait ${timeoutBeforeRetry}ms again: ${new Date().toLocaleString()}`);
+        timerPrint = setTimeout(scrapeCart, timeoutBeforeRetry);
         return;
     }
 
