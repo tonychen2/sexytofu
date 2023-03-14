@@ -15,7 +15,6 @@ OnCartItemsChange = async (array) => {
 let cartItems = [];
 
 function showItems(carts) {
-    console.log("show items.")
     $("#display2").html(JSON.stringify(carts, null, 4));
     $("#count").text(carts?.items?.length);
     $("#timeInfo").text(new Date(carts.timestamp).toLocaleString());

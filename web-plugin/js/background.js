@@ -136,10 +136,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
                     url: '../demo/index.html'
                 });
                 break;
-            default:
-            // case "off":
-            // case "0":
-            // case "false":
+            default:  //"off", "0", "false"
                 IS_Debuger = false
                 break;
         }
@@ -147,9 +144,9 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
 });
 
 async function handleCartItems(items) {
-    
+
     let itemsCount = items ? items.length : 0;
-    let status =  itemsCount > 0 ? STATUS.HaveFood : STATUS.Empty;
+    let status = itemsCount > 0 ? STATUS.HaveFood : STATUS.Empty;
 
     setBadge({
         cartStatus: status,
@@ -209,32 +206,24 @@ const parseResponse = async (json) => {
     let cartItems = [];
     // Find impact of each ingredient and rank them
     for (let item of json["items"]) {
-        let impact, product, matched, origImpact;
+        let product, matched, impact;
         matched = item["match_conf"] >= GHGI_CONFIDENCE_LIMIT;
-        origImpact = item["impact"];
+        impact = item["impact"]; //in "g"
+        product = item["product"]?.["alias"];
 
-        if (matched) {
-            impact = origImpact * G_TO_POUND;
-            product = item["product"]?.["alias"];
-        } else {
-            impact = null;
-            product = item["product"]?.["alias"];
-        }
         cartItems.push({
             name: item["names"][0],
             product: product,
             match_conf: item["match_conf"],
             matched: matched,
-            impact: impact,
-            origImpact: origImpact,
+            origImpact: impact,
             grams: item["g"]
         });
     }
 
-    cartItems.sort((a, b) => b.impact - a.impact);
-    let totalImpact = cartItems.reduce((acc, curr) => acc + curr.impact, 0);
-    let totalOrigImpact = cartItems.reduce((acc, curr) => acc + curr.origImpact, 0)
-    let offsetCost = totalOrigImpact * CarbonCostFeeRate;
+    let totalOrigImpact = cartItems.reduce((total, item) => total + item.origImpact, 0);
+    let totalImpact = cartItems.reduce((total, item) => total + (item.matched ? item.origImpact : 0), 0);
+    let offsetCost = totalImpact * CarbonCostFeeRate;
     let status = STATUS.HaveFood;
     if (offsetCost < ZERO) {
         status = STATUS.Empty;
@@ -249,7 +238,7 @@ const parseResponse = async (json) => {
 
     let carbonEmission = {
         matched: cartItems.reduce((acc, curr) => acc || curr.matched, false),
-        totalImpact: totalImpact,
+        totalImpact: totalImpact * G_TO_POUND, //here convert to lb
         totalOrigImpact: totalOrigImpact,
         offsetCost: offsetCost,
         cartItems: cartItems,
