@@ -14,6 +14,7 @@
   - [3.3 Logs](#33-logs)
   - [3.4 Want know more about GHGI API?](#34-want-know-more-about-ghgi-api)
   - [3.5 How to open demo page](#35-how-to-open-demo-page)
+  - [3.6 Scraper the instacart site](#36-scraper-the-instacart-site)
 
 ## 1. Introduce
 
@@ -210,3 +211,18 @@ chrome.runtime.sendMessage({
        Debug: "on"
    })
 ```
+
+### 3.6 Scraper the instacart site
+For reserach the instacart site food item name & unit, we need scraper the site, and get the values from the site.
+
+So far, I build a scraper sitemap for it. But not sure why, seem still not dump all data.
+The Script as:
+ [WebScraper.json](./webscraper.json)
+
+We can use the `Import` to import this sitemap, and use it to scraper the site.
+![webscraper](./mdImg/webscraper.PNG)
+
+
+<hr/>
+
+<span align="center">by [Odin:heart:](https://github.com/szjfhb), or you can [Mail Me](mailto:jfhb@msn.com)</span>
