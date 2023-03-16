@@ -130,7 +130,6 @@ if (closeBtn) {
 let refreshBtn = document.querySelector('.refreshBtn');
 if (refreshBtn) {
   refreshBtn.addEventListener('click', async () => {
-    console.warn('retry action to get data in backend: message: Refresh');
     chrome.runtime.sendMessage({
       action: 'Refresh',
     })

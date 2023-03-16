@@ -49,7 +49,11 @@ $("#addItem").click(() => {
     let name = $("#name").val();
     let weight = $("#quan").val();
     if (name?.length > 0 && weight?.length > 0) {
-        let item = new TofuItem(name, "ea", weight);
+        let item = {
+            name: name,
+            quantity: weight,
+            unit: 'ea'
+        };
         cartItems.push(item);
         OnCartItemsChange(cartItems);
     }

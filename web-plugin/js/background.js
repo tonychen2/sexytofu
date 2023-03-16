@@ -1,20 +1,10 @@
+//Common.js contains many const & options settings.
+//TODO: Do we need a option Page, to let user set the options?
 try {
     importScripts("./common.js");
 } catch (e) {
     console.error(e.message);
 }
-
-const GHGI_API_ADDRESS = 'https://api.sexytofu.org/api.ghgi.org:443';
-const GHGI_CONFIDENCE_LIMIT = 0.2; //need try found a reasonable limit. 0.5 will ignore too much, like organic banana.
-const G_TO_POUND = 0.00220462262185;
-const CarbonCostFeeRate = 0.000050; //  $50 per 1000 kg, as per  0.000050 /per g.
-let IS_Debuger = true;
-const ZERO = 0.0000001;
-const MIN_COST = 0.01;
-const Expire_Period = 24 * 60 * 60 * 1000;
-const OutDatedColor = '#FABB05';
-const DefaultColor = '#4285F4';
-const DefaultTextColor = '#FFFFFF';
 
 chrome.runtime.onInstalled.addListener(details => {
     if (details.reason === chrome.runtime.OnInstalledReason.INSTALL) {
@@ -107,15 +97,17 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     if (action) {
         switch (action) {
             case 'Refresh':
-                console.log('start to recalc again');
+                console.log('start to re-calcuation again...');
                 InitData();
                 break;
             case 'OutDated':
+                console.log('Cart items outdated, change badge background color.');
                 let popupFile = `./popup/Outdated.html`;
                 chrome.action.setPopup({ popup: popupFile });
                 chrome.action.setBadgeBackgroundColor({ color: OutDatedColor });
                 break;
             case 'Normal':
+                console.log('Cart items refreshed, change badge background color to normal.');
                 chrome.action.setBadgeBackgroundColor({ color: DefaultColor });
                 break;
             //not send message again. only handle in handleCartItems
@@ -211,7 +203,7 @@ const parseResponse = async (json) => {
     for (let item of json["items"]) {
         let product, matched, impact;
         matched = item["match_conf"] >= GHGI_CONFIDENCE_LIMIT;
-        impact = item["impact"]; //in "g"
+        impact = item["impact"] ? item["impact"] : 0; //in "g"
         product = item["product"]?.["alias"];
 
         cartItems.push({

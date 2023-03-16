@@ -35,6 +35,7 @@ function getTargetbyType(item, tagType) {
 /* The InstaCart Cart "button" consists of 3 parts: a path, a span, and an svg (the cart icon). This function verifies that the 
 "button" was clicked by checking if the target of user click had the attribute of any of these three parts.
 */
+//TODO: re-org, how to orgnize the button types?
 function notifyExtension(e) {
     let cartUI = document.querySelector('div[aria-label="Cart"]');
     let notInCartUI = cartUI?.hasAttribute('hidden') || cartUI?.style.display == 'none';
@@ -82,7 +83,7 @@ async function waitThenScrapeCart(timeout = 500) {
     scrapeTimer = setTimeout(scrapeCart, timeout);
 }
 
-function scrapeCart(timeoutBeforeRetry=300) {
+function scrapeCart(timeoutBeforeRetry = 300) {
     //if user have exit the cart, need set OutDated.
     let cartUI = document.querySelector('div[aria-label="Cart"]');
     let notInCartUI = cartUI?.hasAttribute('hidden') || cartUI?.style.display == 'none';
@@ -100,15 +101,16 @@ function scrapeCart(timeoutBeforeRetry=300) {
 
     console.log(`Print start: ${new Date().toLocaleString()}`);
     let items = document.querySelectorAll('div[aria-label="product"]');
-    // TODO: Consider refactor as foreach + callback
+
     let cartItems = [];
     setOutDated(false);
     for (i = 0; i < items.length; ++i) {
         item = items[i];
 
-        if (item.childElementCount == 2) { // TODO: Improve logic for failure check
-            //unit: 6 ct,  3 lb, per lb, each
-            textNode = item.firstChild.lastChild.firstChild // TODO: Handle situation where this is not true
+        //TODO: add error report, send mail or let user send feedback?
+        //TODO: still need improve logic for reading the cart items...
+        if (item.childElementCount == 2) {
+            textNode = item.firstChild.lastChild.firstChild;
 
             try {
                 foodName = textNode.firstChild.firstChild.textContent;
@@ -140,10 +142,14 @@ function BuildFoodItem(foodName, unit, quantity) {
         if (numb) {
             // console.log(`before unit: ${unit}, quantity: ${quantity}`);
             quantity = numb * quantity;
-            unit = unit.replace(numb, '').trim();
-            
-            //remove container words, like: bag, container 
-            unit = unit?.replace(" container", "")?.replace(" bag", "");
+            unit = unit.replace(numb, '').trim().toLowerCase();
+
+            //remove container words, like: bag, container, count ...
+            UNIT_RemoveWords.forEach((word) => {
+                unit = unit?.replace(word, "").trim();
+            });
+
+            //convert some speical unit, like: fl oz, ct, oz bunch
             if (UNIT_Convert[unit]) {
                 unit = UNIT_Convert[unit];
             }
@@ -155,5 +161,9 @@ function BuildFoodItem(foodName, unit, quantity) {
         }
     }
 
-    return new TofuItem(foodName, unit, quantity);
+    return {
+        name: foodName,
+        quantity: quantity,
+        unit: unit
+    };
 }
