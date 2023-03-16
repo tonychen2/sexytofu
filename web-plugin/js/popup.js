@@ -1,6 +1,6 @@
 let cartItems = null;
-const carbonEmission = document.querySelector('div[class="child one"]');
-const carbonCost = document.querySelector('div[class="child two"]');
+const carbonEmission = document.querySelector('div[class="total-emission"]');
+const carbonCost = document.querySelector('div[class="offset-cost"]');
 let pageUrl = window.location.pathname;
 
 //TODO: split pages & js files.
@@ -80,10 +80,10 @@ async function loadCarbonImpact() {
 //TODO: this need move to some other js file...
 function buildItem(impacts) {
   if (isOffset) {
-    let pEmission = document.querySelector('div[class="child one"] span');
+    let pEmission = document.querySelector('div[class="total-emission"] span');
     pEmission.innerText = impacts.totalImpact.toFixed(1);
 
-    let pCost = document.querySelector('div[class="child two"] span');
+    let pCost = document.querySelector('div[class="offset-cost"] span');
     pCost.innerText = '$' + impacts.offsetCost.toFixed(2);
   }
 }
