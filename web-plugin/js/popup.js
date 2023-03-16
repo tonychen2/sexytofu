@@ -88,9 +88,9 @@ function buildItem(impacts) {
   }
 }
 
-let leanMoreBtn = document.querySelector('#leanMoreBtn');
-if (leanMoreBtn) {
-  leanMoreBtn.addEventListener('click', async () => {
+let learnMoreBtn = document.querySelector('#learnMoreBtn');
+if (learnMoreBtn) {
+  learnMoreBtn.addEventListener('click', async () => {
     //we can jump in extension pages. but open third-party page must open new tabs.
     // this.location.href = 'payment-success.html';
     chrome.tabs.create({
