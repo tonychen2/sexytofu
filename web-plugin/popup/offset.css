@@ -22,7 +22,7 @@ body {
   margin-bottom: 25px;
 }
 
-.child {
+.total-emission, .offset-cost{
   flex: 1;
   text-align: left;
 }

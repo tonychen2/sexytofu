@@ -1,6 +1,4 @@
 let cartItems = null;
-const carbonEmission = document.querySelector('div[class="total-emission"]');
-const carbonCost = document.querySelector('div[class="offset-cost"]');
 let pageUrl = window.location.pathname;
 
 //TODO: split pages & js files.
@@ -11,24 +9,26 @@ const isEmpty = pageUrl.toLowerCase().endsWith('/empty.html');
 //V2 function... not working anymore.
 //link: https://developer.chrome.com/docs/extensions/mv3/mv3-migration-checklist/#api-background-context
 
-let timerCalc = null;
+let waitCalcuatingTimer = null;
 let i = 0;
 
 if (isEmpty) {
   loadCarbonImpact();
 }
 else {
-  timerCalc = setTimeout(() => { checkIsCalc() }, 1000);
+  //TODO: Here delay 1s for let user can see the waiting message... 
+  //Do we have any better way to show sometimes we are still calcuating?
+  waitCalcuatingTimer = setTimeout(() => { checkIsCalcuating() }, 1000);
 }
 
-async function checkIsCalc() {
-  let { isCalc } = await chrome.storage.local.get("isCalc");
+async function checkIsCalcuating() {
+  let { isCalcuating } = await chrome.storage.local.get("isCalcuating");
 
-  if (isCalc) {
-    timerCalc = setTimeout(() => { checkIsCalc() }, 100);
+  if (isCalcuating) {
+    waitCalcuatingTimer = setTimeout(() => { checkIsCalcuating() }, 100);
   } else {
     loadCarbonImpact();
-    clearTimeout(timerCalc);
+    clearTimeout(waitCalcuatingTimer);
   }
 }
 
@@ -110,6 +110,7 @@ if (paymentBtn) {
   });
 }
 
+//Normal X button
 let closeBtn = document.querySelector('.close');
 if (closeBtn) {
   closeBtn.addEventListener('click', async () => {
@@ -117,6 +118,7 @@ if (closeBtn) {
   });
 }
 
+//Outdated big Close button
 closeBtn = document.querySelector('.CloseBtn');
 if (closeBtn) {
   closeBtn.addEventListener('click', async () => {
@@ -124,9 +126,10 @@ if (closeBtn) {
   });
 }
 
-let backBtn = document.querySelector('.backBtn');
-if (backBtn) {
-  backBtn.addEventListener('click', async () => {
+//Error page Refresh Button
+let refreshBtn = document.querySelector('.refreshBtn');
+if (refreshBtn) {
+  refreshBtn.addEventListener('click', async () => {
     console.warn('retry action to get data in backend: message: Refresh');
     chrome.runtime.sendMessage({
       action: 'Refresh',

@@ -77,11 +77,6 @@ function notifyExtension(e) {
 
 let scrapeTimer = null;
 async function waitThenScrapeCart(timeout = 500) {
-    //set isCalc first.
-    chrome.runtime.sendMessage({
-        action: 'isCalcuating'
-    })
-
     clearTimeout(scrapeTimer);//cancel the before timer first.
     console.log(`Go to read  carts, wait ${timeout}ms first: ${new Date().toLocaleString()}`);
     scrapeTimer = setTimeout(scrapeCart, timeout);

@@ -79,7 +79,6 @@ async function InitData() {
     let items = [];
 
     chrome.action.setBadgeTextColor({ color: DefaultTextColor });
-    setIsCalcStatus(true);
 
     if (carts) {
         items = carts.items;
@@ -98,6 +97,7 @@ async function InitData() {
     }
     handleCartItems(items);
 }
+
 InitData();
 
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
@@ -118,9 +118,10 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
             case 'Normal':
                 chrome.action.setBadgeBackgroundColor({ color: DefaultColor });
                 break;
-            case 'isCalcuating':
-                setIsCalcStatus(true);
-                break;
+            //not send message again. only handle in handleCartItems
+            // case 'isCalcuating': 
+            //     setIsCalcuating(true);
+            //     break;
         }
     }
 
@@ -153,6 +154,8 @@ async function handleCartItems(items) {
         cartCount: itemsCount
     });
 
+    setIsCalcuating(true);
+
     if (itemsCount > 0) {
         console.log(`Cart items received at ${new Date().toLocaleString()}`)
         try {
@@ -173,11 +176,11 @@ async function handleCartItems(items) {
         console.log(`Cart cleared.\n`);
     }
 
-    setIsCalcStatus(false);
+    setIsCalcuating(false);
 }
 
-function setIsCalcStatus(flag) {
-    chrome.storage.local.set({ isCalc: flag });
+function setIsCalcuating(flag) {
+    chrome.storage.local.set({ isCalcuating: flag });
 }
 
 //when get cart items changes
