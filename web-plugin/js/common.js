@@ -20,7 +20,7 @@ const STATUS = {
 const UNIT_Convert = {
     //"lb" : "pound", // found this valid short can auto convert by the API.
     //"oz" : "ounce",
-    "ct": "oz", // not valid one?
+    "ct": "oz",
     "fl oz": "oz",
     "oz bunch": "oz"
 }
@@ -31,6 +31,5 @@ const UNIT_RemoveWords = [
     "about ",
     " package",
     "count "
-
 ]
 

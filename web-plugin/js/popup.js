@@ -1,7 +1,6 @@
 let cartItems = null;
 let pageUrl = window.location.pathname;
 
-//TODO: split pages & js files.
 const isOffset = pageUrl.toLowerCase().endsWith('/offset.html');
 const isEmpty = pageUrl.toLowerCase().endsWith('/empty.html');
 
@@ -77,7 +76,6 @@ async function loadCarbonImpact() {
   }
 }
 
-//TODO: this need move to some other js file...
 function buildItem(impacts) {
   if (isOffset) {
     let pEmission = document.querySelector('div[class="total-emission"] span');
