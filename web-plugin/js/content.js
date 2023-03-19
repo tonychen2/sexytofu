@@ -20,54 +20,48 @@ function setOutDated(isOutDated) {
     })
 }
 
-function getTargetbyType(item, tagType) {
-    let max = 3, i = 0;
-    while (item?.tagName?.toLowerCase() !== tagType) {
-        item = item?.parentElement;
-        if (item == null || i > max) {//sometimes, click area remove from UI, so no parent.
-            return null;
-        }
-        i++;
-    }
-    return item;
-}
-
 /* The InstaCart Cart "button" consists of 3 parts: a path, a span, and an svg (the cart icon). This function verifies that the 
 "button" was clicked by checking if the target of user click had the attribute of any of these three parts.
 */
 //TODO: re-org, how to orgnize the button types?
 function notifyExtension(e) {
-    let target = e.target;
-    let origTagName = target?.tagName?.toLowerCase();
-
-    target = getTargetbyType(target, 'button');
-    let isRetailBtn = target?.querySelector(".RetailerLogo") ? true : false;
-
-    if (isRetailBtn) {
-        // Re-scrape if user goes to a different retailer's cart
-        waitThenScrapeCart();
-        return;
-    }
-    else if (origTagName != 'span' && origTagName != 'button' && origTagName != 'svg' && origTagName != 'path') {
-        return;
-    }
-
-    console.info('Button Clicked: ', target ? target.outerHTML : '(button removed.)');
-
-    let ariaLabel = target?.getAttribute("aria-label")?.toLowerCase();
-    let btnText = target?.outerText.toLowerCase();
     let isHomePage = window.location.pathname.trim().toLowerCase().endsWith('/store');
+    if (isHomePage) {//home page area skip any actions. include Cart Button.
+        return;
+    }
+
+    let $target = $(e.target);
+    let origTagName = e.target?.tagName?.toLowerCase();
+    let $targetBtn = $target.closest("button");
+    let ariaLabel = $targetBtn.attr("aria-label")?.toLowerCase()??"";
+    let btnText = $targetBtn.text().toLowerCase();
+
+    console.info('Button Clicked: ', $targetBtn.length > 0 ? $targetBtn.prop("outerHTML") :
+        $target.prop("outerHTML"));
+
+    //view cart button clicked
+    if (ariaLabel?.includes("view cart")) {
+        waitThenScrapeCart();
+    }
+
+    if (origTagName != 'span' && origTagName != 'button' && origTagName != 'svg' && origTagName != 'path') {
+        return;
+    }
 
     if (isCartUIVisible()) {
-        //view cart click, before function call, the UI attribute is in cart.
-        if ((!isHomePage && ariaLabel?.includes("view cart")) || ariaLabel?.includes("increment") ||
-            ariaLabel?.includes("decrement") || ariaLabel?.includes("remove") || btnText == 'remove') {
+        //Img button version, before 2023.03.
+        let isRetailBtn = $targetBtn.find(".RetailerLogo").length > 0;
+        //2023.3.19 append retail row.
+        let isRetailRow = $targetBtn.find('span[data-testid="retailer-name"]').length > 0;
+
+        if (isRetailBtn || isRetailRow || ariaLabel.includes("increment") ||
+            ariaLabel.includes("decrement") || ariaLabel.includes("remove") || btnText == 'remove') {
             waitThenScrapeCart();
         }
     }
     else if (ariaLabel?.includes("add") || ariaLabel?.includes("remove")
         || ariaLabel?.includes("increment") || ariaLabel?.includes("decrement")
-        || target == null || btnText == 'Add to cart' || btnText == 'Update quantity') {
+        || targetBtn == null || btnText == 'add to cart' || btnText == 'update quantity') {
         //inform need open cart again.
         console.info('Need reopen the cart again!')
         setOutDated(true);
