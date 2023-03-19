@@ -37,8 +37,6 @@ function getTargetbyType(item, tagType) {
 */
 //TODO: re-org, how to orgnize the button types?
 function notifyExtension(e) {
-    let cartUI = document.querySelector('div[aria-label="Cart"]');
-    let notInCartUI = cartUI?.hasAttribute('hidden') || cartUI?.style.display == 'none';
     let target = e.target;
     let origTagName = target?.tagName?.toLowerCase();
 
@@ -60,50 +58,73 @@ function notifyExtension(e) {
     let btnText = target?.outerText.toLowerCase();
     let isHomePage = window.location.pathname.trim().toLowerCase().endsWith('/store');
 
-    if (notInCartUI) {
-        if (ariaLabel?.includes("add") || ariaLabel?.includes("remove")
-            || ariaLabel?.includes("increment") || ariaLabel?.includes("decrement")
-            || target == null || btnText == 'Add to cart' || btnText == 'Update quantity') {
-            //inform need open cart again.
-            console.info('Need reopen the cart again!')
-            setOutDated(true);
+    if (isCartUIVisible()) {
+        //view cart click, before function call, the UI attribute is in cart.
+        if ((!isHomePage && ariaLabel?.includes("view cart")) || ariaLabel?.includes("increment") ||
+            ariaLabel?.includes("decrement") || ariaLabel?.includes("remove") || btnText == 'remove') {
+            waitThenScrapeCart();
         }
     }
-    //view cart click, before function call, the UI attribute is in cart.
-    else if ((!isHomePage && ariaLabel?.includes("view cart")) || ariaLabel?.includes("increment") ||
-        ariaLabel?.includes("decrement") || ariaLabel?.includes("remove") || btnText == 'remove') {
-        waitThenScrapeCart();
+    else if (ariaLabel?.includes("add") || ariaLabel?.includes("remove")
+        || ariaLabel?.includes("increment") || ariaLabel?.includes("decrement")
+        || target == null || btnText == 'Add to cart' || btnText == 'Update quantity') {
+        //inform need open cart again.
+        console.info('Need reopen the cart again!')
+        setOutDated(true);
+
     }
 }
 
+function isCartUIVisible() {
+    //$('div[aria-label="Cart"]:visible'), get visible cart obj
+    return $('div[aria-label="Cart"]').is(':visible');
+}
+
+//Init the retryTimes.
+async function resetRetryCount() {
+    retryTimes = 0;
+}
+
+let retryTimes = -1;
+const MAX_RETRY = 30; // 300 * 30 = 9s. total around 9.5s
 let scrapeTimer = null;
+
 async function waitThenScrapeCart(timeout = 500) {
     clearTimeout(scrapeTimer);//cancel the before timer first.
     console.log(`Go to read  carts, wait ${timeout}ms first: ${new Date().toLocaleString()}`);
+
+    //This used to handle when cartBody can't load out, maybe network error and so on.
+    retryTimes = 0;
+
     scrapeTimer = setTimeout(scrapeCart, timeout);
 }
 
 function scrapeCart(timeoutBeforeRetry = 300) {
     //if user have exit the cart, need set OutDated.
-    let cartUI = document.querySelector('div[aria-label="Cart"]');
-    let notInCartUI = cartUI?.hasAttribute('hidden') || cartUI?.style.display == 'none';
-    if (notInCartUI) {
+    if (!isCartUIVisible()) {
         console.log("User exit the cart UI, we can't read cart items now...")
         setOutDated(true);
         return;
     }
-    let cartBody = document.querySelector('div[id="cart-body"]');
-    if (!cartBody) {//here to make sure cartbody is loaded.
+
+    //here to make sure cartbody is loaded.
+    if (!$('div[id="cart-body"]').is(':visible')) {
+        if (retryTimes > MAX_RETRY) {
+            console.error(`Cart Body still not ready. currentTime: ${new Date().toLocaleString()}`);
+            return;
+        }
+
         console.log(`Cart Body not ready, wait ${timeoutBeforeRetry}ms again: ${new Date().toLocaleString()}`);
         scrapeTimer = setTimeout(scrapeCart, timeoutBeforeRetry);
+        retryTimes++;
         return;
     }
 
     console.log(`Print start: ${new Date().toLocaleString()}`);
     let items = document.querySelectorAll('div[aria-label="product"]');
-
     let cartItems = [];
     setOutDated(false);
+
     for (i = 0; i < items.length; ++i) {
         item = items[i];
 

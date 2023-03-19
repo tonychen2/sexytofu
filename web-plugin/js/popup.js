@@ -71,8 +71,8 @@ async function loadCarbonImpact() {
       }
     }
   }
-  catch {
-    console.error('Load local storage failed. Not working in extension mode?');
+  catch (ex) {
+    console.error('Load local storage failed. Exception as: \n', ex);
   }
 }
 
