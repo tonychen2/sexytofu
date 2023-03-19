@@ -1,5 +1,4 @@
 //Common.js contains many const & options settings.
-//TODO: Do we need a option Page, to let user set the options?
 try {
     importScripts("./common.js");
 } catch (e) {

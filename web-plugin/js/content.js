@@ -23,7 +23,6 @@ function setOutDated(isOutDated) {
 /* The InstaCart Cart "button" consists of 3 parts: a path, a span, and an svg (the cart icon). This function verifies that the 
 "button" was clicked by checking if the target of user click had the attribute of any of these three parts.
 */
-//TODO: re-org, how to orgnize the button types?
 function notifyExtension(e) {
     let isHomePage = window.location.pathname.trim().toLowerCase().endsWith('/store');
     if (isHomePage) {//home page area skip any actions. include Cart Button.
@@ -33,36 +32,40 @@ function notifyExtension(e) {
     let $target = $(e.target);
     let origTagName = e.target?.tagName?.toLowerCase();
     let $targetBtn = $target.closest("button");
-    let ariaLabel = $targetBtn.attr("aria-label")?.toLowerCase()??"";
+    let ariaLabel = $targetBtn.attr("aria-label")?.toLowerCase() ?? "";
     let btnText = $targetBtn.text().toLowerCase();
 
-    console.info('Button Clicked: ', $targetBtn.length > 0 ? $targetBtn.prop("outerHTML") :
-        $target.prop("outerHTML"));
+    if (origTagName != 'span' && origTagName != 'button' && origTagName != 'svg' && origTagName != 'path'
+        && ($targetBtn.length == 0 && origTagName == 'div')) {
+        return;
+    }
 
     //view cart button clicked
     if (ariaLabel?.includes("view cart")) {
         waitThenScrapeCart();
     }
+    console.info('Button Clicked: ', $targetBtn.length > 0 ? $targetBtn.prop("outerHTML") :
+        $target.prop("outerHTML"));
 
-    if (origTagName != 'span' && origTagName != 'button' && origTagName != 'svg' && origTagName != 'path') {
-        return;
-    }
-
+    //$targetBtn.length == 0 means the button dispear after click or do not have button parent.
     if (isCartUIVisible()) {
-        //Img button version, before 2023.03.
+        //Img button version, before 2023.03. But not sure if it will show again?
         let isRetailBtn = $targetBtn.find(".RetailerLogo").length > 0;
-        //2023.3.19 append retail row.
+        //2023.3.19 append is retail row.
         let isRetailRow = $targetBtn.find('span[data-testid="retailer-name"]').length > 0;
 
-        if (isRetailBtn || isRetailRow || ariaLabel.includes("increment") ||
+        if (isRetailBtn || isRetailRow ){
+            //Sometimes it will read to old cart data... hard to reproduct, but occurs.
+            waitThenScrapeCart(1000);
+        }
+        else if(ariaLabel.includes("increment") || $targetBtn.length == 0 ||
             ariaLabel.includes("decrement") || ariaLabel.includes("remove") || btnText == 'remove') {
             waitThenScrapeCart();
         }
     }
-    else if (ariaLabel?.includes("add") || ariaLabel?.includes("remove")
-        || ariaLabel?.includes("increment") || ariaLabel?.includes("decrement")
-        || targetBtn == null || btnText == 'add to cart' || btnText == 'update quantity') {
-        //inform need open cart again.
+    else if (ariaLabel.includes("add") || ariaLabel.includes("remove")
+        || ariaLabel.includes("increment") || ariaLabel.includes("decrement")
+        || $targetBtn.length == 0 || btnText.includes('add ') || btnText == 'update quantity') {
         console.info('Need reopen the cart again!')
         setOutDated(true);
 
@@ -72,11 +75,6 @@ function notifyExtension(e) {
 function isCartUIVisible() {
     //$('div[aria-label="Cart"]:visible'), get visible cart obj
     return $('div[aria-label="Cart"]').is(':visible');
-}
-
-//Init the retryTimes.
-async function resetRetryCount() {
-    retryTimes = 0;
 }
 
 let retryTimes = -1;
@@ -109,6 +107,7 @@ function scrapeCart(timeoutBeforeRetry = 300) {
         }
 
         console.log(`Cart Body not ready, wait ${timeoutBeforeRetry}ms again: ${new Date().toLocaleString()}`);
+
         scrapeTimer = setTimeout(scrapeCart, timeoutBeforeRetry);
         retryTimes++;
         return;
