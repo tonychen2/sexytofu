@@ -9,29 +9,72 @@ const isEmpty = pageUrl.toLowerCase().endsWith('/empty.html');
 //link: https://developer.chrome.com/docs/extensions/mv3/mv3-migration-checklist/#api-background-context
 
 let waitCalcuatingTimer = null;
-let i = 0;
+let startTime = Date.now();
+let isCalcuating;
+let retry = 0;
+let targetSize = 12, maxSize = 50;
+let isDesc = false;
+let timer;
+let isCenter = true;
 
-if (isEmpty) {
-  loadCarbonImpact();
-}
-else {
-  //TODO: Here delay 1s for let user can see the waiting message... 
-  //Do we have any better way to show sometimes we are still calcuating?
-  waitCalcuatingTimer = setTimeout(() => { checkIsCalcuating() }, 1000);
+(async () => {
+  if (isEmpty) {
+    loadCarbonImpact();
+  }
+  else {
+    isCalcuating = (await chrome.storage.local.get("isCalcuating")).isCalcuating;
+    if (isCalcuating) {
+      $(".dispValue").css("text-align", "center");
+      animateValueField();
+      waitCalcuatingTimer = setTimeout(() => { checkIsCalcuating() }, 1000);
+    }
+    else {
+      loadCarbonImpact();
+    }
+  }
+})()
+
+function animateValueField() {
+  if (isDesc) {
+    if (targetSize < 0) {
+      isDesc = false;
+    }
+    targetSize -= 10;
+  }
+  else {
+    if (targetSize > maxSize) {
+      isDesc = true;
+    }
+    targetSize += 10;
+  }
+  if (isCalcuating) {
+    $(".dispValue").animate({
+      fontSize: `${targetSize}px`,
+    }, 20);
+
+    setTimeout(() => { animateValueField() }, 20);
+  }
 }
 
 async function checkIsCalcuating() {
-  let { isCalcuating } = await chrome.storage.local.get("isCalcuating");
+  // console.log("time checkIsCalcuating: ", Date.now() - startTime);
+  try {
+    isCalcuating = (await chrome.storage.local.get("isCalcuating")).isCalcuating;
+  } catch {
+    //isCalcuating = retry++ < 10; //this is for hard test.
+  }
 
   if (isCalcuating) {
-    waitCalcuatingTimer = setTimeout(() => { checkIsCalcuating() }, 100);
+    waitCalcuatingTimer = setTimeout(() => { checkIsCalcuating() }, 200);
   } else {
+    $(".dispValue").stop(true, true).css("fontSize", "").css("text-align", "");;
     loadCarbonImpact();
     clearTimeout(waitCalcuatingTimer);
   }
 }
 
 async function loadCarbonImpact() {
+  //console.log("time loadCarbonImpact: ", Date.now() - startTime);
   try {
     let { impacts } = await chrome.storage.local.get("impacts");
 
@@ -78,11 +121,20 @@ async function loadCarbonImpact() {
 
 function buildItem(impacts) {
   if (isOffset) {
-    let pEmission = document.querySelector('div[class="total-emission"] span');
-    pEmission.innerText = impacts.totalImpact.toFixed(1);
+    let dispVals = $(".dispValue");
+    $(dispVals[0]).text(impacts.totalImpact.toFixed(1));
+    $(dispVals[1]).text('$' + impacts.offsetCost.toFixed(2));
 
-    let pCost = document.querySelector('div[class="offset-cost"] span');
-    pCost.innerText = '$' + impacts.offsetCost.toFixed(2);
+    //For breakdown details
+    impacts.cartItems.sort((a, b) => b.origImpact - a.origImpact).forEach(item => {
+      let row = `<div class="row"><div class="col first">${item.name}</div>` + (
+        item.matched ? `<div class="col">${item.impact.toFixed(1)}</div></div>` :
+          `<div class="col notRec">Not recognized</div></div>`);
+
+      $(".Data").append(row);
+    });
+    let total = $("div.total> div.col")[1];
+    total.innerText = impacts.totalImpact.toFixed(1);
   }
 }
 
@@ -134,3 +186,11 @@ if (refreshBtn) {
     self.close();
   });
 }
+
+$(".displayDetail").click(() => {
+  $(".DetailTable").show();
+})
+
+$(".detailClose").click(() => {
+  $(".DetailTable").hide();
+})

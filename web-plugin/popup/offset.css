@@ -1,6 +1,7 @@
 body {
   border-radius: 10px;
   font-family: Poppins;
+  font-size: 75%;
 }
 
 .BoardContainer {
@@ -22,7 +23,8 @@ body {
   margin-bottom: 25px;
 }
 
-.total-emission, .offset-cost{
+.total-emission,
+.offset-cost {
   flex: 1;
   text-align: left;
 }
@@ -103,7 +105,7 @@ input {
 }
 
 .offset[disabled] {
-  background-color: #FACAE8 !important;
+  background-color: #facae8 !important;
 }
 
 .projects {
@@ -116,7 +118,8 @@ input {
   text-align: center;
 }
 
-.close {
+.close,
+.detailClose {
   float: right;
   margin-top: -15px;
   margin-right: 5px;
@@ -130,13 +133,15 @@ hr {
   /* border-style:inset; */
 }
 
-.DispValue {
+.dispValue {
   font-size: 24px;
   font-weight: 600;
   color: #1c0c30;
+  position: relative;
+  min-width: 45px;
 }
 
-.DispExText {
+.dispExText {
   margin-left: 5px;
   color: #786e84;
   font-size: 11px;
@@ -154,4 +159,112 @@ h3 {
 span {
   padding: 3px;
   font-size: 11px;
+}
+
+.DetailTable {
+  /* border: 1px solid gray; */
+  margin-top: -165px;
+  height: 270px;
+  width: 355px;
+  position: absolute;
+  background-color: white;
+  border-radius: 5px;
+  padding: 8px 3px;
+  color: #786e84;
+  display: none;
+  /* border: 1px solid gray; */
+}
+.data-container {
+  height: 264px;
+}
+
+.Data {
+  overflow: auto;
+  min-height: 20px;
+  max-height: 200px;
+  padding-right: 17px;
+  overflow-y: auto;
+  /* border: 1px solid gray; */
+}
+/* .Data:hover {
+  padding-right: 0px;
+  overflow-y: auto;
+} */
+
+/* grid table related - start */
+.header {
+  font-weight: bold;
+  color: #786e84;
+  font-size: 10px;
+  height: 26px;
+  vertical-align: center;
+  /* background-color: lightgray; */
+  margin-right: 17px;
+}
+
+.header .col,
+.header .col1,
+.header .col2 {
+  padding-top: 4px;
+}
+
+.row {
+  display: flex;
+  text-align: left;
+  padding-left: 5px;
+  /* border: 1px solid gray; */
+}
+.total{
+  margin-top: 10px;
+}
+.col,
+.col1,
+.col2 {
+  /* flex: 1; */
+  width: 150px;
+  /* border: 1px solid gray; */
+  padding: 0px 3px;
+}
+
+.notRec {
+  /* flex: 2; */
+  color: #b3b3b3;
+  font-style: italic;
+}
+
+/* grid table related - end */
+
+.detailTitle {
+  font-weight: 600;
+  font-size: 18px;
+  margin: 10px 0px;
+}
+
+.detailClose {
+  margin-top: -15px;
+}
+
+.displayDetail {
+  font-size: 7px;
+  font-weight: 600;
+  color: gray;
+  margin-top: 3px;
+  cursor: pointer;
+}
+
+.displayDetail:hover {
+  text-decoration: underline;
+}
+
+.infoIcon {
+  height: 12px;
+}
+
+.QuesTip {
+  text-align: left;
+  font-style: italic;
+  font-weight: 400;
+  transform: scale(0.76);
+  transform-origin: 0 0;
+  white-space: nowrap;
 }

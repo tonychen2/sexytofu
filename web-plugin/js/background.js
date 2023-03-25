@@ -34,9 +34,6 @@ async function postItems(items) {
             food.push(`${item["quantity"]} ${item["unit"]} of ${item["name"]}`);
         }
     }
-    if (IS_Debuger) {
-        console.time('Ghgi request');
-    }
 
     let results = await fetch(`${GHGI_API_ADDRESS}/rate`,
         {
@@ -45,10 +42,6 @@ async function postItems(items) {
         })
         .then(response => response.json())
         .then(json => parseResponse(json));
-
-    if (IS_Debuger) {
-        console.timeEnd('Ghgi request');
-    }
 }
 
 function validDateCartItems(alarm) {
@@ -150,6 +143,7 @@ async function handleCartItems(items) {
     if (itemsCount > 0) {
         console.log(`Cart items received at ${new Date().toLocaleString()}`)
         try {
+            console.time('Ghgi request');
             await postItems(items);
         }
         catch
@@ -160,6 +154,9 @@ async function handleCartItems(items) {
                 cartCount: itemsCount
             });
             chrome.storage.local.set({ impacts: null });
+        }
+        finally{
+            console.timeEnd('Ghgi request');
         }
     }
     else {
@@ -211,6 +208,7 @@ const parseResponse = async (json) => {
             match_conf: item["match_conf"],
             matched: matched,
             origImpact: impact,
+            impact : impact * G_TO_POUND, //convert orig to lb
             grams: item["g"]
         });
     }
@@ -232,7 +230,7 @@ const parseResponse = async (json) => {
 
     let carbonEmission = {
         matched: cartItems.reduce((acc, curr) => acc || curr.matched, false),
-        totalImpact: totalImpact * G_TO_POUND, //here convert to lb
+        totalImpact: totalImpact * G_TO_POUND, //convert total to lb
         totalOrigImpact: totalOrigImpact,
         offsetCost: offsetCost,
         cartItems: cartItems,
@@ -243,6 +241,7 @@ const parseResponse = async (json) => {
         console.log("CartItems data:")
         console.table(cartItems);
     }
+
     //save the impact to local.
     await chrome.storage.local.set({ impacts: carbonEmission });
 }

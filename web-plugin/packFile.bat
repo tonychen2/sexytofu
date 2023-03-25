@@ -1,9 +1,9 @@
-@echo on
+@echo off
 
 setlocal enabledelayedexpansion
 set chromeExe=C:\Program Files\Google\Chrome\Application\chrome.exe
 set Zip=C:\Program Files\7-Zip\
-set tmpFolder=tmp
+set tmpFolder=Sexy-Tofu
 
 ::back to up folder
 pushd ..
@@ -18,6 +18,9 @@ echo   ©¸©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©
 echo.
 
 if exist %tmpFolder% rd %tmpFolder% /s /q
+if Exist %tmpFolder%.zip del %tmpFolder%.zip
+if Exist %tmpFolder%.crx del %tmpFolder%.crx
+
 xcopy /S /Y .\web-plugin  .\%tmpFolder%\ /Exclude:.\web-plugin\exclude.txt >nul
 
 "%zip%\7z.exe" a  %tmpFolder%.zip  .\%tmpFolder%
@@ -30,15 +33,14 @@ if Exist %tmpFolder%.pem (
 set pemCmd= 
 )
 
-if Exist %tmpFolder%.crx del %tmpFolder%.crx
-
 "%chromeExe%" --pack-extension=%cd%\%tmpFolder%\ %pemCmd%
-
-echo related generated files:
-echo.
-dir %tmpFolder%* | findstr tmp
 
 echo.
 echo Remove temp folder: %tmpFolder% if we created it.
 if exist %tmpFolder% rd %tmpFolder% /s /q
+
+echo related generated files:
+echo.
+dir %tmpFolder%* | findstr %tmpFolder%
+
 popd
