@@ -86,16 +86,7 @@ async function loadCarbonImpact() {
 
       status = impacts.cartStatus;
 
-      if (status == STATUS.Empty) {
-        if (isEmpty) {
-          let h2 = document.querySelector('h2');
-          h2.textContent = "Your cart has no food in it";
-        }
-        else {
-          this.location.href = 'empty.html';
-        }
-      }
-      else if (status == STATUS.HaveFood) {
+      if (status == STATUS.HaveFood) {
         if (isOffset) {
           let bubbleTxt = document.querySelector('#bubbleTxt');
           let offsetBtn = document.querySelector('#paymentBtn');
@@ -111,6 +102,17 @@ async function loadCarbonImpact() {
         else {
           this.location.href = 'offset.html';
         }
+      }
+    }
+    
+    //set empty when no data... normally only test meet this case.
+    if (status == STATUS.Empty) {
+      if (isEmpty) {
+        let h2 = document.querySelector('h2');
+        h2.textContent = "Your cart has no food in it";
+      }
+      else {
+        this.location.href = 'empty.html';
       }
     }
   }
