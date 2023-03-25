@@ -134,7 +134,10 @@ async function resetbadgeText() {
 
 $("#sel_Popup").change(async () => {
     let page = $("#sel_Popup").val();
-    if (page) {
+    if (page == 'calculating') {
+        chrome.storage.local.set({ isCalcuating: true });
+    }
+    else if (page) {
         let popupFile = `./popup/${page}.html`;
         chrome.action.setPopup({ popup: popupFile });
         if (page != 'offset') {
