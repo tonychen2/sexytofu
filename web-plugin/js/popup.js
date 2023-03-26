@@ -24,8 +24,6 @@ let isCenter = true;
   else {
     isCalcuating = (await chrome.storage.local.get("isCalcuating")).isCalcuating;
     if (isCalcuating) {
-      $(".dispValue").css("text-align", "center");
-      animateValueField();
       waitCalcuatingTimer = setTimeout(() => { checkIsCalcuating() }, 1000);
     }
     else {
@@ -33,28 +31,6 @@ let isCenter = true;
     }
   }
 })()
-
-function animateValueField() {
-  if (isDesc) {
-    if (targetSize < 0) {
-      isDesc = false;
-    }
-    targetSize -= 10;
-  }
-  else {
-    if (targetSize > maxSize) {
-      isDesc = true;
-    }
-    targetSize += 10;
-  }
-  if (isCalcuating) {
-    $(".dispValue").animate({
-      fontSize: `${targetSize}px`,
-    }, 20);
-
-    setTimeout(() => { animateValueField() }, 20);
-  }
-}
 
 async function checkIsCalcuating() {
   // console.log("time checkIsCalcuating: ", Date.now() - startTime);
@@ -67,7 +43,6 @@ async function checkIsCalcuating() {
   if (isCalcuating) {
     waitCalcuatingTimer = setTimeout(() => { checkIsCalcuating() }, 200);
   } else {
-    $(".dispValue").stop(true, true).css("fontSize", "").css("text-align", "");;
     loadCarbonImpact();
     clearTimeout(waitCalcuatingTimer);
   }
@@ -104,7 +79,7 @@ async function loadCarbonImpact() {
         }
       }
     }
-    
+
     //set empty when no data... normally only test meet this case.
     if (status == STATUS.Empty) {
       if (isEmpty) {
@@ -123,7 +98,8 @@ async function loadCarbonImpact() {
 
 function buildItem(impacts) {
   if (isOffset) {
-    let dispVals = $(".dispValue");
+    //stop the animation
+    let dispVals = $(".loading").removeClass("loading").addClass("dispValue");
     $(dispVals[0]).text(impacts.totalImpact.toFixed(1));
     $(dispVals[1]).text('$' + impacts.offsetCost.toFixed(2));
 

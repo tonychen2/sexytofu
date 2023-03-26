@@ -268,3 +268,56 @@ span {
   transform-origin: 0 0;
   white-space: nowrap;
 }
+
+/* Loading  animation, use 3 div to change size */
+.loading,
+.loading > div {
+  position: relative;
+  box-sizing: border-box;
+}
+
+.loading {
+  display: block;
+  font-size: 0;
+  color: #000;
+}
+
+/* .loading.la-dark {
+  color: #FFF;
+} */
+
+.loading > div {
+  display: inline-block;
+  float: none;
+  background-color: currentColor;
+  border: 0 solid currentColor;
+}
+
+.loading {
+  width: 45px;
+  height: 18px;
+}
+
+.loading > div {
+  width: 8px;
+  height: 8px;
+  margin: 2px;
+  border-radius: 100%;
+  animation: change-size 0.7s -0.15s infinite linear;
+}
+
+.loading > div:nth-child(2n-1) {
+  animation-delay: -0.5s;
+}
+
+@keyframes change-size {
+  50% {
+    opacity: 0.1;
+    transform: scale(0.25);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1.3);
+  }
+}
