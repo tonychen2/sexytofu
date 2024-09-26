@@ -1,0 +1,323 @@
+body {
+  border-radius: 10px;
+  font-family: Poppins;
+  font-size: 75%;
+}
+
+.BoardContainer {
+  width: 352px;
+  /* height: 352px; */
+  font-style: normal;
+  font-weight: 400;
+  line-height: 18px;
+  /* background-color: blue; */
+  text-align: center;
+  padding: 16px;
+  padding-bottom: 8px;
+}
+
+.container {
+  display: flex;
+  margin-left: 0px;
+  margin-top: 27px;
+  margin-bottom: 25px;
+}
+
+.total-emission,
+.offset-cost {
+  flex: 1;
+  text-align: left;
+}
+
+@font-face {
+  font-family: Poppins;
+  src: url(../fonts/Poppins-Light.ttf);
+}
+
+.txtbubble {
+  /* Text bubble */
+  height: 32px;
+
+  /* Inside auto layout */
+  display: flex;
+  order: 1;
+  flex-grow: 0;
+}
+
+.tofuIcon {
+  height: 48px;
+  /* margin-top: -10px; */
+}
+
+.frame606 {
+  /* Auto layout */
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  padding: 4px 4px 7px;
+  gap: 10px;
+
+  margin-top: 20px;
+  margin-left: 25px;
+  position: absolute;
+
+  height: 21px;
+  left: 64px;
+  top: 13px;
+
+  /* Neutral/Container */
+  background-color: #f6f5f7;
+  color: #786e84;
+  font-weight: 600;
+  border-radius: 4px;
+}
+
+.triangle {
+  margin-top: 30.5px;
+  margin-left: 6px;
+  width: 15px;
+  height: 10.5px;
+  background-repeat: no-repeat;
+  outline: 0px solid F6F5F7;
+  background-image: linear-gradient(
+    -40deg,
+    #f6f5f7 50%,
+    rgba(255, 255, 255, 0) 50%
+  );
+}
+
+input {
+  width: 352px;
+  height: 40px;
+  border-radius: 5px;
+  font-family: Poppins;
+  font-weight: 600;
+  font-size: 12px;
+  margin-top: 9px;
+  margin-bottom: 8px;
+  cursor: pointer;
+}
+
+.offset {
+  background-color: #f15cb7;
+  border-color: #f15cb7;
+  color: white;
+}
+
+.offset[disabled] {
+  background-color: #facae8 !important;
+}
+
+.projects {
+  background-color: white;
+  border-color: #f15cb7;
+  color: #f15cb7;
+}
+
+.form-container {
+  text-align: center;
+}
+
+.close,
+.detailClose {
+  float: right;
+  margin-top: -15px;
+  margin-right: 5px;
+  cursor: pointer;
+}
+
+hr {
+  width: 351px;
+  color: #dbd8de;
+  /* height: 2px; */
+  /* border-style:inset; */
+}
+
+.dispValue {
+  font-size: 24px;
+  font-weight: 600;
+  color: #1c0c30;
+  position: relative;
+  min-width: 45px;
+}
+
+.dispExText {
+  margin-left: 5px;
+  color: #786e84;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+h3 {
+  font-family: "Poppins";
+  font-style: normal;
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 18px;
+}
+
+span {
+  padding: 3px;
+  font-size: 11px;
+}
+
+.DetailTable {
+  /* border: 1px solid gray; */
+  margin-top: -165px;
+  height: 270px;
+  width: 355px;
+  position: absolute;
+  background-color: white;
+  border-radius: 5px;
+  padding: 8px 3px;
+  color: #786e84;
+  display: none;
+  /* border: 1px solid gray; */
+}
+.data-container {
+  height: 264px;
+}
+
+.Data {
+  overflow: auto;
+  min-height: 20px;
+  max-height: 200px;
+  padding-right: 17px;
+  overflow-y: auto;
+  /* border: 1px solid gray; */
+}
+/* .Data:hover {
+  padding-right: 0px;
+  overflow-y: auto;
+} */
+
+/* grid table related - start */
+.header {
+  font-weight: bold;
+  color: #786e84;
+  font-size: 10px;
+  height: 26px;
+  vertical-align: center;
+  /* background-color: lightgray; */
+  margin-right: 17px;
+}
+
+.header .col,
+.header .col1,
+.header .col2 {
+  padding-top: 4px;
+}
+
+.row {
+  display: flex;
+  text-align: left;
+  padding-left: 5px;
+  /* border: 1px solid gray; */
+}
+.total{
+  margin-top: 10px;
+}
+.col,
+.col1,
+.col2 {
+  /* flex: 1; */
+  width: 150px;
+  /* border: 1px solid gray; */
+  padding: 0px 3px;
+}
+
+.notRec {
+  /* flex: 2; */
+  color: #b3b3b3;
+  font-style: italic;
+}
+
+/* grid table related - end */
+
+.detailTitle {
+  font-weight: 600;
+  font-size: 18px;
+  margin: 10px 0px;
+}
+
+.detailClose {
+  margin-top: -15px;
+}
+
+.displayDetail {
+  font-size: 7px;
+  font-weight: 600;
+  color: gray;
+  margin-top: 3px;
+  cursor: pointer;
+}
+
+.displayDetail:hover {
+  text-decoration: underline;
+}
+
+.infoIcon {
+  height: 12px;
+}
+
+.QuesTip {
+  text-align: left;
+  font-style: italic;
+  font-weight: 400;
+  transform: scale(0.76);
+  transform-origin: 0 0;
+  white-space: nowrap;
+}
+
+/* Loading  animation, use 3 div to change size */
+.loading,
+.loading > div {
+  position: relative;
+  box-sizing: border-box;
+}
+
+.loading {
+  display: block;
+  font-size: 0;
+  color: #000;
+}
+
+/* .loading.la-dark {
+  color: #FFF;
+} */
+
+.loading > div {
+  display: inline-block;
+  float: none;
+  background-color: currentColor;
+  border: 0 solid currentColor;
+}
+
+.loading {
+  width: 45px;
+  height: 18px;
+}
+
+.loading > div {
+  width: 8px;
+  height: 8px;
+  margin: 2px;
+  border-radius: 100%;
+  animation: change-size 0.7s -0.15s infinite linear;
+}
+
+.loading > div:nth-child(2n-1) {
+  animation-delay: -0.5s;
+}
+
+@keyframes change-size {
+  50% {
+    opacity: 0.1;
+    transform: scale(0.25);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1.3);
+  }
+}

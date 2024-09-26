@@ -1,0 +1,7 @@
+\mdImg\
+.md
+.txt
+.bat
+webscraper.json
+.csv
+unit
